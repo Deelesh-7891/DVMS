@@ -1038,24 +1038,7 @@ class _ScanQRScreenState
                     subtitle:
                         Text(
 
-                      [
-                        cityName,
-                        "CityId: $cityId",
-                        locationType,
-
-                        if (pinCode
-                            .isNotEmpty)
-                          "PIN: $pinCode",
-                      ]
-                          .where(
-                            (x) =>
-                                x
-                                    .trim()
-                                    .isNotEmpty,
-                          )
-                          .join(
-                            " • ",
-                          ),
+                      cityName,
 
                       maxLines: 2,
 
