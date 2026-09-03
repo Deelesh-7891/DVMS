@@ -11,7 +11,6 @@ import 'screens/accounts/accounts_home_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-
   tz.initializeTimeZones();
 
   runApp(
