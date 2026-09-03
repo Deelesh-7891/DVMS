@@ -438,6 +438,98 @@ Future<Map<String, dynamic>> getLocations(
     }
   }
 
+/*================= GetFuelBills =============*/
+Future<List<dynamic>> getFuelBills() async {
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString("token");
+
+  final response = await http.get(
+    Uri.parse("$baseUrl/fuel"),
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $token",
+    },
+  );
+
+  if (response.statusCode == 200) {
+    final json = jsonDecode(response.body);
+    if (json is List) return json;
+    return json["data"] as List<dynamic>;
+  } else {
+    throw Exception(response.body);
+  }
+}
+
+/*================= GetInsurance =============*/
+Future<List<dynamic>> getInsurance() async {
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString("token");
+
+  final response = await http.get(
+    Uri.parse("$baseUrl/insurance"),
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $token",
+    },
+  );
+
+  if (response.statusCode == 200) {
+    final json = jsonDecode(response.body);
+    if (json is List) return json;
+    return json["data"] as List<dynamic>;
+  } else {
+    throw Exception(response.body);
+  }
+}
+
+/*================= GetExpenses (Service list) =============*/
+// dvms.js has no dedicated "service" table — DemoExpense (via GET /expenses)
+// is the generic vehicle-expense ledger, and is what ExpenseTypeMaster's
+// categories (Service, Repair, etc. — whatever's actually configured) get
+// recorded against, so the Service List screen reads from here.
+Future<List<dynamic>> getExpenses() async {
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString("token");
+
+  final response = await http.get(
+    Uri.parse("$baseUrl/expenses"),
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $token",
+    },
+  );
+
+  if (response.statusCode == 200) {
+    final json = jsonDecode(response.body);
+    if (json is List) return json;
+    return json["data"] as List<dynamic>;
+  } else {
+    throw Exception(response.body);
+  }
+}
+
+/*================= GetDrivers =============*/
+Future<List<dynamic>> getDrivers() async {
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString("token");
+
+  final response = await http.get(
+    Uri.parse("$baseUrl/drivers"),
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $token",
+    },
+  );
+
+  if (response.statusCode == 200) {
+    final json = jsonDecode(response.body);
+    if (json is List) return json;
+    return json["data"] as List<dynamic>;
+  } else {
+    throw Exception(response.body);
+  }
+}
+
 /*================= GetVehicleQr =============*/
 // GET /vehicles/:id/qr returns { vehicleId, token, infoUrl, qrImage } where
 // qrImage is a "data:image/png;base64,..." data URL — decoded here so the

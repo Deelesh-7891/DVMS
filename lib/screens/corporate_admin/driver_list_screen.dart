@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../../services/auth_service.dart';
 
 class DriverListScreen extends StatefulWidget {
   const DriverListScreen({super.key});
@@ -8,43 +11,76 @@ class DriverListScreen extends StatefulWidget {
 }
 
 class _DriverListScreenState extends State<DriverListScreen> {
+  final AuthService _authService = AuthService();
   final TextEditingController searchController = TextEditingController();
 
   String selectedStatus = "All statuses";
 
-  final List<Map<String, dynamic>> allDrivers = [
-    {
-      "name": "Rahul Kumar",
-      "mobile": "9876543210",
-      "license": "RJ142023001",
-      "status": "Active",
-    },
-    {
-      "name": "Amit Sharma",
-      "mobile": "9876543211",
-      "license": "RJ142023002",
-      "status": "Active",
-    },
-    {
-      "name": "Vijay Singh",
-      "mobile": "9876543212",
-      "license": "RJ142023003",
-      "status": "Inactive",
-    },
-  ];
-
+  List<Map<String, dynamic>> allDrivers = [];
   List<Map<String, dynamic>> filteredDrivers = [];
+
+  bool _loading = true;
+  String? _loadError;
 
   @override
   void initState() {
     super.initState();
-    filteredDrivers = List.from(allDrivers);
+    _loadDrivers();
   }
 
   @override
   void dispose() {
     searchController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadDrivers() async {
+    setState(() {
+      _loading = true;
+      _loadError = null;
+    });
+
+    try {
+      final data = await _authService.getDrivers();
+
+      setState(() {
+        allDrivers = data
+            .whereType<Map>()
+            .map((e) => Map<String, dynamic>.from(e))
+            .toList();
+        filteredDrivers = List.from(allDrivers);
+        _loading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _loading = false;
+        _loadError = "Unable to load drivers: $e";
+      });
+    }
+  }
+
+  // GET /drivers is a `SELECT *` off dbo.DriverMaster, and its exact column
+  // set hasn't been confirmed against the live schema from this environment
+  // (DB unreachable here) — so every field is read defensively across a few
+  // plausible names rather than assuming one exact spelling.
+  String _pick(Map<String, dynamic> d, List<String> keys) {
+    for (final k in keys) {
+      final v = d[k];
+      if (v != null && v.toString().trim().isNotEmpty) return v.toString();
+    }
+    return "-";
+  }
+
+  String _name(Map<String, dynamic> d) =>
+      _pick(d, ["DriverName", "FullName", "Name"]);
+  String _mobile(Map<String, dynamic> d) =>
+      _pick(d, ["Phone", "Mobile", "MobileNo", "ContactNo"]);
+  String _license(Map<String, dynamic> d) =>
+      _pick(d, ["LicenseNo", "DrivingLicenseNo", "DLNo", "License"]);
+  String _status(Map<String, dynamic> d) {
+    final active = d["IsActive"];
+    if (active is bool) return active ? "Active" : "Inactive";
+    return _pick(d, ["Status"]) == "-" ? "Active" : _pick(d, ["Status"]);
   }
 
   // ============================================================
@@ -56,18 +92,14 @@ class _DriverListScreenState extends State<DriverListScreen> {
 
     setState(() {
       filteredDrivers = allDrivers.where((driver) {
-        final name = driver["name"].toString().toLowerCase();
-        final mobile = driver["mobile"].toString().toLowerCase();
-        final license = driver["license"].toString().toLowerCase();
-
         final matchesSearch =
-            name.contains(search) ||
-            mobile.contains(search) ||
-            license.contains(search);
+            _name(driver).toLowerCase().contains(search) ||
+            _mobile(driver).toLowerCase().contains(search) ||
+            _license(driver).toLowerCase().contains(search);
 
         final matchesStatus =
             selectedStatus == "All statuses" ||
-            driver["status"] == selectedStatus;
+            _status(driver) == selectedStatus;
 
         return matchesSearch && matchesStatus;
       }).toList();
@@ -113,6 +145,13 @@ class _DriverListScreenState extends State<DriverListScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
+        actions: [
+          IconButton(
+            onPressed: _loading ? null : _loadDrivers,
+            icon: const Icon(Icons.refresh),
+            tooltip: "Refresh",
+          ),
+        ],
       ),
 
       // ========================================================
@@ -120,7 +159,32 @@ class _DriverListScreenState extends State<DriverListScreen> {
       // ========================================================
 
       body: SafeArea(
-        child: Padding(
+        child: _loading
+            ? const Center(child: CircularProgressIndicator())
+            : _loadError != null
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.error_outline,
+                            size: 48,
+                            color: Colors.red,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(_loadError!, textAlign: TextAlign.center),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: _loadDrivers,
+                            child: const Text("Retry"),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : Padding(
           padding: const EdgeInsets.all(8),
 
           child: Column(
@@ -244,7 +308,17 @@ class _DriverListScreenState extends State<DriverListScreen> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16),
 
-                    child: SingleChildScrollView(
+                    child: filteredDrivers.isEmpty
+                        ? const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(24),
+                              child: Text(
+                                "No drivers found",
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ),
+                          )
+                        : SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
 
                       child: SingleChildScrollView(
@@ -308,7 +382,7 @@ class _DriverListScreenState extends State<DriverListScreen> {
 
                                 DataCell(
                                   Text(
-                                    driver["name"],
+                                    _name(driver),
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: Color(0xff172033),
@@ -322,7 +396,7 @@ class _DriverListScreenState extends State<DriverListScreen> {
 
                                 DataCell(
                                   Text(
-                                    driver["mobile"],
+                                    _mobile(driver),
                                     style: const TextStyle(
                                       color: Color(0xff334155),
                                     ),
@@ -335,7 +409,7 @@ class _DriverListScreenState extends State<DriverListScreen> {
 
                                 DataCell(
                                   Text(
-                                    driver["license"],
+                                    _license(driver),
                                     style: const TextStyle(
                                       color: Color(0xff334155),
                                     ),
@@ -348,7 +422,7 @@ class _DriverListScreenState extends State<DriverListScreen> {
 
                                 DataCell(
                                   statusBadge(
-                                    driver["status"],
+                                    _status(driver),
                                   ),
                                 ),
 
@@ -664,18 +738,30 @@ class _DriverListScreenState extends State<DriverListScreen> {
   }
 
   // ============================================================
-  // CALL DRIVER
+  // CALL DRIVER — actually places the call via the device dialer
+  // instead of just showing a snackbar.
   // ============================================================
 
-  void callDriver(Map<String, dynamic> driver) {
+  Future<void> callDriver(Map<String, dynamic> driver) async {
+    final mobile = _mobile(driver);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          "Call ${driver["name"]} - ${driver["mobile"]}",
-        ),
-      ),
-    );
+    if (mobile == "-" || mobile.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("No phone number on file for ${_name(driver)}")),
+      );
+      return;
+    }
+
+    final uri = Uri(scheme: "tel", path: mobile);
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Unable to place a call to $mobile")),
+      );
+    }
   }
 
   // ============================================================
@@ -687,7 +773,7 @@ class _DriverListScreenState extends State<DriverListScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          "Edit ${driver["name"]}",
+          "Edit ${_name(driver)}",
         ),
       ),
     );
