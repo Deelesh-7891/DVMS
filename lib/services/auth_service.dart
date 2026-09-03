@@ -903,22 +903,82 @@ Future<void> movementSave({
   }
 
   /*================= Report Damage =============*/
+  // POST /accidents only reads VehicleId, CapturedAt, Description and
+  // AttachmentId (PascalCase, exact — see dvms.js). The old body here sent
+  // vehicleId/txnDate/damageType/location/description, none of which
+  // match, so VehicleId always came through as undefined server-side.
+  //
+  // damageType and location have no columns of their own on
+  // AccidentReport, so they're folded into Description as readable
+  // prefixes instead of being silently dropped.
+  //
+  // photoBytes/photoFileName are optional: when given, the photo is
+  // uploaded to /attachments first (same flow as the odometer photo in
+  // movementSave) and the AttachmentId it returns is what actually gets
+  // linked to the accident report.
  Future<void> reportDamageSave({
   required int vehicleId,
   required String txnDate,
   required String damageType,
   required String location,
   required String description,
+  Uint8List? photoBytes,
+  String? photoFileName,
 }) async {
   final prefs = await SharedPreferences.getInstance();
   final token = prefs.getString("token");
 
+  if (token == null || token.isEmpty) {
+    throw Exception('Authorization token not found. Please login again.');
+  }
+
+  // ==========================================================
+  // UPLOAD PHOTO FIRST (optional)
+  // ==========================================================
+
+  int? attachmentId;
+
+  if (photoBytes != null) {
+    final uploadRequest = http.MultipartRequest(
+      'POST',
+      Uri.parse('$baseUrl/attachments'),
+    )
+      ..headers['Authorization'] = 'Bearer $token'
+      ..fields['entityType'] = 'Accident'
+      ..files.add(
+        http.MultipartFile.fromBytes(
+          'file',
+          photoBytes,
+          filename: photoFileName ?? 'accident.jpg',
+          contentType: MediaType('image', 'jpeg'),
+        ),
+      );
+
+    final uploadStreamed = await uploadRequest.send();
+    final uploadResponse = await http.Response.fromStream(uploadStreamed);
+
+    print('ACCIDENT PHOTO UPLOAD STATUS: ${uploadResponse.statusCode}');
+    print('ACCIDENT PHOTO UPLOAD RESPONSE: ${uploadResponse.body}');
+
+    if (uploadResponse.statusCode != 200 && uploadResponse.statusCode != 201) {
+      throw Exception(
+        'Photo upload failed: ${uploadResponse.statusCode} ${uploadResponse.body}',
+      );
+    }
+
+    final uploadData = jsonDecode(uploadResponse.body);
+    attachmentId = int.tryParse(uploadData['attachmentId']?.toString() ?? '');
+  }
+
+  // ==========================================================
+  // REQUEST BODY — field names must match the backend exactly
+  // ==========================================================
+
   final body = {
-    "vehicleId": vehicleId,
-    "txnDate": txnDate,
-    "damageType": damageType,
-    "location": location,
-    "description": description,
+    "VehicleId": vehicleId,
+    "CapturedAt": txnDate,
+    "Description": "[$damageType @ $location] $description",
+    "AttachmentId": attachmentId,
   };
 
   print("Request Body: ${jsonEncode(body)}");

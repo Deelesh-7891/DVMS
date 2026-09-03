@@ -530,7 +530,7 @@ class _ReportAccidentScreenState extends State<ReportAccidentScreen> {
       "VehicleId": vehicleId,
       "CapturedAt": captured.toIso8601String(),
       "Description": description.trim(),
-      "AttachmentId": 1,
+      "AttachmentId": attachmentId,
     };
 
     debugPrint("======================================");
@@ -1582,71 +1582,223 @@ class _ReportAccidentScreenState extends State<ReportAccidentScreen> {
                             final photoPath =
                                 (item["PhotoPath"] ?? "").toString();
 
+                            // Server returns PhotoPath as a root-relative
+                            // path ("/uploads/xxx.jpg") — baseUrl already
+                            // ends in "/api", so strip that to get the host
+                            // the file actually lives under.
+                            final photoUrl = photoPath.isEmpty
+                                ? null
+                                : baseUrl.replaceFirst(
+                                      RegExp(r'/api/?$'),
+                                      '',
+                                    ) +
+                                    photoPath;
+
+                            final locationName = (item["LocationName"] ??
+                                    item["CityName"] ??
+                                    "")
+                                .toString()
+                                .trim();
+
+                            final reportedBy =
+                                (item["ReportedByName"] ?? "")
+                                    .toString()
+                                    .trim();
+
                             return Card(
                               margin: const EdgeInsets.only(bottom: 12),
                               elevation: 2,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(14),
                               ),
-                              child: ListTile(
-                                contentPadding: const EdgeInsets.all(14),
-                                leading: Container(
-                                  width: 50,
-                                  height: 50,
-                                  decoration: BoxDecoration(
-                                    color: Colors.red.shade50,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: const Icon(
-                                    Icons.car_crash,
-                                    color: Colors.red,
-                                  ),
-                                ),
-                                title: Text(
-                                  model.isEmpty
-                                      ? registration
-                                      : "$registration • $model",
-                                  style: const TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                subtitle: Padding(
-                                  padding:
-                                      const EdgeInsets.only(top: 6),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      if (accidentId != null)
-                                        Text("Accident ID: $accidentId"),
-                                      Text(
-                                        "Captured: "
-                                        "${_formatCapturedDate(capturedAt)}",
+                              child: Padding(
+                                padding: const EdgeInsets.all(14),
+                                child: Row(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      width: 50,
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                        color: Colors.red.shade50,
+                                        borderRadius:
+                                            BorderRadius.circular(12),
                                       ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        description,
-                                        maxLines: 2,
-                                        overflow:
-                                            TextOverflow.ellipsis,
+                                      child: const Icon(
+                                        Icons.car_crash,
+                                        color: Colors.red,
                                       ),
-                                      if (photoPath.isNotEmpty) ...[
-                                        const SizedBox(height: 4),
-                                        const Row(
-                                          children: [
-                                            Icon(
-                                              Icons.photo,
-                                              size: 16,
-                                              color: Colors.green,
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            model.isEmpty
+                                                ? registration
+                                                : "$registration • $model",
+                                            style: const TextStyle(
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.bold,
                                             ),
-                                            SizedBox(width: 5),
-                                            Text("Photo attached"),
-                                          ],
+                                          ),
+                                          const SizedBox(height: 6),
+                                          if (accidentId != null)
+                                            Text(
+                                              "Accident ID: $accidentId",
+                                              style: const TextStyle(
+                                                color: Color(0xff6B7A90),
+                                                fontSize: 13,
+                                              ),
+                                            ),
+                                          Text(
+                                            "Captured: "
+                                            "${_formatCapturedDate(capturedAt)}",
+                                            style: const TextStyle(
+                                              color: Color(0xff6B7A90),
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                          if (locationName.isNotEmpty)
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                top: 2,
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  const Icon(
+                                                    Icons.location_on,
+                                                    size: 14,
+                                                    color: Color(0xff6B7A90),
+                                                  ),
+                                                  const SizedBox(width: 4),
+                                                  Expanded(
+                                                    child: Text(
+                                                      locationName,
+                                                      style: const TextStyle(
+                                                        color:
+                                                            Color(0xff6B7A90),
+                                                        fontSize: 13,
+                                                      ),
+                                                      overflow: TextOverflow
+                                                          .ellipsis,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          if (reportedBy.isNotEmpty)
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                top: 2,
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  const Icon(
+                                                    Icons.person_outline,
+                                                    size: 14,
+                                                    color: Color(0xff6B7A90),
+                                                  ),
+                                                  const SizedBox(width: 4),
+                                                  Text(
+                                                    "Reported by $reportedBy",
+                                                    style: const TextStyle(
+                                                      color:
+                                                          Color(0xff6B7A90),
+                                                      fontSize: 13,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          const SizedBox(height: 6),
+                                          Text(
+                                            description,
+                                            maxLines: 2,
+                                            overflow:
+                                                TextOverflow.ellipsis,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    if (photoUrl != null)
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          left: 8,
                                         ),
-                                      ],
-                                    ],
-                                  ),
+                                        child: GestureDetector(
+                                          onTap: () => showDialog(
+                                            context: context,
+                                            builder: (_) => Dialog(
+                                              backgroundColor:
+                                                  Colors.transparent,
+                                              child: InteractiveViewer(
+                                                child: Image.network(
+                                                  photoUrl,
+                                                  errorBuilder:
+                                                      (_, __, ___) =>
+                                                          const Icon(
+                                                    Icons
+                                                        .broken_image_outlined,
+                                                    color: Colors.white,
+                                                    size: 48,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            child: Image.network(
+                                              photoUrl,
+                                              width: 56,
+                                              height: 56,
+                                              fit: BoxFit.cover,
+                                              errorBuilder:
+                                                  (_, __, ___) => Container(
+                                                width: 56,
+                                                height: 56,
+                                                color: Colors.grey.shade200,
+                                                child: const Icon(
+                                                  Icons
+                                                      .broken_image_outlined,
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                              loadingBuilder: (
+                                                _,
+                                                child,
+                                                progress,
+                                              ) {
+                                                if (progress == null) {
+                                                  return child;
+                                                }
+                                                return Container(
+                                                  width: 56,
+                                                  height: 56,
+                                                  color:
+                                                      Colors.grey.shade100,
+                                                  child: const Center(
+                                                    child: SizedBox(
+                                                      width: 18,
+                                                      height: 18,
+                                                      child:
+                                                          CircularProgressIndicator(
+                                                        strokeWidth: 2,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
                                 ),
                               ),
                             );
