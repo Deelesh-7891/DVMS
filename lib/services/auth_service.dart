@@ -438,6 +438,39 @@ Future<Map<String, dynamic>> getLocations(
     }
   }
 
+/*================= GetVehicleQr =============*/
+// GET /vehicles/:id/qr returns { vehicleId, token, infoUrl, qrImage } where
+// qrImage is a "data:image/png;base64,..." data URL — decoded here so the
+// caller gets ready-to-render bytes instead of parsing the data URL itself.
+Future<Uint8List> getVehicleQr(int vehicleId) async {
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString("token");
+
+  final response = await http.get(
+    Uri.parse("$baseUrl/vehicles/$vehicleId/qr"),
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $token",
+    },
+  );
+
+  if (response.statusCode != 200) {
+    throw Exception(response.body);
+  }
+
+  final data = jsonDecode(response.body);
+  final qrImage = data["qrImage"]?.toString() ?? "";
+  final base64Part = qrImage.contains(",")
+      ? qrImage.substring(qrImage.indexOf(",") + 1)
+      : qrImage;
+
+  if (base64Part.isEmpty) {
+    throw Exception("No QR image returned for this vehicle.");
+  }
+
+  return base64Decode(base64Part);
+}
+
 /*================= GetVehicles =============*/
 
 Future<List<dynamic>> getVehicles() async

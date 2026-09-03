@@ -1,4 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+
+import '../../services/auth_service.dart';
 
 class VehicleListScreen extends StatefulWidget {
   const VehicleListScreen({super.key});
@@ -8,110 +12,22 @@ class VehicleListScreen extends StatefulWidget {
 }
 
 class _VehicleListScreenState extends State<VehicleListScreen> {
+  final AuthService _authService = AuthService();
   final TextEditingController searchController = TextEditingController();
 
   String selectedModel = "All models";
   String selectedStatus = "All statuses";
 
-  final List<Map<String, dynamic>> allVehicles = [
-    {
-      "regNo": "RJ18SS2800",
-      "model": "HONDA SHINE",
-      "variant": "Shine",
-      "fuel": "PETROL",
-      "odometer": "0 km",
-      "location": "-",
-      "status": "Available",
-      "fitness": "Not required",
-    },
-    {
-      "regNo": "RJ45CH4954",
-      "model": "Alto 800",
-      "variant": "LXI",
-      "fuel": "Petrol",
-      "odometer": "0 km",
-      "location": "-",
-      "status": "Available",
-      "fitness": "Not required",
-    },
-    {
-      "regNo": "RJ45CH1505",
-      "model": "Alto 800",
-      "variant": "VXI",
-      "fuel": "Petrol",
-      "odometer": "0 km",
-      "location": "-",
-      "status": "Available",
-      "fitness": "Not required",
-    },
-    {
-      "regNo": "RJ45CF8745",
-      "model": "WagonR",
-      "variant": "ZXI AGS",
-      "fuel": "Petrol",
-      "odometer": "0 km",
-      "location": "-",
-      "status": "Available",
-      "fitness": "Not required",
-    },
-    {
-      "regNo": "RJ45CJ2696",
-      "model": "S-Presso",
-      "variant": "VXI AGS",
-      "fuel": "Petrol",
-      "odometer": "0 km",
-      "location": "-",
-      "status": "Available",
-      "fitness": "Not required",
-    },
-    {
-      "regNo": "RJ45CQ9977",
-      "model": "Celerio",
-      "variant": "ZXI+",
-      "fuel": "Petrol",
-      "odometer": "0 km",
-      "location": "-",
-      "status": "Available",
-      "fitness": "Not required",
-    },
-    {
-      "regNo": "RJ45CT7222",
-      "model": "Alto K10",
-      "variant": "VXI+ 1.0L",
-      "fuel": "Petrol",
-      "odometer": "0 km",
-      "location": "-",
-      "status": "Available",
-      "fitness": "Not required",
-    },
-    {
-      "regNo": "RJ60CA7012",
-      "model": "Swift",
-      "variant": "ZXI+",
-      "fuel": "Petrol",
-      "odometer": "0 km",
-      "location": "-",
-      "status": "Available",
-      "fitness": "Not required",
-    },
-    {
-      "regNo": "RJ60CC4712",
-      "model": "Dzire",
-      "variant": "ZXI+",
-      "fuel": "Petrol",
-      "odometer": "0 km",
-      "location": "-",
-      "status": "Available",
-      "fitness": "Not required",
-    },
-  ];
-
+  List<Map<String, dynamic>> allVehicles = [];
   List<Map<String, dynamic>> filteredVehicles = [];
+
+  bool _loading = true;
+  String? _loadError;
 
   @override
   void initState() {
     super.initState();
-    filteredVehicles = List.from(allVehicles);
+    _loadVehicles();
   }
 
   @override
@@ -120,21 +36,72 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
     super.dispose();
   }
 
+  Future<void> _loadVehicles() async {
+    setState(() {
+      _loading = true;
+      _loadError = null;
+    });
+
+    try {
+      final data = await _authService.getVehicles();
+
+      setState(() {
+        allVehicles = data
+            .whereType<Map>()
+            .map((e) => Map<String, dynamic>.from(e))
+            .toList();
+        filteredVehicles = List.from(allVehicles);
+        _loading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _loading = false;
+        _loadError = "Unable to load vehicles: $e";
+      });
+    }
+  }
+
+  // Server field names, read defensively since not every vehicle has every
+  // field populated (e.g. LocationName/CityName are null on a lot of rows —
+  // see the DVMS backend notes on VehicleMaster.LOC_CD coverage).
+  String _regNo(Map<String, dynamic> v) =>
+      (v["RegistrationNo"] ?? "-").toString();
+  String _model(Map<String, dynamic> v) => (v["Model"] ?? "-").toString();
+  String _variant(Map<String, dynamic> v) => (v["Variant"] ?? "-").toString();
+  String _fuel(Map<String, dynamic> v) => (v["FuelType"] ?? "-").toString();
+  String _odometer(Map<String, dynamic> v) {
+    final odo = v["CurrentOdometer"];
+    if (odo == null) return "-";
+    return "$odo km";
+  }
+
+  String _location(Map<String, dynamic> v) {
+    final loc = v["LocationName"] ?? v["CityName"];
+    if (loc == null || loc.toString().trim().isEmpty) return "-";
+    return loc.toString();
+  }
+
+  String _status(Map<String, dynamic> v) => (v["Status"] ?? "-").toString();
+
+  String _fitness(Map<String, dynamic> v) {
+    final required = v["FitnessRequired"];
+    if (required == true) return "Required";
+    return "Not required";
+  }
+
   void applyFilter() {
     final search = searchController.text.trim().toLowerCase();
 
     setState(() {
       filteredVehicles = allVehicles.where((vehicle) {
-        final matchesSearch =
-            vehicle["regNo"].toString().toLowerCase().contains(search);
+        final matchesSearch = _regNo(vehicle).toLowerCase().contains(search);
 
         final matchesModel =
-            selectedModel == "All models" ||
-            vehicle["model"] == selectedModel;
+            selectedModel == "All models" || _model(vehicle) == selectedModel;
 
         final matchesStatus =
             selectedStatus == "All statuses" ||
-            vehicle["status"] == selectedStatus;
+            _status(vehicle) == selectedStatus;
 
         return matchesSearch && matchesModel && matchesStatus;
       }).toList();
@@ -168,10 +135,45 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
+        actions: [
+          IconButton(
+            onPressed: _loading ? null : _loadVehicles,
+            icon: const Icon(Icons.refresh),
+            tooltip: "Refresh",
+          ),
+        ],
       ),
 
       body: SafeArea(
-        child: Padding(
+        child: _loading
+            ? const Center(child: CircularProgressIndicator())
+            : _loadError != null
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.error_outline,
+                            size: 48,
+                            color: Colors.red,
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            _loadError!,
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: _loadVehicles,
+                            child: const Text("Retry"),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : Padding(
           padding: const EdgeInsets.all(8),
           child: Column(
             children: [
@@ -279,7 +281,17 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16),
-                    child: SingleChildScrollView(
+                    child: filteredVehicles.isEmpty
+                        ? const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(24),
+                              child: Text(
+                                "No vehicles found",
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ),
+                          )
+                        : SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: SingleChildScrollView(
                         child: DataTable(
@@ -349,7 +361,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
                                 // REG NO
                                 DataCell(
                                   Text(
-                                    vehicle["regNo"],
+                                    _regNo(vehicle),
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: Color(0xff172033),
@@ -360,7 +372,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
                                 // MODEL
                                 DataCell(
                                   Text(
-                                    vehicle["model"],
+                                    _model(vehicle),
                                     style: const TextStyle(
                                       color: Color(0xff172033),
                                     ),
@@ -369,35 +381,35 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
 
                                 // VARIANT
                                 DataCell(
-                                  Text(vehicle["variant"]),
+                                  Text(_variant(vehicle)),
                                 ),
 
                                 // FUEL
                                 DataCell(
-                                  Text(vehicle["fuel"]),
+                                  Text(_fuel(vehicle)),
                                 ),
 
                                 // ODOMETER
                                 DataCell(
-                                  Text(vehicle["odometer"]),
+                                  Text(_odometer(vehicle)),
                                 ),
 
                                 // LOCATION
                                 DataCell(
-                                  Text(vehicle["location"]),
+                                  Text(_location(vehicle)),
                                 ),
 
                                 // STATUS
                                 DataCell(
                                   statusBadge(
-                                    vehicle["status"],
+                                    _status(vehicle),
                                   ),
                                 ),
 
                                 // FITNESS
                                 DataCell(
                                   fitnessBadge(
-                                    vehicle["fitness"],
+                                    _fitness(vehicle),
                                   ),
                                 ),
 
@@ -503,7 +515,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
     final models = [
       "All models",
       ...allVehicles
-          .map((e) => e["model"].toString())
+          .map((e) => _model(e))
           .toSet(),
     ];
 
@@ -544,13 +556,13 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
 
     final statuses = [
       "All statuses",
-      "Available",
-      "On Demo",
-      "Service",
+      ...allVehicles.map((e) => _status(e)).toSet(),
     ];
 
     return DropdownButtonFormField<String>(
-      value: selectedStatus,
+      value: statuses.contains(selectedStatus)
+          ? selectedStatus
+          : "All statuses",
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,
@@ -646,7 +658,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
     if (status == "Available") {
       background = const Color(0xffDCFCE7);
       textColor = const Color(0xff16A34A);
-    } else if (status == "On Demo") {
+    } else if (status == "OnDemo" || status == "On Demo") {
       background = const Color(0xffDBEAFE);
       textColor = const Color(0xff2563EB);
     } else {
@@ -755,39 +767,74 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
   }
 
   // ============================================================
-  // QR
+  // QR — fetches the real QR code image from the server instead of
+  // showing a placeholder icon.
   // ============================================================
 
   void showQR(Map<String, dynamic> vehicle) {
+    final vehicleId = vehicle["VehicleId"];
 
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
-          title: Text(
-            "Vehicle QR",
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.qr_code_2,
-                size: 150,
-              ),
-              const SizedBox(height: 15),
-              Text(
-                vehicle["regNo"],
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
+          title: const Text("Vehicle QR"),
+          content: SizedBox(
+            width: 220,
+            height: 260,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FutureBuilder<Uint8List>(
+                  future: _authService.getVehicleQr(vehicleId),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState ==
+                        ConnectionState.waiting) {
+                      return const SizedBox(
+                        width: 180,
+                        height: 180,
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+
+                    if (snapshot.hasError || !snapshot.hasData) {
+                      return const SizedBox(
+                        width: 180,
+                        height: 180,
+                        child: Center(
+                          child: Icon(
+                            Icons.error_outline,
+                            color: Colors.red,
+                            size: 40,
+                          ),
+                        ),
+                      );
+                    }
+
+                    return Image.memory(
+                      snapshot.data!,
+                      width: 180,
+                      height: 180,
+                    );
+                  },
                 ),
-              ),
-            ],
+                const SizedBox(height: 15),
+                Text(
+                  _regNo(vehicle),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+                ),
+              ],
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(dialogContext);
               },
               child: const Text("Close"),
             ),
@@ -806,7 +853,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          "Allocate ${vehicle["regNo"]}",
+          "Allocate ${_regNo(vehicle)}",
         ),
       ),
     );
@@ -821,7 +868,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          "Edit ${vehicle["regNo"]}",
+          "Edit ${_regNo(vehicle)}",
         ),
       ),
     );
