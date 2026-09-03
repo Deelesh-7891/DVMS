@@ -1029,4 +1029,166 @@ Future<Position> getCurrentLocation() async {
   );
 }
 
+
+ Future<List<dynamic>> getAccidents() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    if (token == null || token.isEmpty) {
+      throw Exception(
+        "Authorization token not found. Please login again.",
+      );
+    }
+
+    final response = await http.get(
+      Uri.parse("$baseUrl/accidents"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    );
+
+    print(
+      "ACCIDENT LIST STATUS: ${response.statusCode}",
+    );
+    print(
+      "ACCIDENT LIST RESPONSE: ${response.body}",
+    );
+
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+
+      if (json is List) {
+        return json;
+      }
+
+      if (json["data"] is List) {
+        return List<dynamic>.from(json["data"]);
+      }
+
+      return [];
+    }
+
+    throw Exception(
+      "Accident list failed: "
+      "${response.statusCode} ${response.body}",
+    );
+  }
+
+   
+  Future<Map<String, dynamic>> uploadAccidentAttachment({
+    required Uint8List bytes,
+    required String fileName,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    if (token == null || token.isEmpty) {
+      throw Exception(
+        "Authorization token not found. Please login again.",
+      );
+    }
+
+    final request = http.MultipartRequest(
+      "POST",
+      Uri.parse("$baseUrl/attachments"),
+    );
+
+    request.headers["Authorization"] = "Bearer $token";
+    request.fields["entityType"] = "Accident";
+
+    request.files.add(
+      http.MultipartFile.fromBytes(
+        "file",
+        bytes,
+        filename: fileName,
+      ),
+    );
+
+    print("======================================");
+    print("ACCIDENT ATTACHMENT UPLOAD");
+    print("URL: $baseUrl/attachments");
+    print("FILE: $fileName");
+    print("SIZE: ${bytes.length}");
+    print("======================================");
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(
+      streamedResponse,
+    );
+
+    print(
+      "ATTACHMENT STATUS: ${response.statusCode}",
+    );
+    print(
+      "ATTACHMENT RESPONSE: ${response.body}",
+    );
+
+    if (response.statusCode == 200 ||
+        response.statusCode == 201) {
+      return Map<String, dynamic>.from(
+        jsonDecode(response.body),
+      );
+    }
+
+    throw Exception(
+      "Attachment upload failed: "
+      "${response.statusCode} ${response.body}",
+    );
+  }
+
+  Future<Map<String, dynamic>> saveAccident({
+    required int vehicleId,
+    required String capturedAt,
+    required String description,
+    int? attachmentId,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    if (token == null || token.isEmpty) {
+      throw Exception(
+        "Authorization token not found. Please login again.",
+      );
+    }
+
+    final body = {
+      "VehicleId": vehicleId,
+      "CapturedAt": capturedAt,
+      "Description": description,
+      "AttachmentId": 1,
+    };
+
+    print("======================================");
+    print("ACCIDENT SAVE API");
+    print("URL: $baseUrl/accidents");
+    print("REQUEST BODY: ${jsonEncode(body)}");
+    print("======================================");
+
+    final response = await http.post(
+      Uri.parse("$baseUrl/accidents"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+      body: jsonEncode(body),
+    );
+
+    print("ACCIDENT STATUS: ${response.statusCode}");
+    print("ACCIDENT RESPONSE: ${response.body}");
+
+    if (response.statusCode == 200 ||
+        response.statusCode == 201) {
+      return Map<String, dynamic>.from(
+        jsonDecode(response.body),
+      );
+    }
+
+    throw Exception(
+      "Accident API failed: "
+      "${response.statusCode} ${response.body}",
+    );
+  }
+
+
 }
