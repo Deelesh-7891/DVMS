@@ -1611,7 +1611,7 @@ class _ScanQRScreenState
       if (odometerImageBytes !=
           null) {
 
-        uploadedImagePath =
+        final uploadResult =
             await _authService
                 .uploadAttachment(
 
@@ -1625,6 +1625,8 @@ class _ScanQRScreenState
           entityType:
               "Movement",
         );
+
+        uploadedImagePath = uploadResult.url;
 
         debugPrint(
           "ODOMETER PHOTO UPLOADED: "

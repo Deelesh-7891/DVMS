@@ -114,10 +114,25 @@ Widget build(BuildContext context) {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
 
-          Image.asset(
-            "assets/images/logo.png",
-            width: 130,
-            height: 130,
+          Container(
+            width: 148,
+            height: 148,
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xff2458A6).withOpacity(0.15),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: Image.asset(
+              "assets/images/logo.png",
+              fit: BoxFit.contain,
+            ),
           ),
 
           const SizedBox(height: 30),

@@ -420,8 +420,12 @@ return Scaffold(
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (_) =>
-                                              const UploadBillScreen(),
+                                          builder: (_) => UploadBillScreen(
+                                            vehicleId: vehicle["VehicleId"],
+                                            registrationNo:
+                                                vehicle["RegistrationNo"],
+                                            model: vehicle["Model"],
+                                          ),
                                         ),
                                       );
                                     },

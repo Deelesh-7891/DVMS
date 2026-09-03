@@ -176,6 +176,8 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
 
   // ================= SUBMIT (FIXED) =================
 
+  bool _saving = false;
+
   Future<void> saveFuel() async {
   if (stationController.text.trim().isEmpty) {
     showSnack("Please enter Fuel Station");
@@ -196,18 +198,41 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
     return;
   }
 
+  setState(() => _saving = true);
+
   try {
+    // Upload the receipt photo first (if one was picked) — POST /fuel only
+    // accepts an already-uploaded AttachmentId, not the raw photo, so this
+    // has to happen before saveFuel(). Previously selectedReceipt was
+    // captured and previewed but never actually sent anywhere.
+    int? attachmentId;
+
+    if (selectedReceipt != null) {
+      final uploadResult = await _authService.uploadAttachment(
+        bytes: await selectedReceipt!.readAsBytes(),
+        fileName: selectedReceipt!.path.split(Platform.pathSeparator).last,
+        entityType: 'Fuel',
+      );
+      attachmentId = uploadResult.attachmentId;
+    }
+
     await _authService.saveFuel(
       vehicleId: widget.vehicleId,
       txnDate: DateTime.now().toIso8601String().substring(0, 10),
       fuelStation: stationController.text.trim(),
       amount: amount,
       odometer: odometer,
+      attachmentId: attachmentId,
     );
 
-    showSnack("Fuel Entry Saved Successfully");
-
     if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Fuel Entry Saved Successfully"),
+        backgroundColor: Colors.green,
+      ),
+    );
 
     Navigator.pushReplacement(
       context,
@@ -217,6 +242,8 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
     );
   } catch (e) {
     showSnack(e.toString());
+  } finally {
+    if (mounted) setState(() => _saving = false);
   }
 }
 
@@ -344,49 +371,26 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
                     width: double.infinity,
                     height: 55,
                     child: ElevatedButton(
-                      
-                     onPressed: () async {
-  try {
-    await _authService.saveFuel(
-      vehicleId: widget.vehicleId,
-      txnDate: DateTime.now().toIso8601String().substring(0, 10),
-      fuelStation: stationController.text.trim(),
-      amount: double.parse(rateController.text),
-      odometer: int.parse(odoController.text),
-    );
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Fuel Entry Saved Successfully"),
-        backgroundColor: Colors.green,
-      ),
-    );
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const DriverHomeScreen(),
-      ),
-    );
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(e.toString())),
-    );
-  }
-},
-                      // onPressed: saveFuel,
+                      onPressed: _saving ? null : saveFuel,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green.shade600,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12)),
                       ),
-                      
-                      child: const Text(
-                        
-                        "Submit Request",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
+                      child: _saving
+                          ? const SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.4,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Text(
+                              "Submit Request",
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
                     ),
                   ),
 

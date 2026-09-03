@@ -5,6 +5,20 @@ import 'package:http_parser/http_parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:geolocator/geolocator.dart';
 
+// POST /attachments returns both an "attachmentId" (int FK, used by
+// /fuel, /accidents, etc.) and a "url" (root-relative path, used by
+// /movement/scan's ImagePath) — different callers need different halves,
+// so uploadAttachment() hands back both instead of picking one.
+class AttachmentUploadResult {
+  final int attachmentId;
+  final String url;
+
+  const AttachmentUploadResult({
+    required this.attachmentId,
+    required this.url,
+  });
+}
+
 class AuthService {
   // static const String baseUrl = "https://premerp.in/dvms/api";
   // static const String baseUrl = "http://localhost:5000/api";
@@ -448,8 +462,94 @@ Future<List<dynamic>> getVehicles() async
     }
   }
 
+/*================= GetExpenseTypes =============*/
+Future<List<dynamic>> getExpenseTypes() async {
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString("token");
+
+  final response = await http.get(
+    Uri.parse("$baseUrl/expense-types"),
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $token",
+    },
+  );
+
+  if (response.statusCode == 200) {
+    final json = jsonDecode(response.body);
+    if (json is List) return json;
+    return json["data"] as List<dynamic>;
+  } else {
+    throw Exception(response.body);
+  }
+}
+
+/*================= SaveExpense (Upload Bill) =============*/
+// Backing for the "Upload Bill" flow: photo gets uploaded to /attachments
+// first (if provided), then the returned attachmentId is linked into the
+// POST /expenses call.
+Future<void> saveExpense({
+  required int vehicleId,
+  required int expenseTypeId,
+  required String expenseDate,
+  required double amount,
+  String? vendor,
+  String? invoiceNumber,
+  Uint8List? photoBytes,
+  String? photoFileName,
+}) async {
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString("token");
+
+  if (token == null || token.isEmpty) {
+    throw Exception('Authorization token not found. Please login again.');
+  }
+
+  int? attachmentId;
+
+  if (photoBytes != null) {
+    final uploadResult = await uploadAttachment(
+      bytes: photoBytes,
+      fileName: photoFileName ?? 'bill.jpg',
+      entityType: 'Expense',
+    );
+    attachmentId = uploadResult.attachmentId;
+  }
+
+  final body = {
+    "VehicleId": vehicleId,
+    "ExpenseTypeId": expenseTypeId,
+    "ExpenseDate": expenseDate,
+    "Amount": amount,
+    "Vendor": vendor,
+    "InvoiceNumber": invoiceNumber,
+    "AttachmentId": attachmentId,
+  };
+
+  print("EXPENSE REQUEST BODY: ${jsonEncode(body)}");
+
+  final response = await http.post(
+    Uri.parse("$baseUrl/expenses"),
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $token",
+    },
+    body: jsonEncode(body),
+  );
+
+  print("EXPENSE RESPONSE: ${response.statusCode} ${response.body}");
+
+  if (response.statusCode != 200 && response.statusCode != 201) {
+    throw Exception(response.body);
+  }
+}
+
 /*================= SaveFuel =============*/
 
+  // attachmentId is optional — pass the id returned by uploadAttachment()
+  // after uploading the receipt/odometer photo, so it actually gets linked
+  // to this FuelTransaction (dvms.js's POST /fuel already reads and stores
+  // AttachmentId; the caller just wasn't sending one before this).
   Future<void> saveFuel(
   {
     required int vehicleId,
@@ -457,9 +557,19 @@ Future<List<dynamic>> getVehicles() async
     required String fuelStation,
     required double amount,
     required int odometer,
+    int? attachmentId,
   }) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
+
+    final body = {
+      "VehicleId": vehicleId,
+      "TxnDate": txnDate,
+      "FuelStation": fuelStation,
+      "Amount": amount,
+      "Odometer": odometer,
+      "AttachmentId": attachmentId,
+    };
 
     final response = await http.post(
       Uri.parse("$baseUrl/fuel"),
@@ -467,23 +577,11 @@ Future<List<dynamic>> getVehicles() async
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
       },
-      body: jsonEncode({
-        "VehicleId": vehicleId,
-        "TxnDate": txnDate,
-        "FuelStation": fuelStation,
-        "Amount": amount,
-        "Odometer": odometer,
-      }),
+      body: jsonEncode(body),
     );
 
     print("Request Body:");
-    print(jsonEncode({
-      "VehicleId": vehicleId,
-      "TxnDate": txnDate,
-      "FuelStation": fuelStation,
-      "Amount": amount,
-      "Odometer": odometer,
-    }));
+    print(jsonEncode(body));
 
     print("Response: ${response.body}");
 
@@ -497,7 +595,7 @@ Future<List<dynamic>> getVehicles() async
 // Uploads a photo (e.g. the odometer photo captured before saving a
 // movement) via POST /attachments and returns the "url" the server
 // hands back — pass that straight into movementSave's imagePath.
-Future<String> uploadAttachment({
+Future<AttachmentUploadResult> uploadAttachment({
   required Uint8List bytes,
   required String fileName,
   String entityType = 'Movement',
@@ -544,12 +642,18 @@ Future<String> uploadAttachment({
 
   final data = jsonDecode(response.body);
   final url = data['url']?.toString();
+  final attachmentId = int.tryParse(data['attachmentId']?.toString() ?? '');
 
   if (url == null || url.isEmpty) {
     throw Exception('Attachment upload succeeded but no url was returned.');
   }
+  if (attachmentId == null) {
+    throw Exception(
+      'Attachment upload succeeded but no attachmentId was returned.',
+    );
+  }
 
-  return url;
+  return AttachmentUploadResult(attachmentId: attachmentId, url: url);
 }
 
 Future<void> movementSave({

@@ -1608,6 +1608,13 @@ Future<void> login() async {
                         BorderRadius.circular(
                       22,
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.18),
+                        blurRadius: 24,
+                        offset: const Offset(0, 12),
+                      ),
+                    ],
                   ),
 
                   child: Column(
@@ -1620,12 +1627,26 @@ Future<void> login() async {
                       // ============================================
 
                       Center(
-                        child:
-                            Image.asset(
-                          "assets/images/logo.png",
-                          height: 100,
-                          width: 100,
-                          fit: BoxFit.contain,
+                        child: Container(
+                          width: 112,
+                          height: 112,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xff2458A6)
+                                    .withOpacity(0.15),
+                                blurRadius: 16,
+                                offset: const Offset(0, 6),
+                              ),
+                            ],
+                          ),
+                          padding: const EdgeInsets.all(8),
+                          child: Image.asset(
+                            "assets/images/logo.png",
+                            fit: BoxFit.contain,
+                          ),
                         ),
                       ),
 
