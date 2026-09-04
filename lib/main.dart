@@ -9,8 +9,11 @@ import 'screens/corporate_admin/corporate_admin_home_screen.dart';
 import 'screens/branch_admin/branch_admin_home_screen.dart';
 import 'screens/accounts/accounts_home_screen.dart';
 
+import 'services/app_update_service.dart';
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+
   tz.initializeTimeZones();
 
   runApp(
@@ -23,20 +26,22 @@ void main() {
 // ============================================================
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({
+    super.key,
+  });
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
 
-      title:
-          'Demo Vehicle Management',
+      title: 'Demo Vehicle Management',
 
-      home:
-          const SplashScreen(),
+      // ========================================================
+      // SPLASH
+      // ========================================================
+
+      home: const SplashScreen(),
     );
   }
 }
@@ -62,7 +67,41 @@ class _SplashScreenState
   void initState() {
     super.initState();
 
-    checkLogin();
+    _startApp();
+  }
+
+  // ==========================================================
+  // START APP
+  // ==========================================================
+
+  Future<void> _startApp() async {
+    // ========================================================
+    // WAIT UNTIL SCREEN IS READY
+    // ========================================================
+
+    await Future.delayed(
+      const Duration(
+        milliseconds: 500,
+      ),
+    );
+
+    if (!mounted) return;
+
+    // ========================================================
+    // CHECK APP UPDATE
+    // ========================================================
+
+    await AppUpdateService.checkForUpdate(
+      context,
+    );
+
+    if (!mounted) return;
+
+    // ========================================================
+    // CHECK LOGIN
+    // ========================================================
+
+    await checkLogin();
   }
 
   // ==========================================================
@@ -72,7 +111,7 @@ class _SplashScreenState
   Future<void> checkLogin() async {
 
     try {
-
+    
       final prefs =
           await SharedPreferences.getInstance();
 
@@ -102,7 +141,10 @@ class _SplashScreenState
               ) ??
               "";
 
-      // Fallback
+      // ======================================================
+      // FALLBACK ROLE
+      // ======================================================
+
       if (role.trim().isEmpty) {
         role =
             prefs.getString(
@@ -201,9 +243,7 @@ class _SplashScreenState
       openHomePage(
         role,
       );
-
     } catch (e) {
-
       debugPrint(
         "CHECK LOGIN ERROR: $e",
       );
@@ -227,7 +267,6 @@ class _SplashScreenState
   void openHomePage(
     String role,
   ) {
-
     Widget page;
 
     switch (role.trim()) {
@@ -293,7 +332,6 @@ class _SplashScreenState
 
       case "StateAdmin":
 
-        // Abhi StateAdminHomeScreen available nahi hai
         page =
             const LoginScreen();
 
@@ -335,8 +373,7 @@ class _SplashScreenState
   ) {
     return const Scaffold(
       body: Center(
-        child:
-            CircularProgressIndicator(),
+        child: CircularProgressIndicator(),
       ),
     );
   }
