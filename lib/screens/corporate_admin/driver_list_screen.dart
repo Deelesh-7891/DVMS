@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../core/widgets/voice_search_button.dart';
 import '../../services/auth_service.dart';
 
 class DriverListScreen extends StatefulWidget {
@@ -502,6 +503,14 @@ class _DriverListScreenState extends State<DriverListScreen> {
         prefixIcon: const Icon(
           Icons.search,
           size: 20,
+        ),
+
+        suffixIcon: VoiceSearchButton(
+          tooltip: "Say the last 4 digits of the phone or license no",
+          onResult: (digits) {
+            searchController.text = digits;
+            applyFilter();
+          },
         ),
 
         filled: true,

@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
+import '../../core/widgets/voice_search_button.dart';
 import '../../services/auth_service.dart';
 
 class VehicleListScreen extends StatefulWidget {
@@ -497,6 +498,12 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
         prefixIcon: const Icon(
           Icons.search,
           size: 20,
+        ),
+        suffixIcon: VoiceSearchButton(
+          onResult: (digits) {
+            searchController.text = digits;
+            applyFilter();
+          },
         ),
         filled: true,
         fillColor: Colors.white,

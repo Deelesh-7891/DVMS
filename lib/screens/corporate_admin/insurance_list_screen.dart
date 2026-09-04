@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../core/widgets/photo_thumbnail.dart';
+import '../../core/widgets/voice_search_button.dart';
 import '../../services/auth_service.dart';
 
 class InsuranceListScreen extends StatefulWidget {
@@ -343,6 +344,12 @@ class _InsuranceListScreenState extends State<InsuranceListScreen> {
       decoration: InputDecoration(
         hintText: "Search policy / vehicle no...",
         prefixIcon: const Icon(Icons.search, size: 20),
+        suffixIcon: VoiceSearchButton(
+          onResult: (digits) {
+            searchController.text = digits;
+            applyFilter();
+          },
+        ),
         filled: true,
         fillColor: Colors.white,
         contentPadding: const EdgeInsets.symmetric(horizontal: 14),

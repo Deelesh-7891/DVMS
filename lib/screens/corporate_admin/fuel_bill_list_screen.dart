@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../core/widgets/photo_thumbnail.dart';
+import '../../core/widgets/voice_search_button.dart';
 import '../../services/auth_service.dart';
 
 class FuelBillListScreen extends StatefulWidget {
@@ -334,6 +335,12 @@ class _FuelBillListScreenState extends State<FuelBillListScreen> {
       decoration: InputDecoration(
         hintText: "Search bill / vehicle no...",
         prefixIcon: const Icon(Icons.search, size: 20),
+        suffixIcon: VoiceSearchButton(
+          onResult: (digits) {
+            searchController.text = digits;
+            applyFilter();
+          },
+        ),
         filled: true,
         fillColor: Colors.white,
         contentPadding: const EdgeInsets.symmetric(horizontal: 14),
