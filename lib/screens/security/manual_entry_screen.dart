@@ -536,9 +536,9 @@ class _ManualEntryScreenState
                     subtitle: Text(
                       [
                         if (cityName.isNotEmpty) cityName,
-                        if (cityId.isNotEmpty) 'CityId: $cityId',
+                        // if (cityId.isNotEmpty) 'CityId: $cityId',
                         if (locationType.isNotEmpty) locationType,
-                        if (pinCode.isNotEmpty) 'PIN: $pinCode',
+                        // if (pinCode.isNotEmpty) 'PIN: $pinCode',
                       ].join(' • '),
                     ),
                     onTap: () => onSelected(location),

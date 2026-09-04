@@ -120,8 +120,6 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-
     return Scaffold(
       backgroundColor: const Color(0xffF4F7FB),
 
@@ -203,7 +201,7 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
                 child: LayoutBuilder(
                   builder: (context, constraints) {
 
-                    final isSmall = width < 700;
+                    final isSmall = constraints.maxWidth < 700;
 
                     if (isSmall) {
                       return Column(
@@ -229,34 +227,49 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
                       );
                     }
 
+                    // Desktop / large screen.
+                    // Use Expanded so the controls always fit the
+                    // available width and never produce a Row overflow.
                     return Row(
                       children: [
-                        SizedBox(
-                          width: 245,
+                        Expanded(
+                          flex: 3,
                           child: searchBox(),
                         ),
 
                         const SizedBox(width: 12),
 
-                        SizedBox(
-                          width: 200,
+                        Expanded(
+                          flex: 2,
                           child: modelDropdown(),
                         ),
 
                         const SizedBox(width: 12),
 
-                        SizedBox(
-                          width: 140,
+                        Expanded(
+                          flex: 2,
                           child: statusDropdown(),
                         ),
 
                         const SizedBox(width: 12),
 
-                        filterButton(),
+                        Flexible(
+                          flex: 0,
+                          child: SizedBox(
+                            width: 115,
+                            child: filterButton(),
+                          ),
+                        ),
 
                         const SizedBox(width: 12),
 
-                        resetButton(),
+                        Flexible(
+                          flex: 0,
+                          child: SizedBox(
+                            width: 115,
+                            child: resetButton(),
+                          ),
+                        ),
                       ],
                     );
                   },
@@ -511,7 +524,6 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
   // ============================================================
 
   Widget modelDropdown() {
-
     final models = [
       "All models",
       ...allVehicles
@@ -520,7 +532,13 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
     ];
 
     return DropdownButtonFormField<String>(
-      value: selectedModel,
+      value: models.contains(selectedModel)
+          ? selectedModel
+          : "All models",
+
+      // Prevent text/arrow overflow inside the dropdown.
+      isExpanded: true,
+
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,
@@ -533,16 +551,29 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
             color: Color(0xffDCE3EC),
           ),
         ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(
+            color: Color(0xffDCE3EC),
+          ),
+        ),
       ),
+
       items: models.map((model) {
-        return DropdownMenuItem(
+        return DropdownMenuItem<String>(
           value: model,
-          child: Text(model),
+          child: Text(
+            model,
+            overflow: TextOverflow.ellipsis,
+          ),
         );
       }).toList(),
+
       onChanged: (value) {
+        if (value == null) return;
+
         setState(() {
-          selectedModel = value!;
+          selectedModel = value;
         });
       },
     );
@@ -553,16 +584,21 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
   // ============================================================
 
   Widget statusDropdown() {
-
     final statuses = [
       "All statuses",
-      ...allVehicles.map((e) => _status(e)).toSet(),
+      ...allVehicles
+          .map((e) => _status(e))
+          .toSet(),
     ];
 
     return DropdownButtonFormField<String>(
       value: statuses.contains(selectedStatus)
           ? selectedStatus
           : "All statuses",
+
+      // Prevent text/arrow overflow inside the dropdown.
+      isExpanded: true,
+
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,
@@ -575,16 +611,29 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
             color: Color(0xffDCE3EC),
           ),
         ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(
+            color: Color(0xffDCE3EC),
+          ),
+        ),
       ),
+
       items: statuses.map((status) {
-        return DropdownMenuItem(
+        return DropdownMenuItem<String>(
           value: status,
-          child: Text(status),
+          child: Text(
+            status,
+            overflow: TextOverflow.ellipsis,
+          ),
         );
       }).toList(),
+
       onChanged: (value) {
+        if (value == null) return;
+
         setState(() {
-          selectedStatus = value!;
+          selectedStatus = value;
         });
       },
     );

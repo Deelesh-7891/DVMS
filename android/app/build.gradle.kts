@@ -7,11 +7,14 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-// ===============================
+// ======================================================
 // LOAD KEYSTORE PROPERTIES
-// ===============================
+// ======================================================
+
 val keystoreProperties = Properties()
-val keystorePropertiesFile = rootProject.file("key.properties")
+
+val keystorePropertiesFile =
+    rootProject.file("key.properties")
 
 if (keystorePropertiesFile.exists()) {
     FileInputStream(keystorePropertiesFile).use {
@@ -19,7 +22,11 @@ if (keystorePropertiesFile.exists()) {
     }
 }
 
-android { 
+// ======================================================
+// ANDROID
+// ======================================================
+
+android {
     namespace = "com.anil.demo_vehicle_management"
 
     compileSdk = flutter.compileSdkVersion
@@ -35,7 +42,8 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.anil.demo_vehicle_management"
+        applicationId =
+            "com.anil.demo_vehicle_management"
 
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
@@ -44,23 +52,84 @@ android {
         versionName = flutter.versionName
     }
 
+    // ==================================================
+    // RELEASE SIGNING
+    // ==================================================
+
     signingConfigs {
         create("release") {
-            keyAlias = keystoreProperties["keyAlias"] as String
-            keyPassword = keystoreProperties["keyPassword"] as String
-            storeFile = file(keystoreProperties["storeFile"] as String)
-            storePassword = keystoreProperties["storePassword"] as String
+
+            val keyAliasValue =
+                keystoreProperties
+                    .getProperty("keyAlias")
+
+            val keyPasswordValue =
+                keystoreProperties
+                    .getProperty("keyPassword")
+
+            val storeFileValue =
+                keystoreProperties
+                    .getProperty("storeFile")
+
+            val storePasswordValue =
+                keystoreProperties
+                    .getProperty("storePassword")
+
+            if (keyAliasValue.isNullOrBlank()) {
+                throw GradleException(
+                    "keyAlias missing in android/key.properties"
+                )
+            }
+
+            if (keyPasswordValue.isNullOrBlank()) {
+                throw GradleException(
+                    "keyPassword missing in android/key.properties"
+                )
+            }
+
+            if (storeFileValue.isNullOrBlank()) {
+                throw GradleException(
+                    "storeFile missing in android/key.properties"
+                )
+            }
+
+            if (storePasswordValue.isNullOrBlank()) {
+                throw GradleException(
+                    "storePassword missing in android/key.properties"
+                )
+            }
+
+            keyAlias = keyAliasValue
+            keyPassword = keyPasswordValue
+
+            storeFile = file(
+                storeFileValue
+            )
+
+            storePassword = storePasswordValue
         }
     }
 
+    // ==================================================
+    // BUILD TYPES
+    // ==================================================
+
     buildTypes {
         getByName("release") {
-            signingConfig = signingConfigs.getByName("release")
+
+            signingConfig =
+                signingConfigs.getByName("release")
+
             isMinifyEnabled = false
+
             isShrinkResources = false
         }
     }
 }
+
+// ======================================================
+// FLUTTER
+// ======================================================
 
 flutter {
     source = "../.."
