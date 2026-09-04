@@ -1,7 +1,7 @@
-import 'dart:convert';
-import 'dart:typed_data';
+﻿import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -156,49 +156,28 @@ class _ScanQRScreenState
       TextEditingController();
 
   // ==========================================================
-  // FROM LOCATION
+  // DIRECTION — auto-detected server-side now (see computeAutoDirection
+  // in dvms.js): first-ever movement is always "Exit", then it alternates
+  // from the vehicle's last recorded direction, anywhere. The guard no
+  // longer picks it, so there's no selectedDirection state to hold here.
+  // resultDirection/resultNewStatus hold what the SERVER decided, purely
+  // for showing on the post-save confirmation screen.
   // ==========================================================
 
-  final TextEditingController
-      fromLocationController =
+  String? resultDirection;
+  String? resultNewStatus;
+  bool showSuccessOverlay = false;
+
+  // ==========================================================
+  // OTHER LOCATION — single field for Service/Workshop/InterBranch.
+  // The guard's own gate is fixed server-side; this is just "the other
+  // place" the vehicle is going to/coming from, regardless of direction.
+  // ==========================================================
+
+  final TextEditingController otherLocationController =
       TextEditingController();
-
-  // ==========================================================
-  // TO LOCATION
-  // ==========================================================
-
-  final TextEditingController
-      toLocationController =
-      TextEditingController();
-
-  // ==========================================================
-  // CITY IDS
-  // ==========================================================
-
-  int? fromCityId;
-
-  int? toCityId;
-
-  // ==========================================================
-  // SELECTED LOCATION
-  // ==========================================================
-
-  Map<String, dynamic>?
-      selectedFromLocation;
-
-  Map<String, dynamic>?
-      selectedToLocation;
-
-  // ==========================================================
-  // DIRECTION
-  // ==========================================================
-
-  String? selectedDirection;
-
-  final List<String> directions = [
-    "Entry (returning)",
-    "Exit (going out)",
-  ];
+  int? otherCityId;
+  Map<String, dynamic>? selectedOtherLocation;
 
   // ==========================================================
   // MOVEMENT TYPE
@@ -613,51 +592,6 @@ class _ScanQRScreenState
     }
 
     return null;
-  }
-
-  // ============================================================
-  // DIRECTION CHANGE
-  // ============================================================
-
-  void onDirectionChanged(
-    String? value,
-  ) {
-
-    if (value == null) {
-      return;
-    }
-
-    setState(() {
-
-      selectedDirection =
-          value;
-
-      // --------------------------------------------------------
-      // CLEAR OLD FROM
-      // --------------------------------------------------------
-
-      fromLocationController
-          .clear();
-
-      fromCityId =
-          null;
-
-      selectedFromLocation =
-          null;
-
-      // --------------------------------------------------------
-      // CLEAR OLD TO
-      // --------------------------------------------------------
-
-      toLocationController
-          .clear();
-
-      toCityId =
-          null;
-
-      selectedToLocation =
-          null;
-    });
   }
 
   // ============================================================
@@ -1376,23 +1310,6 @@ class _ScanQRScreenState
     }
 
     // ==========================================================
-    // DIRECTION CHECK
-    // ==========================================================
-
-    if (selectedDirection == null ||
-        selectedDirection!
-            .trim()
-            .isEmpty) {
-
-      showMessage(
-        "Please select Direction",
-        isError: true,
-      );
-
-      return;
-    }
-
-    // ==========================================================
     // MOVEMENT TYPE CHECK
     // ==========================================================
 
@@ -1449,15 +1366,11 @@ class _ScanQRScreenState
     }
 
     // ==========================================================
-    // LOCATIONS
+    // OTHER LOCATION
     // ==========================================================
 
-    final String fromLocation =
-        fromLocationController.text
-            .trim();
-
-    final String toLocation =
-        toLocationController.text
+    final String otherLocation =
+        otherLocationController.text
             .trim();
 
     // ==========================================================
@@ -1470,57 +1383,15 @@ class _ScanQRScreenState
             selectedMovementType !=
                 "TestDrive";
 
-    // ==========================================================
-    // FROM VALIDATION
-    // ==========================================================
+    if (locationRequired &&
+        otherLocation.isEmpty) {
 
-    if (locationRequired) {
+      showMessage(
+        "Please select the other location",
+        isError: true,
+      );
 
-      if (fromLocation.isEmpty) {
-
-        showMessage(
-          "Please select From Location",
-          isError: true,
-        );
-
-        return;
-      }
-
-      // if (fromCityId == null ||
-      //     fromCityId == 0) {
-
-      //   showMessage(
-      //     "Please select a valid From Location",
-      //     isError: true,
-      //   );
-
-      //   return;
-      // }
-
-      // ========================================================
-      // TO VALIDATION
-      // ========================================================
-
-      // if (toLocation.isEmpty) {
-
-      //   showMessage(
-      //     "Please select To Location",
-      //     isError: true,
-      //   );
-
-      //   return;
-      // }
-
-      // if (toCityId == null ||
-      //     toCityId == 0) {
-
-      //   showMessage(
-      //     "Please select a valid To Location",
-      //     isError: true,
-      //   );
-
-      //   return;
-      // }
+      return;
     }
 
     try {
@@ -1593,16 +1464,6 @@ class _ScanQRScreenState
       const int branchId = 1;
 
       // ========================================================
-      // API DIRECTION
-      // ========================================================
-
-      final String apiDirection =
-          selectedDirection ==
-                  "Entry (returning)"
-              ? "Entry"
-              : "Exit";
-
-      // ========================================================
       // PHOTO UPLOAD
       // ========================================================
 
@@ -1663,36 +1524,18 @@ class _ScanQRScreenState
       );
 
       debugPrint(
-        "Direction UI   : $selectedDirection",
-      );
-
-      debugPrint(
-        "Direction API  : $apiDirection",
-      );
-
-      debugPrint(
         "Movement Type  : "
         "$selectedMovementType",
       );
 
       debugPrint(
-        "From Location  : "
-        "$fromLocation",
+        "Other Location : "
+        "$otherLocation",
       );
 
       debugPrint(
-        "From CityId    : "
-        "$fromCityId",
-      );
-
-      debugPrint(
-        "To Location    : "
-        "$toLocation",
-      );
-
-      debugPrint(
-        "To CityId      : "
-        "$toCityId",
+        "Other CityId   : "
+        "$otherCityId",
       );
 
       debugPrint(
@@ -1733,7 +1576,7 @@ class _ScanQRScreenState
       // MOVEMENT API
       // ========================================================
 
-      await _authService.movementSave(
+      final movementResult = await _authService.movementSave(
 
         branchId:
             branchId,
@@ -1748,35 +1591,16 @@ class _ScanQRScreenState
             DateTime.now()
                 .toIso8601String(),
 
-        direction:
-            apiDirection,
+        // direction: left null — the server auto-detects Entry/Exit from
+        // the vehicle's own last movement now.
 
         // ======================================================
-        // FROM LOCATION
+        // OTHER LOCATION
         // ======================================================
 
-        fromLocation:
+        otherCityIdOverride:
             locationRequired
-                ? fromLocation
-                : "",
-
-        fromCityId:
-            locationRequired
-                ? fromCityId
-                : null,
-
-        // ======================================================
-        // TO LOCATION
-        // ======================================================
-
-        toLocation:
-            locationRequired
-                ? toLocation
-                : "",
-
-        toCityId:
-            locationRequired
-                ? toCityId
+                ? otherCityId
                 : null,
 
         // ======================================================
@@ -1836,17 +1660,27 @@ class _ScanQRScreenState
       );
 
       // ========================================================
-      // SUCCESS
+      // SUCCESS — direction shown here is whatever the SERVER decided
+      // (auto-detected), not something the guard picked.
       // ========================================================
 
       if (!mounted) {
         return;
       }
 
-      showMessage(
-        "Movement saved successfully",
-        isError: false,
-      );
+      setState(() {
+        resultDirection =
+            movementResult["direction"]?.toString();
+        resultNewStatus =
+            movementResult["newStatus"]?.toString();
+        showSuccessOverlay = true;
+      });
+
+      // Guard-friendly confirmation: haptic buzz + a click sound + a big
+      // full-screen green tick, so success is obvious without needing to
+      // read English text carefully.
+      HapticFeedback.heavyImpact();
+      SystemSound.play(SystemSoundType.click);
 
       // ========================================================
       // SCAN AGAIN
@@ -1854,13 +1688,17 @@ class _ScanQRScreenState
 
       Future.delayed(
         const Duration(
-          milliseconds: 500,
+          milliseconds: 1600,
         ),
         () {
 
           if (!mounted) {
             return;
           }
+
+          setState(() {
+            showSuccessOverlay = false;
+          });
 
           _scanAgain();
         },
@@ -1910,24 +1748,19 @@ class _ScanQRScreenState
   // ============================================================
 
   // ============================================================
-  // LOCATION FIELDS
+  // LOCATION FIELD
   //
-  // FINAL LOGIC:
-  //
-  // ENTRY (returning):
-  //   To   = Login/Gate (fixed)
-  //   From = Search destination (editable)
-  //
-  // EXIT (going out):
-  //   From = Login/Gate (fixed)
-  //   To   = Search destination (editable)
-  //
+  // Direction is auto-detected server-side now, so the guard never picks
+  // Entry/Exit and this never needs to show two direction-dependent
+  // fields. There's just ONE thing to ask: "where is the other side of
+  // this trip" — the guard's own gate is always the fixed side, filled
+  // in automatically from their login location.
   // ============================================================
 
   Widget _buildLocationFields() {
 
     // ==========================================================
-    // DEMO / TEST DRIVE
+    // DEMO / TEST DRIVE — no location needed at all
     // ==========================================================
 
     if (selectedMovementType == "Demo" ||
@@ -1935,279 +1768,77 @@ class _ScanQRScreenState
       return const SizedBox.shrink();
     }
 
-    // ==========================================================
-    // DIRECTION
-    // ==========================================================
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
 
-    final bool isEntry =
-        selectedDirection == "Entry (returning)";
+        // ------------------------------------------------------
+        // GATE — fixed, read-only, just for confirmation
+        // ------------------------------------------------------
 
-    final bool isExit =
-        selectedDirection == "Exit (going out)";
+        _sectionLabel("Your Gate"),
 
-    // ==========================================================
-    // GATE CITY ID
-    // ==========================================================
+        const SizedBox(height: 7),
 
-    final int? gateCityId =
-        findCityIdByName(gateCityName);
-
-    // ==========================================================
-    // ENTRY:
-    // To = Login/Gate
-    // From = Search
-    // ==========================================================
-
-    if (isEntry &&
-        gateCityName.trim().isNotEmpty) {
-
-      toLocationController.text =
-          gateCityName;
-
-      toCityId = gateCityId;
-
-      selectedToLocation = {
-        "CityId": gateCityId,
-        "CityName": gateCityName,
-        "LocationName": gateCityName,
-        "LocationType": "Login/Gate",
-        "PinCode": "",
-      };
-    }
-
-    // ==========================================================
-    // EXIT:
-    // From = Login/Gate
-    // To = Search
-    // ==========================================================
-
-    if (isExit &&
-        gateCityName.trim().isNotEmpty) {
-
-      fromLocationController.text =
-          gateCityName;
-
-      fromCityId = gateCityId;
-
-      selectedFromLocation = {
-        "CityId": gateCityId,
-        "CityName": gateCityName,
-        "LocationName": gateCityName,
-        "LocationType": "Login/Gate",
-        "PinCode": "",
-      };
-    }
-
-    // ==========================================================
-    // ENTRY UI
-    // ==========================================================
-
-    if (isEntry) {
-      return Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
-        children: [
-
-          // ------------------------------------------------------
-          // TO LOCATION - GATE
-          // ------------------------------------------------------
-
-          _sectionLabel(
-            "To Location (your gate)",
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(
+            horizontal: 14,
+            vertical: 15,
           ),
-
-          const SizedBox(height: 7),
-
-          _locationSearchField(
-            controller:
-                toLocationController,
-            hint:
-                "Login/Gate Location",
-            icon:
-                Icons.location_on_outlined,
-            enabled:
-                false,
-            readOnly: false,
-            isGateField:
-                true,
-            onSelected:
-                (location) {
-              setState(() {
-                selectedToLocation =
-                    location;
-
-                toLocationController.text =
-                    location["LocationName"]
-                            ?.toString() ??
-                        "";
-
-                toCityId =
-                    int.tryParse(
-                  location["CityId"]
-                          ?.toString() ??
-                      "",
-                );
-              });
-            },
+          decoration: BoxDecoration(
+            color: Colors.grey.shade100,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey.shade300),
           ),
-
-          const SizedBox(height: 14),
-
-          // ------------------------------------------------------
-          // FROM LOCATION - SEARCH
-          // ------------------------------------------------------
-
-          _sectionLabel(
-            "From Location (optional)",
+          child: Row(
+            children: [
+              const Icon(Icons.location_on, color: Color(0xff2458A6)),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  gateCityName.trim().isEmpty
+                      ? "Gate location not set"
+                      : gateCityName,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ),
+            ],
           ),
+        ),
 
-          const SizedBox(height: 7),
+        const SizedBox(height: 14),
 
-          _locationSearchField(
-            controller:
-                fromLocationController,
-            hint:
-                "Type 2–3 letters to search...",
-            icon:
-                Icons.location_searching,
-            enabled:
-                true,
-            readOnly:
-                false,
-            isGateField:
-                false,
-            onSelected:
-                (location) {
-              setState(() {
-                selectedFromLocation =
-                    location;
+        // ------------------------------------------------------
+        // OTHER LOCATION — the only thing the guard picks
+        // ------------------------------------------------------
 
-                fromLocationController.text =
-                    location["LocationName"]
-                            ?.toString() ??
-                        "";
+        _sectionLabel("Other Location"),
 
-                fromCityId =
-                    int.tryParse(
-                  location["CityId"]
-                          ?.toString() ??
-                      "",
-                );
-              });
-            },
-          ),
-        ],
-      );
-    }
+        const SizedBox(height: 7),
 
-    // ==========================================================
-    // EXIT UI
-    // ==========================================================
+        _locationSearchField(
+          controller: otherLocationController,
+          hint: "Type 2–3 letters to search...",
+          icon: Icons.location_searching,
+          enabled: true,
+          readOnly: false,
+          isGateField: false,
+          onSelected: (location) {
+            setState(() {
+              selectedOtherLocation = location;
 
-    if (isExit) {
-      return Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
-        children: [
+              otherLocationController.text =
+                  location["LocationName"]?.toString() ?? "";
 
-          // ------------------------------------------------------
-          // FROM LOCATION - GATE
-          // ------------------------------------------------------
-
-          _sectionLabel(
-            "From Location (your gate)",
-          ),
-
-          const SizedBox(height: 7),
-
-          _locationSearchField(
-            controller:
-                fromLocationController,
-            hint:
-                "Login/Gate Location",
-            icon:
-                Icons.location_searching,
-            enabled:
-                false,
-            readOnly:
-                true,
-            isGateField:
-                true,
-            onSelected:
-                (location) {
-              setState(() {
-                selectedFromLocation =
-                    location;
-
-                fromLocationController.text =
-                    location["LocationName"]
-                            ?.toString() ??
-                        "";
-
-                fromCityId =
-                    int.tryParse(
-                  location["CityId"]
-                          ?.toString() ??
-                      "",
-                );
-              });
-            },
-          ),
-
-          const SizedBox(height: 14),
-
-          // ------------------------------------------------------
-          // TO LOCATION - SEARCH
-          // ------------------------------------------------------
-
-          _sectionLabel(
-            "To Location (optional)",
-          ),
-
-          const SizedBox(height: 7),
-
-          _locationSearchField(
-            controller:
-                toLocationController,
-            hint:
-                "Type 2–3 letters to search...",
-            icon:
-                Icons.location_on_outlined,
-            enabled:
-                true,
-            readOnly:
-                false,
-            isGateField:
-                false,
-            onSelected:
-                (location) {
-              setState(() {
-                selectedToLocation =
-                    location;
-
-                toLocationController.text =
-                    location["LocationName"]
-                            ?.toString() ??
-                        "";
-
-                toCityId =
-                    int.tryParse(
-                  location["CityId"]
-                          ?.toString() ??
-                      "",
-                );
-              });
-            },
-          ),
-        ],
-      );
-    }
-
-    // ==========================================================
-    // NO DIRECTION SELECTED
-    // ==========================================================
-
-    return const SizedBox.shrink();
+              otherCityId = int.tryParse(
+                location["CityId"]?.toString() ?? "",
+              );
+            });
+          },
+        ),
+      ],
+    );
   }
 
   // ============================================================
@@ -2623,6 +2254,58 @@ class _ScanQRScreenState
                 ),
               ),
             ),
+
+            // ==================================================
+            // SUCCESS OVERLAY — big, hard-to-miss confirmation for a
+            // guard who may not read English carefully: full-screen
+            // green, a giant checkmark, and the SERVER's auto-detected
+            // direction/status spelled out in plain words.
+            // ==================================================
+
+            if (showSuccessOverlay)
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: Container(
+                    color: const Color(0xff1E8E3E),
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.check_circle,
+                            color: Colors.white,
+                            size: 120,
+                          ),
+                          const SizedBox(height: 18),
+                          Text(
+                            resultDirection == "Exit"
+                                ? "VEHICLE OUT"
+                                : resultDirection == "Entry"
+                                    ? "VEHICLE IN"
+                                    : "RECORDED",
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                          if (resultNewStatus != null) ...[
+                            const SizedBox(height: 6),
+                            Text(
+                              "Status: $resultNewStatus",
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ),
@@ -2766,63 +2449,8 @@ class _ScanQRScreenState
             ),
 
             // ==================================================
-            // DIRECTION
-            // ==================================================
-
-            _sectionLabel(
-              "Direction",
-            ),
-
-            const SizedBox(
-              height: 7,
-            ),
-
-            DropdownButtonFormField<String>(
-
-              value:
-                  selectedDirection,
-
-              isExpanded:
-                  true,
-
-              decoration:
-                  _inputDecoration(
-
-                hint:
-                    "Select direction",
-
-                icon:
-                    Icons.compare_arrows,
-              ),
-
-              items:
-                  directions.map(
-                (direction) {
-
-                  return
-                      DropdownMenuItem<String>(
-
-                    value:
-                        direction,
-
-                    child:
-                        Text(
-                      direction,
-                    ),
-                  );
-                },
-              ).toList(),
-
-              onChanged:
-                  onDirectionChanged,
-            ),
-
-            const SizedBox(
-              height: 16,
-            ),
-
-            // ==================================================
-            // MOVEMENT TYPE
+            // MOVEMENT TYPE — Direction is auto-detected server-side,
+            // so there's no Direction dropdown here anymore.
             // ==================================================
 
             _sectionLabel(
@@ -2878,29 +2506,16 @@ class _ScanQRScreenState
                       value;
 
                   // ------------------------------------------------
-                  // CLEAR FROM
+                  // CLEAR OTHER LOCATION
                   // ------------------------------------------------
 
-                  fromLocationController
+                  otherLocationController
                       .clear();
 
-                  fromCityId =
+                  otherCityId =
                       null;
 
-                  selectedFromLocation =
-                      null;
-
-                  // ------------------------------------------------
-                  // CLEAR TO
-                  // ------------------------------------------------
-
-                  toLocationController
-                      .clear();
-
-                  toCityId =
-                      null;
-
-                  selectedToLocation =
+                  selectedOtherLocation =
                       null;
                 });
               },
@@ -3326,36 +2941,26 @@ class _ScanQRScreenState
       vehicleDetails =
           null;
 
-      selectedDirection =
+      resultDirection =
+          null;
+
+      resultNewStatus =
           null;
 
       selectedMovementType =
           null;
 
       // --------------------------------------------------------
-      // FROM
+      // OTHER LOCATION
       // --------------------------------------------------------
 
-      fromLocationController
+      otherLocationController
           .clear();
 
-      fromCityId =
+      otherCityId =
           null;
 
-      selectedFromLocation =
-          null;
-
-      // --------------------------------------------------------
-      // TO
-      // --------------------------------------------------------
-
-      toLocationController
-          .clear();
-
-      toCityId =
-          null;
-
-      selectedToLocation =
+      selectedOtherLocation =
           null;
 
       // --------------------------------------------------------
@@ -3431,10 +3036,7 @@ class _ScanQRScreenState
     purposeController
         .dispose();
 
-    fromLocationController
-        .dispose();
-
-    toLocationController
+    otherLocationController
         .dispose();
 
     super.dispose();
