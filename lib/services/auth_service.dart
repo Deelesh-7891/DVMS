@@ -781,17 +781,30 @@ Future<AttachmentUploadResult> uploadAttachment({
   return AttachmentUploadResult(attachmentId: attachmentId, url: url);
 }
 
-Future<void> movementSave({
+// direction is now OPTIONAL: the backend auto-detects Entry vs Exit from
+// the vehicle's own last movement (first-ever movement is always "Exit"),
+// so a guard no longer has to pick it. Pass a value only to manually
+// override the auto-detected one (e.g. an admin correction, or a future
+// voice "in"/"out" command); leave it null for the normal flow.
+//
+// otherCityIdOverride: pass this when the caller already knows the single
+// "other location" CityId directly (e.g. the simplified one-field Location
+// picker) and doesn't want it derived from fromCityId/toCityId+direction.
+// Returns the decoded response ({ movementId, vehicle, direction, newStatus })
+// so the caller can show the server's AUTO-DETECTED direction on a success
+// screen — the caller doesn't know it in advance anymore.
+Future<Map<String, dynamic>> movementSave({
   required int branchId,
   required int vehicleId,
   required String qrToken,
-  required String direction,
+  String? direction,
   required String txnDate,
   // Location optional
   String? fromLocation,
   int? fromCityId,
   String? toLocation,
   int? toCityId,
+  int? otherCityIdOverride,
 
   required int odometer,
   required String driverName,
@@ -835,7 +848,8 @@ Future<void> movementSave({
   // as a numeric CityId, in a field called exactly "otherCityId" — from
   // the request. On Exit the vehicle is heading TO the picked location;
   // on Entry it's coming FROM the picked location.
-  final int? otherCityId = direction == 'Entry' ? fromCityId : toCityId;
+  final int? otherCityId = otherCityIdOverride ??
+      (direction == 'Entry' ? fromCityId : toCityId);
 
   // ==========================================================
   // REQUEST BODY
@@ -845,7 +859,7 @@ Future<void> movementSave({
     'branchId': branchId,
     'vehicleId': vehicleId,
     'qrToken': qrToken,
-    'direction': direction,
+    if (direction != null) 'direction': direction,
     'txnDate': txnDate,
 
     // Optional location — fromCityId/toCityId are read directly for
@@ -913,7 +927,8 @@ Future<void> movementSave({
   if (response.statusCode >= 200 &&
       response.statusCode < 300) {
     print('MOVEMENT SAVE SUCCESS');
-    return;
+    final decoded = jsonDecode(response.body);
+    return decoded is Map<String, dynamic> ? decoded : <String, dynamic>{};
   }
 
   // ==========================================================
