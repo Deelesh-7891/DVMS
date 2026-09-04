@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 import '../../services/auth_service.dart';
 
@@ -167,6 +168,51 @@ class _ScanQRScreenState
   String? resultDirection;
   String? resultNewStatus;
   bool showSuccessOverlay = false;
+
+  // ==========================================================
+  // VOICE IN/OUT — hands-free alternative to tapping SAVE MOVEMENT.
+  // The backend auto-detects direction anyway; this just lets the guard
+  // say "in" or "out" (or Hindi "andar"/"bahar") to confirm and submit
+  // instead of tapping, and passes it through as an explicit override.
+  // ==========================================================
+
+  final stt.SpeechToText _voiceSubmit = stt.SpeechToText();
+  bool isListeningForVoiceSubmit = false;
+
+  Future<void> _startVoiceSubmit() async {
+    final available = await _voiceSubmit.initialize();
+    if (!available) {
+      showMessage(
+        "Voice input is not available on this device.",
+        isError: true,
+      );
+      return;
+    }
+
+    setState(() => isListeningForVoiceSubmit = true);
+
+    await _voiceSubmit.listen(
+      localeId: "en_IN",
+      onResult: (result) async {
+        if (!result.finalResult) return;
+
+        final text = result.recognizedWords.toLowerCase();
+        setState(() => isListeningForVoiceSubmit = false);
+        await _voiceSubmit.stop();
+
+        if (RegExp(r"\bin\b|andar|entry").hasMatch(text)) {
+          saveMovement(directionOverride: "Entry");
+        } else if (RegExp(r"\bout\b|bahar|exit").hasMatch(text)) {
+          saveMovement(directionOverride: "Exit");
+        } else if (mounted) {
+          showMessage(
+            'Didn\'t catch that ("$text") — say "in" or "out", or tap Save.',
+            isError: true,
+          );
+        }
+      },
+    );
+  }
 
   // ==========================================================
   // OTHER LOCATION — single field for Service/Workshop/InterBranch.
@@ -1293,7 +1339,11 @@ class _ScanQRScreenState
   // SAVE MOVEMENT
   // ============================================================
 
-  Future<void> saveMovement() async {
+  // directionOverride: set when the guard used the voice "in"/"out" button
+  // instead of tapping Save — passed straight through to the server, which
+  // otherwise auto-detects it. Null (the normal tap-to-save path) means
+  // let the backend decide.
+  Future<void> saveMovement({String? directionOverride}) async {
 
     // ==========================================================
     // VEHICLE CHECK
@@ -1591,8 +1641,11 @@ class _ScanQRScreenState
             DateTime.now()
                 .toIso8601String(),
 
-        // direction: left null — the server auto-detects Entry/Exit from
-        // the vehicle's own last movement now.
+        // Null unless the guard used the voice "in"/"out" button — then
+        // the server auto-detects Entry/Exit from the vehicle's own last
+        // movement instead.
+        direction:
+            directionOverride,
 
         // ======================================================
         // OTHER LOCATION
@@ -2223,6 +2276,39 @@ class _ScanQRScreenState
                             child:
                                 const Text(
                               "SAVE MOVEMENT",
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(
+                          height: 10,
+                        ),
+
+                        // ==================================================
+                        // VOICE IN/OUT — hands-free alternative to tapping
+                        // Save above. Backend still auto-detects direction
+                        // either way; this just lets the guard confirm by
+                        // voice instead.
+                        // ==================================================
+
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton.icon(
+                            onPressed: isListeningForVoiceSubmit
+                                ? null
+                                : _startVoiceSubmit,
+                            icon: Icon(
+                              isListeningForVoiceSubmit
+                                  ? Icons.mic
+                                  : Icons.mic_none,
+                              color: isListeningForVoiceSubmit
+                                  ? Colors.red
+                                  : null,
+                            ),
+                            label: Text(
+                              isListeningForVoiceSubmit
+                                  ? 'Listening… say "in" or "out"'
+                                  : 'Say "in" or "out" to save',
                             ),
                           ),
                         ),
@@ -3020,6 +3106,8 @@ class _ScanQRScreenState
   void dispose() {
 
     controller.dispose();
+
+    _voiceSubmit.stop();
 
     odometerController
         .dispose();
