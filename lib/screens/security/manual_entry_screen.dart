@@ -70,10 +70,10 @@ class _ManualEntryScreenState
   final TextEditingController purposeController =
       TextEditingController();
 
-  final TextEditingController fromLocationController =
-      TextEditingController();
-
-  final TextEditingController toLocationController =
+  // Single "other location" field — the guard's own gate is always the
+  // fixed side (shown read-only), so there's only ever one thing to pick,
+  // regardless of Entry/Exit.
+  final TextEditingController otherLocationController =
       TextEditingController();
 
   // ============================================================
@@ -99,7 +99,9 @@ class _ManualEntryScreenState
   // MOVEMENT
   // ============================================================
 
-  String direction = "Entry";
+  // Direction is auto-detected server-side now (vehicle's own last
+  // movement — see computeAutoDirection in dvms.js). No local state for
+  // it here anymore.
 
   String? selectedMovementType;
 
@@ -127,14 +129,13 @@ class _ManualEntryScreenState
   List<CityModel> allCities = [];
   bool isLoadingCities = false;
 
-  int? fromCityId;
-  int? toCityId;
+  int? otherCityId;
+  Map<String, dynamic>? selectedOtherLocation;
 
-  String? fromCityName;
-  String? toCityName;
-
-  Map<String, dynamic>? selectedFromLocation;
-  Map<String, dynamic>? selectedToLocation;
+  // Result of the last save — what the SERVER auto-detected, shown on the
+  // success confirmation rather than anything the guard picked.
+  String? resultDirection;
+  String? resultNewStatus;
 
   @override
   void initState() {
@@ -179,73 +180,16 @@ class _ManualEntryScreenState
   }
 
   // ============================================================
-  // APPLY LOGIN / GATE LOCATION BASED ON DIRECTION
+  // GATE LOCATION DISPLAY
+  //
+  // Direction is auto-detected server-side now, and the guard's own gate
+  // is pinned from their profile on the backend regardless — so this no
+  // longer needs to resolve a CityId or fill either from/to controller,
+  // it's purely for the read-only "Your Gate" label in the UI.
   // ============================================================
 
   void applyDirectionLocation() {
-    if (gateCityName.trim().isEmpty || allCities.isEmpty) {
-      return;
-    }
-
-    final String gate = gateCityName.trim().toLowerCase();
-
-    CityModel? gateLocation;
-
-    for (final city in allCities) {
-      if (city.cityName.trim().toLowerCase() == gate ||
-          city.locationName.trim().toLowerCase() == gate) {
-        gateLocation = city;
-        break;
-      }
-    }
-
-    if (gateLocation == null) {
-      debugPrint('GATE LOCATION NOT FOUND IN CITIES API: $gateCityName');
-      return;
-    }
-
-    final Map<String, dynamic> location = {
-      'CityId': gateLocation.cityId,
-      'StateId': gateLocation.stateId,
-      'CityName': gateLocation.cityName,
-      'LocationName': gateLocation.locationName,
-      'LocationType': gateLocation.locationType,
-      'PinCode': gateLocation.pinCode,
-    };
-
-    final String displayName = gateLocation.locationName.isNotEmpty
-        ? gateLocation.locationName
-        : gateLocation.cityName;
-
-    setState(() {
-      if (direction == 'Entry') {
-        // ENTRY: To = Login/Gate, From = User destination
-        toCityId = gateLocation!.cityId;
-        toCityName = gateLocation.cityName;
-        selectedToLocation = location;
-        toLocationController.text = displayName;
-
-        fromCityId = null;
-        fromCityName = null;
-        selectedFromLocation = null;
-        fromLocationController.clear();
-      } else {
-        // EXIT: From = Login/Gate, To = User destination
-        fromCityId = gateLocation!.cityId;
-        fromCityName = gateLocation.cityName;
-        selectedFromLocation = location;
-        fromLocationController.text = displayName;
-
-        toCityId = null;
-        toCityName = null;
-        selectedToLocation = null;
-        toLocationController.clear();
-      }
-    });
-
-    debugPrint('DIRECTION: $direction');
-    debugPrint('GATE LOCATION: $displayName');
-    debugPrint('GATE CITY ID: ${gateLocation.cityId}');
+    debugPrint('GATE LOCATION (display only): $gateCityName');
   }
 
   // ============================================================
@@ -410,21 +354,11 @@ class _ManualEntryScreenState
           onChanged: (value) {
             // If the user changes the selected text manually,
             // invalidate the previous CityId/selection.
-            if (controller == fromLocationController) {
-              if (selectedFromLocation?['LocationName']?.toString() != value &&
-                  selectedFromLocation?['CityName']?.toString() != value) {
-                fromCityId = null;
-                fromCityName = null;
-                selectedFromLocation = null;
-              }
-            }
-
-            if (controller == toLocationController) {
-              if (selectedToLocation?['LocationName']?.toString() != value &&
-                  selectedToLocation?['CityName']?.toString() != value) {
-                toCityId = null;
-                toCityName = null;
-                selectedToLocation = null;
+            if (controller == otherLocationController) {
+              if (selectedOtherLocation?['LocationName']?.toString() != value &&
+                  selectedOtherLocation?['CityName']?.toString() != value) {
+                otherCityId = null;
+                selectedOtherLocation = null;
               }
             }
 
@@ -824,61 +758,25 @@ class _ManualEntryScreenState
     }
 
     // ==========================================================
-    // FROM / TO LOCATION
+    // OTHER LOCATION
     // Demo / TestDrive = hidden, not required
     // Service / Workshop / InterBranch = required
+    // The guard's own gate is fixed server-side regardless of direction,
+    // so there's only ever this one field to validate.
     // ==========================================================
 
     if (isLocationRequired()) {
-
-      if (direction == 'Entry') {
-        // ENTRY:
-        // To   = Login/Gate location -> REQUIRED
-        // From = User selected destination -> OPTIONAL
-
-        if (toLocationController.text.trim().isEmpty) {
-          showError('Login / Gate Location not found');
-          return false;
-        }
-
-        if (toCityId == null || toCityId == 0) {
-          showError('Login / Gate City not found');
-          return false;
-        }
-
-        // From is OPTIONAL.
-        // If user entered/selected it, CityId must be valid.
-        if (fromLocationController.text.trim().isNotEmpty &&
-            (fromCityId == null || fromCityId == 0)) {
-          showError('Select From Location from the list');
-          return false;
-        }
-      } else {
-        // EXIT:
-        // From = Login/Gate location -> REQUIRED
-        // To   = User selected destination -> OPTIONAL
-
-        if (fromLocationController.text.trim().isEmpty) {
-          showError('Login / Gate Location not found');
-          return false;
-        }
-
-        if (fromCityId == null || fromCityId == 0) {
-          showError('Login / Gate City not found');
-          return false;
-        }
-
-        // To is OPTIONAL.
-        // If user entered/selected it, CityId must be valid.
-        if (toLocationController.text.trim().isNotEmpty &&
-            (toCityId == null || toCityId == 0)) {
-          showError('Select To Location from the list');
-          return false;
-        }
+      if (otherLocationController.text.trim().isEmpty) {
+        showError('Select the other location');
+        return false;
       }
 
-      debugPrint('VALID FROM CITY ID: $fromCityId');
-      debugPrint('VALID TO CITY ID: $toCityId');
+      if (otherCityId == null || otherCityId == 0) {
+        showError('Select the other location from the list');
+        return false;
+      }
+
+      debugPrint('VALID OTHER CITY ID: $otherCityId');
     }
 
     return true;
@@ -971,18 +869,11 @@ class _ManualEntryScreenState
               .trim();
 
       // ========================================================
-      // LOCATION
-      //
-      // Keeping your existing structure.
+      // LOCATION — single field; the gate side is fixed server-side.
       // ========================================================
 
-      final String fromLocation =
-          fromLocationController
-              .text
-              .trim();
-
-      final String toLocation =
-          toLocationController
+      final String otherLocation =
+          otherLocationController
               .text
               .trim();
 
@@ -1056,7 +947,7 @@ class _ManualEntryScreenState
       );
 
       print(
-        "Direction       : $direction",
+        "Other Location  : $otherLocation ($otherCityId)",
       );
 
       print(
@@ -1090,11 +981,7 @@ class _ManualEntryScreenState
       );
 
       print(
-        "From Location   : $fromLocation",
-      );
-
-      print(
-        "To Location     : $toLocation",
+        "Other Location  : $otherLocation",
       );
 
       print(
@@ -1109,13 +996,13 @@ class _ManualEntryScreenState
       // API CALL
       // ========================================================
 
-      await _authService.movementSave(
+      final movementResult = await _authService.movementSave(
 
         branchId:
             branchId,
 
-        vehicleId:
-            1,
+        // No vehicleId here — this screen only has a hand-typed qrToken,
+        // and the backend looks vehicleId up by that when it's omitted.
 
         qrToken:
             qrToken,
@@ -1124,8 +1011,8 @@ class _ManualEntryScreenState
             DateTime.now()
                 .toIso8601String(),
 
-        direction:
-            direction,
+        // direction: left null — the server auto-detects Entry/Exit from
+        // the vehicle's own last movement now.
 
         odometer:
             odometer,
@@ -1142,19 +1029,8 @@ class _ManualEntryScreenState
         customerName:
             customerName,
 
-        fromLocation:
-            selectedFromLocation?['LocationName']?.toString() ??
-                fromLocation,
-
-        fromCityId:
-            fromCityId,
-
-        toLocation:
-            selectedToLocation?['LocationName']?.toString() ??
-                toLocation,
-
-        toCityId:
-            toCityId,
+        otherCityIdOverride:
+            otherCityId,
 
         purpose:
             purpose,
@@ -1168,13 +1044,20 @@ class _ManualEntryScreenState
         return;
       }
 
+      resultDirection = movementResult["direction"]?.toString();
+      resultNewStatus = movementResult["newStatus"]?.toString();
+
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content:
               Text(
-            "Movement Saved Successfully",
+            resultDirection == "Exit"
+                ? "Vehicle OUT recorded"
+                : resultDirection == "Entry"
+                    ? "Vehicle IN recorded"
+                    : "Movement Saved Successfully",
           ),
 
           backgroundColor:
@@ -1203,27 +1086,20 @@ class _ManualEntryScreenState
 
       purposeController.clear();
 
-      fromLocationController.clear();
-
-      toLocationController.clear();
+      otherLocationController.clear();
 
       setState(() {
 
-        fromCityId = null;
-        toCityId = null;
-        fromCityName = null;
-        toCityName = null;
-        selectedFromLocation = null;
-        selectedToLocation = null;
+        otherCityId = null;
+        selectedOtherLocation = null;
+        resultDirection = null;
+        resultNewStatus = null;
 
         odometerImage =
             null;
 
         odometerImageBytes =
             null;
-
-        direction =
-            "Entry";
 
         selectedMovementType =
             null;
@@ -1322,9 +1198,7 @@ class _ManualEntryScreenState
 
     purposeController.dispose();
 
-    fromLocationController.dispose();
-
-    toLocationController.dispose();
+    otherLocationController.dispose();
 
     super.dispose();
   }
@@ -1465,115 +1339,10 @@ class _ManualEntryScreenState
                 ),
 
                 // ==================================================
-                // DIRECTION
+                // DIRECTION — auto-detected server-side now (no more
+                // Entry/Exit toggle here; the backend figures it out from
+                // the vehicle's own last movement).
                 // ==================================================
-
-                buildTitle(
-                  "Direction",
-                ),
-
-                const SizedBox(
-                  height: 10,
-                ),
-
-                Row(
-                  children: [
-
-                    Expanded(
-                      child:
-                          ChoiceChip(
-
-                        label:
-                            const Text(
-                          "Entry",
-                        ),
-
-                        selected:
-                            direction ==
-                                "Entry",
-
-                        selectedColor:
-                            Colors.green,
-
-                        labelStyle:
-                            TextStyle(
-
-                          color:
-                              direction ==
-                                      "Entry"
-                                  ? Colors.white
-                                  : Colors.black,
-
-                          fontWeight:
-                              FontWeight.w600,
-                        ),
-
-                        onSelected: (_) {
-                          setState(() {
-                            direction = "Entry";
-                          });
-
-                          // Apply gate location only for movement types
-                          // that require Movement Locations.
-                          if (isLocationRequired()) {
-                            applyDirectionLocation();
-                          }
-                        },
-                      ),
-                    ),
-
-                    const SizedBox(
-                      width: 10,
-                    ),
-
-                    Expanded(
-                      child:
-                          ChoiceChip(
-
-                        label:
-                            const Text(
-                          "Exit",
-                        ),
-
-                        selected:
-                            direction ==
-                                "Exit",
-
-                        selectedColor:
-                            Colors.orange,
-
-                        labelStyle:
-                            TextStyle(
-
-                          color:
-                              direction ==
-                                      "Exit"
-                                  ? Colors.white
-                                  : Colors.black,
-
-                          fontWeight:
-                              FontWeight.w600,
-                        ),
-
-                        onSelected: (_) {
-                          setState(() {
-                            direction = "Exit";
-                          });
-
-                          // Apply gate location only for movement types
-                          // that require Movement Locations.
-                          if (isLocationRequired()) {
-                            applyDirectionLocation();
-                          }
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(
-                  height: 20,
-                ),
 
                 // ==================================================
                 // ODOMETER + DRIVER
@@ -1830,17 +1599,9 @@ class _ManualEntryScreenState
                       // Demo / TestDrive:
                       // hide movement location and clear old values.
                       if (value == "Demo" || value == "TestDrive") {
-                        fromLocationController.clear();
-                        toLocationController.clear();
-
-                        fromCityId = null;
-                        toCityId = null;
-
-                        fromCityName = null;
-                        toCityName = null;
-
-                        selectedFromLocation = null;
-                        selectedToLocation = null;
+                        otherLocationController.clear();
+                        otherCityId = null;
+                        selectedOtherLocation = null;
                       }
                     });
 
@@ -1866,163 +1627,90 @@ class _ManualEntryScreenState
                   const SizedBox(height: 20),
 
                   // ==================================================
-                  // MOVEMENT LOCATIONS
-                  // Gate side is disabled; opposite side is optional and searchable.
+                  // MOVEMENT LOCATIONS — Direction is auto-detected
+                  // server-side now, so there's just one gate display
+                  // (read-only, always shown) and one searchable field
+                  // for the other side, regardless of Entry/Exit.
                   // ==================================================
 
                   buildTitle('Movement Locations'),
 
                   const SizedBox(height: 10),
 
-                  // ==================================================
-                  // FROM LOCATION - COL 12
-                  // Entry -> Optional/searchable
-                  // Exit  -> Gate (disabled/read-only)
-                  // ==================================================
-
-                  buildTitle(direction == 'Entry' ? 'From Location (optional)' : 'From Location (your gate)'),
+                  buildTitle('Your Gate'),
 
                   const SizedBox(height: 8),
 
-                  if (direction == 'Entry')
-                    locationSearchField(
-                      controller: fromLocationController,
-                      hint: 'Type 2–3 letters to search...',
-                      icon: Icons.location_searching,
-                      onSelected: (location) {
-                        final cityName =
-                            location['CityName']?.toString() ?? '';
-                        final locationName =
-                            location['LocationName']?.toString() ?? '';
-
-                        setState(() {
-                          selectedFromLocation = location;
-
-                          fromCityId = int.tryParse(
-                            location['CityId']?.toString() ?? '',
-                          );
-
-                          fromCityName = cityName;
-
-                          fromLocationController.text =
-                              locationName.isNotEmpty
-                                  ? locationName
-                                  : cityName;
-                        });
-
-                        debugPrint(
-                          'ENTRY FROM CITY NAME: $cityName',
-                        );
-                        debugPrint(
-                          'ENTRY FROM LOCATION: $locationName',
-                        );
-                        debugPrint(
-                          'ENTRY FROM CITY ID: $fromCityId',
-                        );
-                      },
-                    )
-                  else
-                    TextField(
-                      controller: fromLocationController,
-                      enabled: false,
-                      decoration: InputDecoration(
-                        hintText: 'Login / Gate Location',
-                        prefixIcon: const Icon(
-                          Icons.location_on,
-                          color: Color(0xff64748B),
+                  TextField(
+                    enabled: false,
+                    controller: TextEditingController(
+                      text: gateCityName.trim().isEmpty
+                          ? 'Gate location not set'
+                          : gateCityName,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: 'Login / Gate Location',
+                      prefixIcon: const Icon(
+                        Icons.location_on,
+                        color: Color(0xff64748B),
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey.shade200,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide(
+                          color: Colors.grey.shade300,
                         ),
-                        filled: true,
-                        fillColor: Colors.grey.shade200,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: BorderSide(
-                            color: Colors.grey.shade300,
-                          ),
-                        ),
-                        disabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: BorderSide(
-                            color: Colors.grey.shade300,
-                          ),
+                      ),
+                      disabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide(
+                          color: Colors.grey.shade300,
                         ),
                       ),
                     ),
+                  ),
 
                   const SizedBox(height: 14),
 
-                  // ==================================================
-                  // TO LOCATION - COL 12
-                  // Entry -> Gate (disabled/read-only)
-                  // Exit  -> Optional/searchable
-                  // ==================================================
-
-                  buildTitle(direction == 'Entry' ? 'To Location (your gate)' : 'To Location (optional)'),
+                  buildTitle('Other Location'),
 
                   const SizedBox(height: 8),
 
-                  if (direction == 'Exit')
-                    locationSearchField(
-                      controller: toLocationController,
-                      hint: 'Type 2–3 letters to search...',
-                      icon: Icons.location_on_outlined,
-                      onSelected: (location) {
-                        final cityName =
-                            location['CityName']?.toString() ?? '';
-                        final locationName =
-                            location['LocationName']?.toString() ?? '';
+                  locationSearchField(
+                    controller: otherLocationController,
+                    hint: 'Type 2–3 letters to search...',
+                    icon: Icons.location_searching,
+                    onSelected: (location) {
+                      final cityName =
+                          location['CityName']?.toString() ?? '';
+                      final locationName =
+                          location['LocationName']?.toString() ?? '';
 
-                        setState(() {
-                          selectedToLocation = location;
+                      setState(() {
+                        selectedOtherLocation = location;
 
-                          toCityId = int.tryParse(
-                            location['CityId']?.toString() ?? '',
-                          );
-
-                          toCityName = cityName;
-
-                          toLocationController.text =
-                              locationName.isNotEmpty
-                                  ? locationName
-                                  : cityName;
-                        });
-
-                        debugPrint(
-                          'EXIT TO CITY NAME: $cityName',
+                        otherCityId = int.tryParse(
+                          location['CityId']?.toString() ?? '',
                         );
-                        debugPrint(
-                          'EXIT TO LOCATION: $locationName',
-                        );
-                        debugPrint(
-                          'EXIT TO CITY ID: $toCityId',
-                        );
-                      },
-                    )
-                  else
-                    TextField(
-                      controller: toLocationController,
-                      enabled: false,
-                      decoration: InputDecoration(
-                        hintText: 'Login / Gate Location',
-                        prefixIcon: const Icon(
-                          Icons.location_on,
-                          color: Color(0xff64748B),
-                        ),
-                        filled: true,
-                        fillColor: Colors.grey.shade200,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: BorderSide(
-                            color: Colors.grey.shade300,
-                          ),
-                        ),
-                        disabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          borderSide: BorderSide(
-                            color: Colors.grey.shade300,
-                          ),
-                        ),
-                      ),
-                    ),
+
+                        otherLocationController.text =
+                            locationName.isNotEmpty
+                                ? locationName
+                                : cityName;
+                      });
+
+                      debugPrint(
+                        'OTHER LOCATION CITY NAME: $cityName',
+                      );
+                      debugPrint(
+                        'OTHER LOCATION: $locationName',
+                      );
+                      debugPrint(
+                        'OTHER LOCATION CITY ID: $otherCityId',
+                      );
+                    },
+                  ),
                 ],
 
                 const SizedBox(

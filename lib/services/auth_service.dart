@@ -793,9 +793,16 @@ Future<AttachmentUploadResult> uploadAttachment({
 // Returns the decoded response ({ movementId, vehicle, direction, newStatus })
 // so the caller can show the server's AUTO-DETECTED direction on a success
 // screen — the caller doesn't know it in advance anymore.
+// vehicleId is optional: pass it when the caller already resolved a real
+// vehicle (e.g. Scan QR, after looking up the scanned token). Manual Entry
+// only has a hand-typed qrToken and no real vehicleId — sending a dummy
+// value here would be wrong, since the backend prioritizes vehicleId over
+// qrToken when both are present (POST /movement/scan checks `if (b.vehicleId)`
+// first) and would silently record against whatever vehicle that id
+// happens to belong to instead of the one the token actually names.
 Future<Map<String, dynamic>> movementSave({
   required int branchId,
-  required int vehicleId,
+  int? vehicleId,
   required String qrToken,
   String? direction,
   required String txnDate,
