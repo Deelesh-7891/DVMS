@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import '../driver/driver_home_screen.dart';
+import '../../core/services/odometer_ocr_service.dart';
 
 class AddFuelScreen extends StatefulWidget {
   final int vehicleId;
@@ -109,11 +110,36 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
     }
   }
 
+  bool isReadingOdometer = false;
+
   Future<void> pickOdoImage(ImageSource source) async {
     final picked =
     await picker.pickImage(source: source, imageQuality: 80);
-    if (picked != null) {
-      setState(() => odoImage = File(picked.path));
+    if (picked == null) return;
+
+    setState(() {
+      odoImage = File(picked.path);
+      isReadingOdometer = true;
+    });
+
+    // Best-effort OCR — same digit-extraction approach as the web's
+    // Tesseract.js odometer reader on fuel.html. Never blocks manual
+    // entry: the field stays editable either way, this just pre-fills it.
+    final reading = await OdometerOcrService.recognizeFromPath(picked.path);
+
+    if (!mounted) return;
+
+    setState(() {
+      isReadingOdometer = false;
+      if (reading != null) {
+        odoController.text = reading;
+      }
+    });
+
+    if (reading != null) {
+      showSnack("Detected $reading km — please verify & correct if wrong.");
+    } else {
+      showSnack("Could not read a number — please enter the odometer manually.");
     }
   }
 
@@ -288,10 +314,19 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
                     decoration: InputDecoration(
                       labelText: "Odometer (ODO)",
                       prefixIcon: const Icon(Icons.speed),
-                      suffixIcon: IconButton(
-                        icon: const Icon(Icons.camera_alt),
-                        onPressed: showOdoPicker,
-                      ),
+                      suffixIcon: isReadingOdometer
+                          ? const Padding(
+                              padding: EdgeInsets.all(14),
+                              child: SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              ),
+                            )
+                          : IconButton(
+                              icon: const Icon(Icons.camera_alt),
+                              onPressed: showOdoPicker,
+                            ),
                       filled: true,
                       fillColor: Colors.grey.shade100,
                       border: OutlineInputBorder(
@@ -300,7 +335,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
                     ),
                   ),
 
-                  if (odoImage != null)
+                  if (odoImage != null) ...[
                     Padding(
                       padding: const EdgeInsets.only(top: 10),
                       child: ClipRRect(
@@ -308,6 +343,15 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
                         child: Image.file(odoImage!, height: 120),
                       ),
                     ),
+                    if (!isReadingOdometer)
+                      const Padding(
+                        padding: EdgeInsets.only(top: 4),
+                        child: Text(
+                          "Reading auto-filled from photo — please verify.",
+                          style: TextStyle(fontSize: 11.5, color: Colors.grey),
+                        ),
+                      ),
+                  ],
 
                   const SizedBox(height: 14),
 

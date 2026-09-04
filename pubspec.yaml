@@ -31,6 +31,7 @@ dependencies:
   speech_to_text: ^7.4.0
   # upgrader: ^13.7.0
   in_app_update: ^4.2.5
+  google_mlkit_text_recognition: ^0.15.0
 
 dev_dependencies:
   flutter_test:

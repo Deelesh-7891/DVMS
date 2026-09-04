@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../core/services/odometer_ocr_service.dart';
 import '../../services/auth_service.dart';
 
 class CityModel {
@@ -88,6 +89,8 @@ class _ManualEntryScreenState
 
   // Image bytes - works on Android + Web
   Uint8List? odometerImageBytes;
+
+  bool isReadingOdometer = false;
 
   // ============================================================
   // SERVICE
@@ -542,7 +545,34 @@ class _ManualEntryScreenState
       setState(() {
         odometerImage = image;
         odometerImageBytes = bytes;
+        isReadingOdometer = true;
       });
+
+      // Best-effort OCR — same digit-extraction approach as the web's
+      // Tesseract.js odometer reader on fuel.html. Never blocks manual
+      // entry: the field stays editable either way, this just pre-fills it.
+      final reading =
+          await OdometerOcrService.recognizeFromPath(image.path);
+
+      if (!mounted) return;
+
+      setState(() {
+        isReadingOdometer = false;
+        if (reading != null) {
+          odometerController.text = reading;
+        }
+      });
+
+      if (reading != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "Detected $reading km — please verify & correct if wrong.",
+            ),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
 
       debugPrint(
         "======================================",
@@ -1101,6 +1131,9 @@ class _ManualEntryScreenState
         odometerImageBytes =
             null;
 
+        isReadingOdometer =
+            false;
+
         selectedMovementType =
             null;
       });
@@ -1397,6 +1430,25 @@ class _ManualEntryScreenState
 
                 const SizedBox(height: 10),
 
+                if (isReadingOdometer)
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          "Reading odometer from photo…",
+                          style: TextStyle(fontSize: 12.5, color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ),
+
                 // ==================================================
                 // TAKE ODOMETER IMAGE
                 // ==================================================
@@ -1405,7 +1457,7 @@ class _ManualEntryScreenState
                   width: double.infinity,
                   height: 52,
                   child: ElevatedButton.icon(
-                    onPressed: openOdometerCamera,
+                    onPressed: isReadingOdometer ? null : openOdometerCamera,
                     icon: const Icon(Icons.camera_alt),
                     label: Text(
                       odometerImageBytes == null

@@ -8,6 +8,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
+import '../../core/services/odometer_ocr_service.dart';
 import '../../services/auth_service.dart';
 
 // ============================================================
@@ -123,6 +124,8 @@ class _ScanQRScreenState
 
   bool isTakingOdometerPhoto =
       false;
+
+  bool isReadingOdometer = false;
 
   // ==========================================================
   // DRIVER
@@ -1110,10 +1113,32 @@ class _ScanQRScreenState
 
         isTakingOdometerPhoto =
             false;
+
+        isReadingOdometer =
+            true;
+      });
+
+      // Best-effort OCR — same digit-extraction approach as the web's
+      // Tesseract.js odometer reader on fuel.html. Never blocks the flow:
+      // the field stays editable either way, this just pre-fills it.
+      final reading =
+          await OdometerOcrService.recognizeFromPath(image.path);
+
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        isReadingOdometer = false;
+        if (reading != null) {
+          odometerController.text = reading;
+        }
       });
 
       showMessage(
-        "Odometer photo captured",
+        reading != null
+            ? "Detected $reading km — please verify & correct if wrong."
+            : "Odometer photo captured — couldn't read a number, please enter it manually.",
         isError: false,
       );
 
@@ -1160,6 +1185,25 @@ class _ScanQRScreenState
         const SizedBox(
           height: 7,
         ),
+
+        if (isReadingOdometer)
+          const Padding(
+            padding: EdgeInsets.only(bottom: 7),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 14,
+                  height: 14,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+                SizedBox(width: 8),
+                Text(
+                  "Reading odometer from photo…",
+                  style: TextStyle(fontSize: 12.5, color: Colors.grey),
+                ),
+              ],
+            ),
+          ),
 
         if (odometerImageBytes !=
             null) ...[
@@ -3065,6 +3109,9 @@ class _ScanQRScreenState
 
       odometerImageBytes =
           null;
+
+      isReadingOdometer =
+          false;
 
       // --------------------------------------------------------
       // DRIVER
