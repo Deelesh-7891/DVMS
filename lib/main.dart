@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
+import 'package:upgrader/upgrader.dart';
 
 import 'screens/auth/login_screen.dart';
 import 'screens/driver/driver_home_screen.dart';
@@ -8,13 +9,27 @@ import 'screens/security/security_home_screen.dart';
 import 'screens/corporate_admin/corporate_admin_home_screen.dart';
 import 'screens/branch_admin/branch_admin_home_screen.dart';
 import 'screens/accounts/accounts_home_screen.dart';
+import 'screens/state_admin/state_admin_home_screen.dart';
 
-import 'services/app_update_service.dart';
+import 'core/auth/user_role.dart';
+
+// ============================================================
+// MAIN
+// ============================================================
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // ==========================================================
+  // TIMEZONE
+
+  // ==========================================================
+
   tz.initializeTimeZones();
+
+  // ==========================================================
+  // RUN APP
+  // ==========================================================
 
   runApp(
     const MyApp(),
@@ -35,7 +50,110 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
 
+      // ======================================================
+      // APP TITLE
+      // ======================================================
+
       title: 'Demo Vehicle Management',
+
+      // ======================================================
+      // APP UPDATE
+      //
+      // IMPORTANT:
+      // UpgradeAlert is placed in builder so that it stays
+      // above the complete Navigator.
+      //
+      // Therefore:
+      //
+      // Splash
+      // Login
+      // Driver Home
+      // Security Home
+      // Admin Home
+      //
+      // sab screens ke upar update popup show ho sakta hai.
+      // ======================================================
+
+      builder: (
+        BuildContext context,
+        Widget? child,
+      ) {
+        return UpgradeAlert(
+          upgrader: Upgrader(
+            // ==================================================
+            // CHECK STORE VERSION
+            // ==================================================
+
+            checkOnResume: true,
+
+            // ==================================================
+            // DEBUG
+            //
+            // Production me false rakhein.
+            // ==================================================
+
+            debugDisplayAlways: false,
+            debugDisplayOnce: false,
+            debugLogging: false,
+
+            // ==================================================
+            // POPUP AGAIN AFTER LATER
+            // ==================================================
+
+            durationUntilAlertAgain:
+                const Duration(
+              days: 1,
+            ),
+
+            // ==================================================
+            // UPDATE LANGUAGE
+            // ==================================================
+
+            languageCode: 'en',
+
+            // ==================================================
+            // OPTIONAL:
+            // Minimum supported version.
+            //
+            // Agar aap force update chahte hain to baad me
+            // isko configure kar sakte hain.
+            // ==================================================
+
+            // minAppVersion: '1.0.3',
+          ),
+
+          // ====================================================
+          // BUTTONS
+          // ====================================================
+
+          showIgnore: true,
+          showLater: true,
+          showReleaseNotes: true,
+
+          // ====================================================
+          // MATERIAL STYLE
+          // Android screenshot jaisa
+          // ====================================================
+
+          dialogStyle: UpgradeDialogStyle.material,
+
+          // ====================================================
+          // DIALOG OUTSIDE TAP
+          //
+          // false = outside tap se popup close nahi hoga.
+          // User ko IGNORE / LATER / UPDATE NOW me se
+          // koi action lena hoga.
+          // ====================================================
+
+          barrierDismissible: false,
+
+          // ====================================================
+          // ACTUAL APP
+          // ====================================================
+
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
 
       // ========================================================
       // SPLASH
@@ -60,8 +178,16 @@ class SplashScreen extends StatefulWidget {
       _SplashScreenState();
 }
 
+// ============================================================
+// SPLASH STATE
+// ============================================================
+
 class _SplashScreenState
     extends State<SplashScreen> {
+
+  // ==========================================================
+  // INIT STATE
+  // ==========================================================
 
   @override
   void initState() {
@@ -81,24 +207,22 @@ class _SplashScreenState
 
     await Future.delayed(
       const Duration(
-        milliseconds: 500,
+        milliseconds: 800,
       ),
     );
 
     if (!mounted) return;
 
     // ========================================================
-    // CHECK APP UPDATE
-    // ========================================================
-
-    await AppUpdateService.checkForUpdate(
-      context,
-    );
-
-    if (!mounted) return;
-
-    // ========================================================
     // CHECK LOGIN
+    //
+    // APP UPDATE IS NOW HANDLED GLOBALLY BY UpgradeAlert.
+    //
+    // Therefore yahan:
+    //
+    // AppUpdateService.checkForUpdate(context)
+    //
+    // call nahi karna hai.
     // ========================================================
 
     await checkLogin();
@@ -109,14 +233,16 @@ class _SplashScreenState
   // ==========================================================
 
   Future<void> checkLogin() async {
-
     try {
-    
+      // ======================================================
+      // GET PREFERENCES
+      // ======================================================
+
       final prefs =
           await SharedPreferences.getInstance();
 
       // ======================================================
-      // GET LOGIN DATA
+      // LOGIN
       // ======================================================
 
       final bool isLogin =
@@ -125,6 +251,10 @@ class _SplashScreenState
               ) ??
               false;
 
+      // ======================================================
+      // TOKEN
+      // ======================================================
+
       final String token =
           prefs.getString(
                 "token",
@@ -132,7 +262,7 @@ class _SplashScreenState
               "";
 
       // ======================================================
-      // ROLE
+      // ROLE NAME
       // ======================================================
 
       String role =
@@ -153,7 +283,14 @@ class _SplashScreenState
                 "";
       }
 
+      // ======================================================
+      // CLEAN ROLE
+      // ======================================================
+
       role = role.trim();
+
+      final userRole =
+          UserRole.fromApiValue(role);
 
       // ======================================================
       // DEBUG
@@ -198,7 +335,7 @@ class _SplashScreenState
       );
 
       // ======================================================
-      // WAIT
+      // SMALL WAIT
       // ======================================================
 
       await Future.delayed(
@@ -210,12 +347,12 @@ class _SplashScreenState
       if (!mounted) return;
 
       // ======================================================
-      // NOT LOGIN
+      // NOT LOGGED IN
       // ======================================================
 
       if (!isLogin ||
           token.isEmpty ||
-          role.isEmpty) {
+          userRole == null) {
 
         debugPrint(
           "SESSION INVALID -> LOGIN",
@@ -241,9 +378,14 @@ class _SplashScreenState
       );
 
       openHomePage(
-        role,
+        userRole,
       );
+
     } catch (e) {
+      // ======================================================
+      // LOGIN CHECK ERROR
+      // ======================================================
+
       debugPrint(
         "CHECK LOGIN ERROR: $e",
       );
@@ -265,17 +407,21 @@ class _SplashScreenState
   // ==========================================================
 
   void openHomePage(
-    String role,
+    UserRole role,
   ) {
     Widget page;
 
-    switch (role.trim()) {
+    // ========================================================
+    // ROLE SWITCH
+    // ========================================================
+
+    switch (role) {
 
       // ======================================================
       // CORPORATE ADMIN
       // ======================================================
 
-      case "CorporateAdmin":
+      case UserRole.corporateAdmin:
 
         page =
             const CorporateAdminHomeScreen();
@@ -286,7 +432,7 @@ class _SplashScreenState
       // BRANCH ADMIN
       // ======================================================
 
-      case "BranchAdmin":
+      case UserRole.branchAdmin:
 
         page =
             const BranchAdminHomeScreen();
@@ -297,7 +443,7 @@ class _SplashScreenState
       // DRIVER
       // ======================================================
 
-      case "Driver":
+      case UserRole.driver:
 
         page =
             const DriverHomeScreen();
@@ -308,7 +454,7 @@ class _SplashScreenState
       // SECURITY
       // ======================================================
 
-      case "Security":
+      case UserRole.security:
 
         page =
             const SecurityHomeScreen();
@@ -319,7 +465,7 @@ class _SplashScreenState
       // ACCOUNTS
       // ======================================================
 
-      case "Accounts":
+      case UserRole.accounts:
 
         page =
             const AccountsHomeScreen();
@@ -330,25 +476,12 @@ class _SplashScreenState
       // STATE ADMIN
       // ======================================================
 
-      case "StateAdmin":
+      case UserRole.stateAdmin:
 
         page =
-            const LoginScreen();
+            const StateAdminHomeScreen();
 
         break;
-
-      // ======================================================
-      // UNKNOWN
-      // ======================================================
-
-      default:
-
-        debugPrint(
-          "UNKNOWN ROLE: $role",
-        );
-
-        page =
-            const LoginScreen();
     }
 
     // ========================================================

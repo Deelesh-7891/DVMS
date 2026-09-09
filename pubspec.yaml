@@ -1,8 +1,8 @@
-name: demo_vehicle_management
-description: A demo app for managing vehicles.
+name: pm_demo_vehicle_management
+description: PM Demo Vehicle Management.
 publish_to: 'none'
 
-version: 1.0.0+37
+version: 1.0.4+40
 
 environment:
   sdk: ">=3.9.0 <4.0.0"
@@ -29,9 +29,10 @@ dependencies:
   timezone: ^0.10.1
   geolocator: ^13.0.2
   speech_to_text: ^7.4.0
-  # upgrader: ^13.7.0
+  upgrader: ^13.7.0
   in_app_update: ^4.2.5
   google_mlkit_text_recognition: ^0.15.0
+  flutter_tts: ^4.2.3
 
 dev_dependencies:
   flutter_test:

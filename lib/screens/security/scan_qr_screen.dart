@@ -172,45 +172,361 @@ class _ScanQRScreenState
   String? resultNewStatus;
   bool showSuccessOverlay = false;
 
+
   // ==========================================================
-  // VOICE IN/OUT — hands-free alternative to tapping SAVE MOVEMENT.
-  // The backend auto-detects direction anyway; this just lets the guard
-  // say "in" or "out" (or Hindi "andar"/"bahar") to confirm and submit
-  // instead of tapping, and passes it through as an explicit override.
+  // SPEECH TO TEXT
   // ==========================================================
 
-  final stt.SpeechToText _voiceSubmit = stt.SpeechToText();
-  bool isListeningForVoiceSubmit = false;
+  final stt.SpeechToText _speech = stt.SpeechToText();
+  bool isListening = false;
+  bool _speechInitialized = false;
+  String? _activeSpeechField;
+  String _speechLocaleId = 'en_IN';
 
-  Future<void> _startVoiceSubmit() async {
-    final available = await _voiceSubmit.initialize();
-    if (!available) {
-      showMessage(
-        "Voice input is not available on this device.",
-        isError: true,
+  Future<void> _initSpeech() async {
+    try {
+      _speechInitialized = await _speech.initialize(
+        onStatus: (status) {
+          if ((status == 'done' || status == 'notListening') && mounted) {
+            setState(() {
+              isListening = false;
+              _activeSpeechField = null;
+            });
+          }
+        },
+        onError: (error) {
+          if (mounted) {
+            setState(() {
+              isListening = false;
+              _activeSpeechField = null;
+            });
+            showMessage(
+              'Speech error: ${error.errorMsg}',
+              isError: true,
+            );
+          }
+        },
       );
-      return;
+    } catch (e) {
+      debugPrint('SPEECH INIT ERROR: $e');
+      _speechInitialized = false;
+    }
+  }
+
+  Future<void> _stopSpeech() async {
+    try {
+      await _speech.stop();
+    } catch (_) {}
+    if (mounted) {
+      setState(() {
+        isListening = false;
+        _activeSpeechField = null;
+      });
+    }
+  }
+
+  String _normalizeNumberSpeech(String input) {
+    final text = input.toLowerCase().trim();
+    const map = <String, String>{
+      'zero': '0', 'oh': '0', 'o': '0', 'शून्य': '0', 'जीरो': '0',
+      'one': '1', 'एक': '1',
+      'two': '2', 'to': '2', 'too': '2', 'दो': '2',
+      'three': '3', 'तीन': '3',
+      'four': '4', 'for': '4', 'चार': '4',
+      'five': '5', 'पांच': '5', 'पाँच': '5',
+      'six': '6', 'छह': '6', 'छः': '6',
+      'seven': '7', 'सात': '7',
+      'eight': '8', 'आठ': '8',
+      'nine': '9', 'नौ': '9',
+    };
+
+    if (RegExp(r'^\s*[0-9, .-]+\s*$').hasMatch(text)) {
+      return text.replaceAll(RegExp(r'[^0-9]'), '');
     }
 
-    setState(() => isListeningForVoiceSubmit = true);
+    final tokens = text
+        .replaceAll(RegExp(r'[,.-]'), ' ')
+        .split(RegExp(r'\s+'));
 
-    await _voiceSubmit.listen(
-      localeId: "en_IN",
-      onResult: (result) async {
-        if (!result.finalResult) return;
+    final out = StringBuffer();
+    for (final token in tokens) {
+      if (map.containsKey(token)) {
+        out.write(map[token]);
+      } else if (RegExp(r'^\d+$').hasMatch(token)) {
+        out.write(token);
+      }
+    }
+    return out.isNotEmpty
+        ? out.toString()
+        : text.replaceAll(RegExp(r'[^0-9]'), '');
+  }
 
-        final text = result.recognizedWords.toLowerCase();
-        setState(() => isListeningForVoiceSubmit = false);
-        await _voiceSubmit.stop();
+  String? _movementFromSpeech(String text) {
+    final v = text.trim().toLowerCase().replaceAll(
+          RegExp(r'[\s\-_]'),
+          '',
+        );
 
-        if (RegExp(r"\bin\b|andar|entry").hasMatch(text)) {
-          saveMovement(directionOverride: "Entry");
-        } else if (RegExp(r"\bout\b|bahar|exit").hasMatch(text)) {
-          saveMovement(directionOverride: "Exit");
-        } else if (mounted) {
-          showMessage(
-            'Didn\'t catch that ("$text") — say "in" or "out", or tap Save.',
-            isError: true,
+    if (v.contains('demo') || text.contains('डेमो')) return 'Demo';
+    if (v.contains('testdrive') ||
+        text.contains('टेस्ट ड्राइव') ||
+        text.contains('टेस्टड्राइव')) {
+      return 'TestDrive';
+    }
+    if (v.contains('service') || text.contains('सर्विस')) return 'Service';
+    if (v.contains('workshop') || text.contains('वर्कशॉप')) return 'Workshop';
+    if (v.contains('interbranch') ||
+        text.contains('इंटर ब्रांच') ||
+        text.contains('इंटरब्रांच')) {
+      return 'InterBranch';
+    }
+    return null;
+  }
+
+  Future<void> _listenTextField({
+    required String fieldName,
+    required TextEditingController controller,
+    bool numberOnly = false,
+  }) async {
+    try {
+      if (isListening) {
+        await _stopSpeech();
+        await Future.delayed(const Duration(milliseconds: 250));
+      }
+
+      if (!_speechInitialized) {
+        await _initSpeech();
+      }
+
+      if (!_speechInitialized || !mounted) return;
+
+      setState(() {
+        isListening = true;
+        _activeSpeechField = fieldName;
+      });
+
+      await _speech.listen(
+        localeId: _speechLocaleId,
+        listenMode: stt.ListenMode.dictation,
+        partialResults: true,
+        cancelOnError: true,
+        listenFor: const Duration(seconds: 30),
+        pauseFor: const Duration(seconds: 3),
+        onResult: (result) {
+          if (!mounted) return;
+
+          var value = result.recognizedWords.trim();
+          if (value.isEmpty) return;
+
+          if (numberOnly) {
+            value = _normalizeNumberSpeech(value);
+          }
+
+          controller.value = TextEditingValue(
+            text: value,
+            selection: TextSelection.collapsed(offset: value.length),
+          );
+
+          if (result.finalResult) {
+            _stopSpeech();
+          }
+        },
+      );
+    } catch (e) {
+      await _stopSpeech();
+    }
+  }
+
+  Future<void> _listenMovementType() async {
+    try {
+      if (isListening) {
+        await _stopSpeech();
+        await Future.delayed(const Duration(milliseconds: 250));
+      }
+
+      if (!_speechInitialized) await _initSpeech();
+      if (!_speechInitialized || !mounted) return;
+
+      setState(() {
+        isListening = true;
+        _activeSpeechField = 'movementType';
+      });
+
+      await _speech.listen(
+        localeId: _speechLocaleId,
+        listenMode: stt.ListenMode.dictation,
+        partialResults: true,
+        cancelOnError: true,
+        listenFor: const Duration(seconds: 15),
+        pauseFor: const Duration(seconds: 3),
+        onResult: (result) {
+          if (!mounted) return;
+
+          final movement = _movementFromSpeech(result.recognizedWords);
+          if (movement != null) {
+            setState(() {
+              selectedMovementType = movement;
+              otherLocationController.clear();
+              otherCityId = null;
+              selectedOtherLocation = null;
+            });
+          }
+
+          if (result.finalResult) {
+            _stopSpeech();
+          }
+        },
+      );
+    } catch (_) {
+      await _stopSpeech();
+    }
+  }
+
+  Widget _speechButton({
+    required String fieldName,
+    required TextEditingController controller,
+    bool numberOnly = false,
+  }) {
+    final active = isListening && _activeSpeechField == fieldName;
+
+    return IconButton(
+      tooltip: active ? 'Stop listening' : 'Speak',
+      icon: Icon(
+        active ? Icons.mic : Icons.mic_none,
+        color: active ? Colors.red : const Color(0xff2757B0),
+        size: 24,
+      ),
+      onPressed: () async {
+        if (active) {
+          await _stopSpeech();
+        } else {
+          await _listenTextField(
+            fieldName: fieldName,
+            controller: controller,
+            numberOnly: numberOnly,
+          );
+        }
+      },
+    );
+  }
+
+  Widget _movementSpeechButton() {
+    final active = isListening && _activeSpeechField == 'movementType';
+
+    return IconButton(
+      tooltip: active ? 'Stop listening' : 'Speak movement type',
+      icon: Icon(
+        active ? Icons.mic : Icons.mic_none,
+        color: active ? Colors.red : const Color(0xff2757B0),
+        size: 24,
+      ),
+      onPressed: () async {
+        if (active) {
+          await _stopSpeech();
+        } else {
+          await _listenMovementType();
+        }
+      },
+    );
+  }
+
+
+  Future<void> _listenGate() async {
+    try {
+      if (isListening) {
+        await _stopSpeech();
+        await Future.delayed(const Duration(milliseconds: 250));
+      }
+
+      if (!_speechInitialized) await _initSpeech();
+      if (!_speechInitialized || !mounted) return;
+
+      setState(() {
+        isListening = true;
+        _activeSpeechField = 'gate';
+      });
+
+      await _speech.listen(
+        localeId: _speechLocaleId,
+        listenMode: stt.ListenMode.dictation,
+        partialResults: true,
+        cancelOnError: true,
+        listenFor: const Duration(seconds: 15),
+        pauseFor: const Duration(seconds: 3),
+        onResult: (result) {
+          if (!mounted) return;
+          final spoken = result.recognizedWords.trim();
+          if (spoken.isEmpty) return;
+
+          // Match the spoken gate against loaded city/location names.
+          final q = spoken.toLowerCase();
+          final matches = allCities.where((city) {
+            final cityName = city.cityName.toLowerCase();
+            final locationName = city.locationName.toLowerCase();
+            return cityName.contains(q) ||
+                locationName.contains(q) ||
+                q.contains(cityName) ||
+                q.contains(locationName);
+          }).toList();
+
+          if (matches.length == 1) {
+            setState(() {
+              gateCityName = matches.first.cityName.isNotEmpty
+                  ? matches.first.cityName
+                  : matches.first.locationName;
+              stateId = matches.first.stateId;
+            });
+          }
+
+          if (result.finalResult) _stopSpeech();
+        },
+      );
+    } catch (_) {
+      await _stopSpeech();
+    }
+  }
+
+
+  Widget _gateSpeechButton() {
+    final active = isListening && _activeSpeechField == 'gate';
+
+    return IconButton(
+      tooltip: active ? 'Stop listening' : 'Speak gate',
+      icon: Icon(
+        active ? Icons.mic : Icons.mic_none,
+        color: active ? Colors.red : const Color(0xff2757B0),
+        size: 24,
+      ),
+      onPressed: () async {
+        if (active) {
+          await _stopSpeech();
+        } else {
+          await _listenGate();
+        }
+      },
+    );
+  }
+
+  Widget _locationSpeechButton({
+    required String fieldName,
+    required TextEditingController controller,
+  }) {
+    final active = isListening && _activeSpeechField == fieldName;
+
+    return IconButton(
+      tooltip: active ? 'Stop listening' : 'Speak location',
+      icon: Icon(
+        active ? Icons.mic : Icons.mic_none,
+        color: active ? Colors.red : const Color(0xff2757B0),
+        size: 24,
+      ),
+      onPressed: () async {
+        if (active) {
+          await _stopSpeech();
+        } else {
+          await _listenTextField(
+            fieldName: fieldName,
+            controller: controller,
           );
         }
       },
@@ -266,6 +582,7 @@ class _ScanQRScreenState
   void initState() {
     super.initState();
 
+    _initSpeech();
     loadLoginData();
 
     loadCities();
@@ -842,17 +1159,16 @@ class _ScanQRScreenState
 
           decoration:
               _inputDecoration(
-
-            hint:
-                hint,
-
-            icon:
-                icon,
-
-            suffix:
-                isLoadingCities
-                    ? "Loading..."
-                    : null,
+            hint: hint,
+            icon: icon,
+            suffix: isLoadingCities ? "Loading..." : null,
+          ).copyWith(
+            suffixIcon: isGateField
+                ? null
+                : _locationSpeechButton(
+                    fieldName: "otherLocation",
+                    controller: controller,
+                  ),
           ),
         );
       },
@@ -1382,12 +1698,7 @@ class _ScanQRScreenState
   // ============================================================
   // SAVE MOVEMENT
   // ============================================================
-
-  // directionOverride: set when the guard used the voice "in"/"out" button
-  // instead of tapping Save — passed straight through to the server, which
-  // otherwise auto-detects it. Null (the normal tap-to-save path) means
-  // let the backend decide.
-  Future<void> saveMovement({String? directionOverride}) async {
+  Future<void> saveMovement() async {
 
     // ==========================================================
     // VEHICLE CHECK
@@ -1678,18 +1989,13 @@ class _ScanQRScreenState
         vehicleId:
             vehicleId,
 
-        qrToken:
-            qrToken,
+        // qrToken: qrToken,
 
         txnDate:
             DateTime.now()
                 .toIso8601String(),
-
-        // Null unless the guard used the voice "in"/"out" button — then
-        // the server auto-detects Entry/Exit from the vehicle's own last
-        // movement instead.
-        direction:
-            directionOverride,
+        // Direction is auto-detected by the backend.
+        direction: null,
 
         // ======================================================
         // OTHER LOCATION
@@ -1881,7 +2187,7 @@ class _ScanQRScreenState
           width: double.infinity,
           padding: const EdgeInsets.symmetric(
             horizontal: 14,
-            vertical: 15,
+            vertical: 7,
           ),
           decoration: BoxDecoration(
             color: Colors.grey.shade100,
@@ -1890,16 +2196,22 @@ class _ScanQRScreenState
           ),
           child: Row(
             children: [
-              const Icon(Icons.location_on, color: Color(0xff2458A6)),
+              const Icon(
+                Icons.location_on,
+                color: Color(0xff2458A6),
+              ),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
                   gateCityName.trim().isEmpty
                       ? "Gate location not set"
                       : gateCityName,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
+              _gateSpeechButton(),
             ],
           ),
         ),
@@ -2085,7 +2397,31 @@ class _ScanQRScreenState
 
       appBar:
           AppBar(
-
+        actions: [
+          PopupMenuButton<String>(
+            tooltip: 'Voice language',
+            icon: Text(
+              _speechLocaleId == 'hi_IN' ? 'हिं' : 'EN',
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            onSelected: (value) {
+              setState(() => _speechLocaleId = value);
+            },
+            itemBuilder: (context) => const [
+              PopupMenuItem(
+                value: 'en_IN',
+                child: Text('English (India)'),
+              ),
+              PopupMenuItem(
+                value: 'hi_IN',
+                child: Text('हिंदी (India)'),
+              ),
+            ],
+          ),
+        ],
         backgroundColor:
             const Color(
           0xff12386B,
@@ -2320,39 +2656,6 @@ class _ScanQRScreenState
                             child:
                                 const Text(
                               "SAVE MOVEMENT",
-                            ),
-                          ),
-                        ),
-
-                        const SizedBox(
-                          height: 10,
-                        ),
-
-                        // ==================================================
-                        // VOICE IN/OUT — hands-free alternative to tapping
-                        // Save above. Backend still auto-detects direction
-                        // either way; this just lets the guard confirm by
-                        // voice instead.
-                        // ==================================================
-
-                        SizedBox(
-                          width: double.infinity,
-                          child: OutlinedButton.icon(
-                            onPressed: isListeningForVoiceSubmit
-                                ? null
-                                : _startVoiceSubmit,
-                            icon: Icon(
-                              isListeningForVoiceSubmit
-                                  ? Icons.mic
-                                  : Icons.mic_none,
-                              color: isListeningForVoiceSubmit
-                                  ? Colors.red
-                                  : null,
-                            ),
-                            label: Text(
-                              isListeningForVoiceSubmit
-                                  ? 'Listening… say "in" or "out"'
-                                  : 'Say "in" or "out" to save',
                             ),
                           ),
                         ),
@@ -2601,12 +2904,10 @@ class _ScanQRScreenState
 
               decoration:
                   _inputDecoration(
-
-                hint:
-                    "Select movement type",
-
-                icon:
-                    Icons.swap_horiz,
+                hint: "Select movement type",
+                icon: Icons.swap_horiz,
+              ).copyWith(
+                suffixIcon: _movementSpeechButton(),
               ),
 
               items:
@@ -2695,7 +2996,22 @@ class _ScanQRScreenState
                     Icons.speed,
 
                 suffix:
-                    "KM",
+                    "",
+              ).copyWith(
+                suffixIcon: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _speechButton(
+                      fieldName: "odometer",
+                      controller: odometerController,
+                      numberOnly: true,
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(right: 8),
+                      child: Text(""),
+                    ),
+                  ],
+                ),
               ),
             ),
 
@@ -2738,6 +3054,11 @@ class _ScanQRScreenState
 
                 icon:
                     Icons.person_outline,
+              ).copyWith(
+                suffixIcon: _speechButton(
+                  fieldName: "driverName",
+                  controller: driverNameController,
+                ),
               ),
             ),
 
@@ -2770,6 +3091,11 @@ class _ScanQRScreenState
 
                 icon:
                     Icons.person_outline,
+              ).copyWith(
+                suffixIcon: _speechButton(
+                  fieldName: "salesExecutive",
+                  controller: salesExecutiveController,
+                ),
               ),
             ),
 
@@ -2802,6 +3128,11 @@ class _ScanQRScreenState
 
                 icon:
                     Icons.person,
+              ).copyWith(
+                suffixIcon: _speechButton(
+                  fieldName: "customerName",
+                  controller: customerNameController,
+                ),
               ),
             ),
 
@@ -2837,6 +3168,11 @@ class _ScanQRScreenState
 
                 icon:
                     Icons.description_outlined,
+              ).copyWith(
+                suffixIcon: _speechButton(
+                  fieldName: "purpose",
+                  controller: purposeController,
+                ),
               ),
             ),
           ],
@@ -3151,10 +3487,9 @@ class _ScanQRScreenState
 
   @override
   void dispose() {
+    _speech.stop();
 
     controller.dispose();
-
-    _voiceSubmit.stop();
 
     odometerController
         .dispose();

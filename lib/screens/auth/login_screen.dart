@@ -6,7 +6,8 @@ import '../security/security_home_screen.dart';
 import '../corporate_admin/corporate_admin_home_screen.dart';
 import '../branch_admin/branch_admin_home_screen.dart';
 import '../accounts/accounts_home_screen.dart';
-
+import '../state_admin/state_admin_home_screen.dart';
+import '../../core/auth/user_role.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../services/location_service.dart';
 
@@ -719,14 +720,16 @@ Future<void> login() async {
                 user["GeoRadiusMeters"].toString(),
               );
 
-    // ========================================================
-    // ROLE CHECK
-    // ========================================================
-
-    if (roleName.isEmpty) {
+    // Reject unknown roles and inactive accounts before saving a session.
+    // The server must make the same decision from the JWT/database.
+    if (UserRole.fromApiValue(roleName) == null) {
       throw Exception(
-        "RoleName not found in login response",
+        "Your account does not have a permitted role.",
       );
+    }
+
+    if (!isActive) {
+      throw Exception("This account is inactive. Please contact an administrator.");
     }
 
     // ========================================================
@@ -1040,8 +1043,8 @@ Future<void> login() async {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-            builder: (_) =>
-                const BranchAdminHomeScreen(),
+            // builder: (_) => const BranchAdminHomeScreen(),
+            builder: (_) => const CorporateAdminHomeScreen(),
           ),
           (route) => false,
         );
@@ -1088,11 +1091,14 @@ Future<void> login() async {
         break;
 
       case "StateAdmin":
-
-        showMessage(
-          "StateAdmin login successful",
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            // builder: (_) => const StateAdminHomeScreen(),
+            builder: (_) => const CorporateAdminHomeScreen(),
+          ),
+          (route) => false,
         );
-
         break;
 
       default:

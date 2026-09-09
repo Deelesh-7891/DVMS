@@ -803,7 +803,7 @@ Future<AttachmentUploadResult> uploadAttachment({
 Future<Map<String, dynamic>> movementSave({
   required int branchId,
   int? vehicleId,
-  required String qrToken,
+//  String qrToken,
   String? direction,
   required String txnDate,
   // Location optional
@@ -865,7 +865,7 @@ Future<Map<String, dynamic>> movementSave({
   final Map<String, dynamic> body = {
     'branchId': branchId,
     'vehicleId': vehicleId,
-    'qrToken': qrToken,
+    // 'qrToken': qrToken,
     if (direction != null) 'direction': direction,
     'txnDate': txnDate,
 
