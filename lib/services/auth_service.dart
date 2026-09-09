@@ -1152,6 +1152,217 @@ Future<Map<String, dynamic>> movementSave({
       throw Exception(response.body);
     }
   }
+ Future<List<dynamic>> getusers() async
+ {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    final response = await http.get(
+      Uri.parse("$baseUrl/users"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    );
+    print("Response: ${response.body}");
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      if (json is List) return json;
+      return json["data"] as List<dynamic>;
+    } else {
+      throw Exception(response.body);
+    }
+  }
+ Future<List<dynamic>> getchallan() async
+ {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    final response = await http.get(
+      Uri.parse("$baseUrl/challan"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    );
+    print("Response: ${response.body}");
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      if (json is List) return json;
+      return json["data"] as List<dynamic>;
+    } else {
+      throw Exception(response.body);
+    }
+  }
+ Future<List<dynamic>> getpuc() async
+ {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    final response = await http.get(
+      Uri.parse("$baseUrl/puc"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    );
+    print("Response: ${response.body}");
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      if (json is List) return json;
+      return json["data"] as List<dynamic>;
+    } else {
+      throw Exception(response.body);
+    }
+  }
+ Future<List<dynamic>> getfastag() async
+ {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    final response = await http.get(
+      Uri.parse("$baseUrl/fastag"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    );
+    print("Response: ${response.body}");
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      if (json is List) return json;
+      return json["data"] as List<dynamic>;
+    } else {
+      throw Exception(response.body);
+    }
+  }
+ Future<List<dynamic>> getmileagevariance() async
+ {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    final response = await http.get(
+      Uri.parse("$baseUrl/reports/mileage-variance"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    );
+    print("Response: ${response.body}");
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      if (json is List) return json;
+      return json["data"] as List<dynamic>;
+    } else {
+      throw Exception(response.body);
+    }
+  }
+ Future<List<dynamic>> getfitness() async
+ {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    final response = await http.get(
+      Uri.parse("$baseUrl/fitness"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    );
+    print("Response: ${response.body}");
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      if (json is List) return json;
+      return json["data"] as List<dynamic>;
+    } else {
+      throw Exception(response.body);
+    }
+  }
+
+ Future<List<dynamic>> getaccidents() async
+ {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    final response = await http.get(
+      Uri.parse("$baseUrl/accidents"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    );
+    print("Response: ${response.body}");
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      if (json is List) return json;
+      return json["data"] as List<dynamic>;
+    } else {
+      throw Exception(response.body);
+    }
+  }
+ Future<List<dynamic>> getexpenses() async
+ {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    final response = await http.get(
+      Uri.parse("$baseUrl/expenses"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    );
+    print("Response: ${response.body}");
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      if (json is List) return json;
+      return json["data"] as List<dynamic>;
+    } else {
+      throw Exception(response.body);
+    }
+  }
+ Future<List<dynamic>> getemployees() async
+ {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    final response = await http.get(
+      Uri.parse("$baseUrl/employees"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    );
+    print("Response: ${response.body}");
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      if (json is List) return json;
+      return json["data"] as List<dynamic>;
+    } else {
+      throw Exception(response.body);
+    }
+  }
+ Future<List<dynamic>> getallocations() async
+ {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    final response = await http.get(
+      Uri.parse("$baseUrl/allocations"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    );
+    print("Response: ${response.body}");
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      if (json is List) return json;
+      return json["data"] as List<dynamic>;
+    } else {
+      throw Exception(response.body);
+    }
+  }
 
   /*================= Report Damage =============*/
   // POST /accidents only reads VehicleId, CapturedAt, Description and

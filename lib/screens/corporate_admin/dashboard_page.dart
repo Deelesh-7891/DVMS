@@ -10,6 +10,25 @@ import 'insurance_list_screen.dart';
 import 'reports_screen.dart';
 import 'qr_movement.dart';
 
+import 'fastag.dart';
+import 'challans.dart';
+import 'puc.dart';
+import 'expenses.dart';
+import 'fitness.dart';
+import 'employees.dart';
+import 'accidents.dart';
+import 'allocations.dart';
+import 'users.dart';
+import 'mileage.dart';
+
+
+
+
+
+
+
+
+
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -343,6 +362,7 @@ final AuthService _authService = AuthService();
         );
       },
     ),
+
       actionCard(
       Icons.analytics,
       "QR Movement",
@@ -356,6 +376,151 @@ final AuthService _authService = AuthService();
         );
       },
     ),
+
+    ///////////////////
+ actionCard(
+  Icons.local_atm,
+  "Fastag",
+  Colors.teal,
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const FastagScreen(),
+      ),
+    );
+  },
+),
+
+actionCard(
+  Icons.receipt_long,
+  "Challans",
+  Colors.red,
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const ChallansScreen(),
+      ),
+    );
+  },
+),
+
+actionCard(
+  Icons.verified,
+  "PUC",
+  Colors.green,
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const PucScreen(),
+      ),
+    );
+  },
+),
+
+actionCard(
+  Icons.account_balance_wallet,
+  "Expenses",
+  Colors.orange,
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const ExpensesScreen(),
+      ),
+    );
+  },
+),
+
+actionCard(
+  Icons.car_repair,
+  "Fitness",
+  Colors.blue,
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const FitnessScreen(),
+      ),
+    );
+  },
+),
+
+actionCard(
+  Icons.people,
+  "Employees",
+  Colors.purple,
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const EmployeesScreen(),
+      ),
+    );
+  },
+),
+
+actionCard(
+  Icons.car_crash,
+  "Accidents",
+  Colors.redAccent,
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const AccidentsScreen(),
+      ),
+    );
+  },
+),
+
+actionCard(
+  Icons.assignment,
+  "Allocations",
+  Colors.indigo,
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const AllocationsScreen(),
+      ),
+    );
+  },
+),
+
+actionCard(
+  Icons.people_alt,
+  "Users",
+  Colors.deepOrange,
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const UsersScreen(),
+      ),
+    );
+  },
+),
+
+actionCard(
+  Icons.speed,
+  "Mileage",
+  Colors.teal,
+  onTap: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const MileageScreen(),
+      ),
+    );
+  },
+),
+      
+
+
+
 
                       ],
                     ),

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-import 'package:demo_vehicle_management/models/city_model.dart';
+import 'package:pm_demo_vehicle_management/models/city_model.dart';
 
 class CityService {
   // static const String citiesUrl = 'https://premerp.in/dvms/api/cities';

@@ -2,7 +2,7 @@ name: pm_demo_vehicle_management
 description: PM Demo Vehicle Management.
 publish_to: 'none'
 
-version: 1.0.4+40
+version: 1.0.4+42
 
 environment:
   sdk: ">=3.9.0 <4.0.0"
