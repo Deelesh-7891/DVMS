@@ -7,9 +7,9 @@ import 'screens/auth/login_screen.dart';
 import 'screens/driver/driver_home_screen.dart';
 import 'screens/security/security_home_screen.dart';
 import 'screens/corporate_admin/corporate_admin_home_screen.dart';
-import 'screens/branch_admin/branch_admin_home_screen.dart';
+// import 'screens/branch_admin/branch_admin_home_screen.dart';
 import 'screens/accounts/accounts_home_screen.dart';
-import 'screens/state_admin/state_admin_home_screen.dart';
+// import 'screens/state_admin/state_admin_home_screen.dart';
 
 import 'core/auth/user_role.dart';
 
@@ -115,6 +115,7 @@ class MyApp extends StatelessWidget {
             // OPTIONAL:
             // Minimum supported version.
             //
+
             // Agar aap force update chahte hain to baad me
             // isko configure kar sakte hain.
             // ==================================================
@@ -434,8 +435,7 @@ class _SplashScreenState
 
       case UserRole.branchAdmin:
 
-        page =
-            const BranchAdminHomeScreen();
+        page = const CorporateAdminHomeScreen();
 
         break;
 
@@ -445,8 +445,7 @@ class _SplashScreenState
 
       case UserRole.driver:
 
-        page =
-            const DriverHomeScreen();
+        page = const DriverHomeScreen();
 
         break;
 
@@ -456,8 +455,7 @@ class _SplashScreenState
 
       case UserRole.security:
 
-        page =
-            const SecurityHomeScreen();
+        page = const SecurityHomeScreen();
 
         break;
 
@@ -467,8 +465,7 @@ class _SplashScreenState
 
       case UserRole.accounts:
 
-        page =
-            const AccountsHomeScreen();
+        page = const AccountsHomeScreen();
 
         break;
 
@@ -478,8 +475,7 @@ class _SplashScreenState
 
       case UserRole.stateAdmin:
 
-        page =
-            const StateAdminHomeScreen();
+        page = const CorporateAdminHomeScreen();
 
         break;
     }

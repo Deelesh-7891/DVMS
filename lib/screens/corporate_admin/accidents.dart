@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../services/auth_service.dart';
+import '../security/report_accident_screen.dart';
 
 class AccidentsScreen extends StatefulWidget {
   const AccidentsScreen({super.key});
@@ -84,6 +85,25 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
       });
 
       debugPrint("Accidents API Error: $e");
+    }
+  }
+
+  // =========================================================
+  // OPEN ADD ACCIDENT SCREEN
+  // =========================================================
+
+  Future<void> openAddAccident() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ReportAccidentScreen(),
+      ),
+    );
+
+    // Add Accident screen se true return hua
+    // to accident list refresh hogi.
+    if (result == true && mounted) {
+      await loadAccidents();
     }
   }
 
@@ -421,199 +441,461 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
   // =========================================================
 
   Widget buildHeader() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        20,
-        20,
-        20,
-        12,
-      ),
-      child: Row(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
-        children: [
-          const Expanded(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
+
+        // Small mobile: stack title, button and date/profile.
+        if (width < 400) {
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 10),
             child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   "Accidents",
+                  maxLines: 1,
+                  softWrap: false,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    fontSize: 30,
+                    fontSize: 24,
                     fontWeight: FontWeight.w800,
                     color: Color(0xff111827),
                   ),
                 ),
-
-                SizedBox(height: 3),
-
-                Text(
-                  "Accident records and incident monitoring",
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Color(0xff64748b),
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: openAddAccident,
+                    icon: const Icon(Icons.add, size: 18),
+                    label: const Text(
+                      "Add Accidents",
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xff2161b5),
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(vertical: 11),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(9),
+                      ),
+                    ),
                   ),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        todayText(),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xff1e293b),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      width: 36,
+                      height: 36,
+                      alignment: Alignment.center,
+                      decoration: const BoxDecoration(
+                        color: Color(0xff2161b5),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Text(
+                        "SY",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ),
+          );
+        }
 
-          Text(
-            todayText(),
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: Color(0xff1e293b),
+        // Mobile / tablet.
+        if (width < 700) {
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(14, 14, 14, 10),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    const Expanded(
+                      child: Text(
+                        "Accidents",
+                        maxLines: 1,
+                        softWrap: false,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 27,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xff111827),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Flexible(
+                      child: ElevatedButton.icon(
+                        onPressed: openAddAccident,
+                        icon: const Icon(Icons.add, size: 17),
+                        label: const Text(
+                          "Add Accidents",
+                          maxLines: 1,
+                          softWrap: false,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xff2161b5),
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 11,
+                            vertical: 10,
+                          ),
+                          minimumSize: Size.zero,
+                          tapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    const Expanded(
+                      child: Text(
+                        "Accident records and incident monitoring",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Color(0xff64748b),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        todayText(),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          color: Color(0xff1e293b),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      width: 34,
+                      height: 34,
+                      alignment: Alignment.center,
+                      decoration: const BoxDecoration(
+                        color: Color(0xff2161b5),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Text(
+                        "SY",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ),
+          );
+        }
 
-          const SizedBox(width: 14),
-
-          Container(
-            width: 46,
-            height: 46,
-            alignment: Alignment.center,
-            decoration: const BoxDecoration(
-              color: Color(0xff2161b5),
-              shape: BoxShape.circle,
-            ),
-            child: const Text(
-              "SY",
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w800,
+        // Desktop.
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Accidents",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xff111827),
+                      ),
+                    ),
+                    SizedBox(height: 3),
+                    Text(
+                      "Accident records and incident monitoring",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 15,
+                        color: Color(0xff64748b),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
+              ElevatedButton.icon(
+                onPressed: openAddAccident,
+                icon: const Icon(Icons.add, size: 20),
+                label: const Text(
+                  "Add Accidents",
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xff2161b5),
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 13,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 14),
+              Flexible(
+                child: Text(
+                  todayText(),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xff1e293b),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 14),
+              Container(
+                width: 46,
+                height: 46,
+                alignment: Alignment.center,
+                decoration: const BoxDecoration(
+                  color: Color(0xff2161b5),
+                  shape: BoxShape.circle,
+                ),
+                child: const Text(
+                  "SY",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
-
-  // =========================================================
-  // FILTER SECTION
-  // =========================================================
 
   Widget buildFilterSection() {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.symmetric(
-        horizontal: 22,
-      ),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xfff8fafc),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xffe2e8f0),
-        ),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x08000000),
-            blurRadius: 8,
-            offset: Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Wrap(
-        spacing: 14,
-        runSpacing: 12,
-        crossAxisAlignment:
-            WrapCrossAlignment.center,
-        children: [
-          // ===================================================
-          // VEHICLE
-          // ===================================================
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
+        final mobile = width < 600;
+        final fieldWidth = mobile
+            ? (width - 24).clamp(0.0, 1000.0)
+            : 270.0;
 
-          SizedBox(
-            width: 270,
-            height: 44,
-            child: TextField(
-              controller: vehicleController,
-              decoration: inputDecoration(
-                "Type to search...",
-              ),
+        return Container(
+          width: double.infinity,
+          margin: EdgeInsets.symmetric(
+            horizontal: mobile ? 12 : 22,
+          ),
+          padding: EdgeInsets.all(mobile ? 12 : 20),
+          decoration: BoxDecoration(
+            color: const Color(0xfff8fafc),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: const Color(0xffe2e8f0),
             ),
-          ),
-
-          // ===================================================
-          // REPORTED BY + MIC
-          // ===================================================
-
-          SizedBox(
-            width: 270,
-            height: 44,
-            child: TextField(
-              controller: reportedByController,
-              decoration: inputDecoration(
-                "Type to search...",
-                suffixIcon:
-                    const Icon(
-                  Icons.mic,
-                  size: 21,
-                  color: Color(0xff111827),
-                ),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x08000000),
+                blurRadius: 8,
+                offset: Offset(0, 2),
               ),
-            ),
+            ],
           ),
-
-          // ===================================================
-          // DESCRIPTION
-          // ===================================================
-
-          SizedBox(
-            width: 270,
-            height: 44,
-            child: TextField(
-              controller: descriptionController,
-              decoration: inputDecoration(
-                "Type to search...",
-              ),
-            ),
-          ),
-
-          // ===================================================
-          // RESET
-          // ===================================================
-
-          SizedBox(
-            height: 44,
-            child: OutlinedButton(
-              onPressed: resetFilters,
-              style: OutlinedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor:
-                    const Color(0xff475569),
-                side: const BorderSide(
-                  color: Color(0xffdbe2ea),
+          child: mobile
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    SizedBox(
+                      height: 44,
+                      child: TextField(
+                        controller: vehicleController,
+                        decoration: inputDecoration(
+                          "Search Vehicle...",
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      height: 44,
+                      child: TextField(
+                        controller: reportedByController,
+                        decoration: inputDecoration(
+                          "Search Reported By...",
+                          suffixIcon: const Icon(
+                            Icons.mic,
+                            size: 21,
+                            color: Color(0xff111827),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      height: 44,
+                      child: TextField(
+                        controller: descriptionController,
+                        decoration: inputDecoration(
+                          "Search Description...",
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: SizedBox(
+                        height: 44,
+                        child: OutlinedButton(
+                          onPressed: resetFilters,
+                          style: OutlinedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: const Color(0xff475569),
+                            side: const BorderSide(
+                              color: Color(0xffdbe2ea),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 18,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: const Text(
+                            "Reset",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              : Wrap(
+                  spacing: 14,
+                  runSpacing: 12,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: fieldWidth,
+                      height: 44,
+                      child: TextField(
+                        controller: vehicleController,
+                        decoration: inputDecoration(
+                          "Type to search...",
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: fieldWidth,
+                      height: 44,
+                      child: TextField(
+                        controller: reportedByController,
+                        decoration: inputDecoration(
+                          "Type to search...",
+                          suffixIcon: const Icon(
+                            Icons.mic,
+                            size: 21,
+                            color: Color(0xff111827),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: fieldWidth,
+                      height: 44,
+                      child: TextField(
+                        controller: descriptionController,
+                        decoration: inputDecoration(
+                          "Type to search...",
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 44,
+                      child: OutlinedButton(
+                        onPressed: resetFilters,
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: const Color(0xff475569),
+                          side: const BorderSide(
+                            color: Color(0xffdbe2ea),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 18,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: const Text(
+                          "Reset",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                padding:
-                    const EdgeInsets.symmetric(
-                  horizontal: 18,
-                ),
-                shape:
-                    RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(10),
-                ),
-              ),
-              child: const Text(
-                "Reset",
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
-
-  // =========================================================
-  // INPUT DECORATION
-  // =========================================================
 
   InputDecoration inputDecoration(
     String hint, {
@@ -621,38 +903,59 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
   }) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: const TextStyle(
+
+      hintStyle:
+          const TextStyle(
         color: Color(0xff8b8f96),
         fontSize: 14,
       ),
-      suffixIcon: suffixIcon,
+
+      suffixIcon:
+          suffixIcon,
+
       filled: true,
-      fillColor: Colors.white,
+
+      fillColor:
+          Colors.white,
+
       contentPadding:
           const EdgeInsets.symmetric(
         horizontal: 15,
       ),
-      border: OutlineInputBorder(
+
+      border:
+          OutlineInputBorder(
         borderRadius:
             BorderRadius.circular(10),
-        borderSide: const BorderSide(
-          color: Color(0xffdbe2ea),
+
+        borderSide:
+            const BorderSide(
+          color:
+              Color(0xffdbe2ea),
         ),
       ),
+
       enabledBorder:
           OutlineInputBorder(
         borderRadius:
             BorderRadius.circular(10),
-        borderSide: const BorderSide(
-          color: Color(0xffdbe2ea),
+
+        borderSide:
+            const BorderSide(
+          color:
+              Color(0xffdbe2ea),
         ),
       ),
+
       focusedBorder:
           OutlineInputBorder(
         borderRadius:
             BorderRadius.circular(10),
-        borderSide: const BorderSide(
-          color: Color(0xff2161b5),
+
+        borderSide:
+            const BorderSide(
+          color:
+              Color(0xff2161b5),
         ),
       ),
     );
@@ -663,45 +966,70 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
   // =========================================================
 
   Widget buildAccidentTable() {
+
+    // =======================================================
     // LOADING
+    // =======================================================
+
     if (isLoading) {
       return const Center(
         child: Padding(
-          padding: EdgeInsets.all(60),
-          child: CircularProgressIndicator(),
+          padding:
+              EdgeInsets.all(60),
+
+          child:
+              CircularProgressIndicator(),
         ),
       );
     }
 
+    // =======================================================
     // ERROR
+    // =======================================================
+
     if (errorMessage != null) {
       return Center(
         child: Padding(
-          padding: const EdgeInsets.all(40),
+          padding:
+              const EdgeInsets.all(40),
+
           child: Column(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisSize:
+                MainAxisSize.min,
+
             children: [
+
               const Icon(
                 Icons.error_outline,
                 size: 50,
                 color: Colors.red,
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(
+                height: 12,
+              ),
 
               Text(
                 errorMessage!,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
+                textAlign:
+                    TextAlign.center,
+
+                style:
+                    const TextStyle(
                   color: Colors.red,
                 ),
               ),
 
-              const SizedBox(height: 15),
+              const SizedBox(
+                height: 15,
+              ),
 
               ElevatedButton(
-                onPressed: loadAccidents,
-                child: const Text("Retry"),
+                onPressed:
+                    loadAccidents,
+
+                child:
+                    const Text("Retry"),
               ),
             ],
           ),
@@ -709,276 +1037,327 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
       );
     }
 
+    // =======================================================
     // EMPTY
+    // =======================================================
+
     if (filteredAccidents.isEmpty) {
       return const Center(
         child: Padding(
-          padding: EdgeInsets.all(60),
+          padding:
+              EdgeInsets.all(60),
+
           child: Text(
             "No accident records found",
+
             style: TextStyle(
               fontSize: 16,
-              color: Color(0xff64748b),
+              color:
+                  Color(0xff64748b),
             ),
           ),
         ),
       );
     }
 
+    // =======================================================
     // TABLE
+    // =======================================================
+
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.symmetric(
+
+      margin:
+          const EdgeInsets.symmetric(
         horizontal: 22,
       ),
-      decoration: BoxDecoration(
+
+      decoration:
+          BoxDecoration(
         color: Colors.white,
+
         borderRadius:
             BorderRadius.circular(16),
+
         border: Border.all(
-          color: const Color(0xffe2e8f0),
+          color:
+              const Color(
+                  0xffe2e8f0),
         ),
       ),
+
       child: ClipRRect(
         borderRadius:
             BorderRadius.circular(16),
-        child: SingleChildScrollView(
+
+        child:
+            SingleChildScrollView(
           scrollDirection:
               Axis.horizontal,
+
           child: DataTable(
             horizontalMargin: 18,
+
             columnSpacing: 55,
+
             headingRowHeight: 48,
+
             dataRowMinHeight: 58,
+
             dataRowMaxHeight: 82,
+
             dividerThickness: 0.7,
 
             columns: const [
+
               DataColumn(
-                label: AccidentHeader(
+                label:
+                    AccidentHeader(
                   "CAPTURED",
                 ),
               ),
 
               DataColumn(
-                label: AccidentHeader(
+                label:
+                    AccidentHeader(
                   "VEHICLE",
                 ),
               ),
 
               DataColumn(
-                label: AccidentHeader(
+                label:
+                    AccidentHeader(
                   "MODEL",
                 ),
               ),
 
               DataColumn(
-                label: AccidentHeader(
+                label:
+                    AccidentHeader(
                   "LOCATION",
                 ),
               ),
 
               DataColumn(
-                label: AccidentHeader(
+                label:
+                    AccidentHeader(
                   "REPORTED BY",
                 ),
               ),
 
               DataColumn(
-                label: AccidentHeader(
+                label:
+                    AccidentHeader(
                   "DESCRIPTION",
                 ),
               ),
 
               DataColumn(
-                label: AccidentHeader(
+                label:
+                    AccidentHeader(
                   "PHOTO",
                 ),
               ),
             ],
 
-            rows: filteredAccidents
-                .map<DataRow>((item) {
-              final data =
-                  Map<String, dynamic>.from(
-                item,
-              );
+            rows:
+                filteredAccidents
+                    .map<DataRow>(
+              (item) {
 
-              final captured =
-                  getCaptured(data);
+                final data =
+                    Map<String, dynamic>
+                        .from(item);
 
-              final vehicle =
-                  getVehicle(data);
+                final captured =
+                    getCaptured(data);
 
-              final model =
-                  getModel(data);
+                final vehicle =
+                    getVehicle(data);
 
-              final location =
-                  getLocation(data);
+                final model =
+                    getModel(data);
 
-              final reportedBy =
-                  getReportedBy(data);
+                final location =
+                    getLocation(data);
 
-              final description =
-                  getDescription(data);
+                final reportedBy =
+                    getReportedBy(data);
 
-              final photo =
-                  getPhoto(data);
+                final description =
+                    getDescription(data);
 
-              return DataRow(
-                cells: [
-                  // =================================================
-                  // CAPTURED
-                  // =================================================
+                final photo =
+                    getPhoto(data);
 
-                  DataCell(
-                    SizedBox(
-                      width: 175,
-                      child: Text(
-                        formatCaptured(
-                          captured,
-                        ),
-                        style:
-                            const TextStyle(
-                          fontSize: 13,
-                          color:
-                              Color(
-                            0xff111827,
+                return DataRow(
+                  cells: [
+
+                    // =========================================
+                    // CAPTURED
+                    // =========================================
+
+                    DataCell(
+                      SizedBox(
+                        width: 175,
+
+                        child: Text(
+                          formatCaptured(
+                            captured,
+                          ),
+
+                          style:
+                              const TextStyle(
+                            fontSize: 13,
+                            color:
+                                Color(
+                                    0xff111827),
                           ),
                         ),
                       ),
                     ),
-                  ),
 
-                  // =================================================
-                  // VEHICLE
-                  // =================================================
+                    // =========================================
+                    // VEHICLE
+                    // =========================================
 
-                  DataCell(
-                    SizedBox(
-                      width: 110,
-                      child: Text(
-                        vehicle,
-                        style:
-                            const TextStyle(
-                          fontSize: 14,
-                          fontWeight:
-                              FontWeight.w800,
-                          color:
-                              Color(
-                            0xff111827,
+                    DataCell(
+                      SizedBox(
+                        width: 110,
+
+                        child: Text(
+                          vehicle,
+
+                          style:
+                              const TextStyle(
+                            fontSize: 14,
+                            fontWeight:
+                                FontWeight.w800,
+                            color:
+                                Color(
+                                    0xff111827),
                           ),
                         ),
                       ),
                     ),
-                  ),
 
-                  // =================================================
-                  // MODEL
-                  // =================================================
+                    // =========================================
+                    // MODEL
+                    // =========================================
 
-                  DataCell(
-                    SizedBox(
-                      width: 120,
-                      child: Text(
-                        model,
-                        style:
-                            const TextStyle(
-                          fontSize: 14,
-                          color:
-                              Color(
-                            0xff111827,
+                    DataCell(
+                      SizedBox(
+                        width: 120,
+
+                        child: Text(
+                          model,
+
+                          style:
+                              const TextStyle(
+                            fontSize: 14,
+                            color:
+                                Color(
+                                    0xff111827),
                           ),
                         ),
                       ),
                     ),
-                  ),
 
-                  // =================================================
-                  // LOCATION
-                  // =================================================
+                    // =========================================
+                    // LOCATION
+                    // =========================================
 
-                  DataCell(
-                    SizedBox(
-                      width: 130,
-                      child: Text(
-                        location,
-                        maxLines: 2,
-                        overflow:
-                            TextOverflow
-                                .ellipsis,
-                        style:
-                            const TextStyle(
-                          fontSize: 14,
-                          color:
-                              Color(
-                            0xff111827,
+                    DataCell(
+                      SizedBox(
+                        width: 130,
+
+                        child: Text(
+                          location,
+
+                          maxLines: 2,
+
+                          overflow:
+                              TextOverflow
+                                  .ellipsis,
+
+                          style:
+                              const TextStyle(
+                            fontSize: 14,
+                            color:
+                                Color(
+                                    0xff111827),
                           ),
                         ),
                       ),
                     ),
-                  ),
 
-                  // =================================================
-                  // REPORTED BY
-                  // =================================================
+                    // =========================================
+                    // REPORTED BY
+                    // =========================================
 
-                  DataCell(
-                    SizedBox(
-                      width: 165,
-                      child: Text(
-                        reportedBy,
-                        maxLines: 2,
-                        overflow:
-                            TextOverflow
-                                .ellipsis,
-                        style:
-                            const TextStyle(
-                          fontSize: 14,
-                          color:
-                              Color(
-                            0xff111827,
+                    DataCell(
+                      SizedBox(
+                        width: 165,
+
+                        child: Text(
+                          reportedBy,
+
+                          maxLines: 2,
+
+                          overflow:
+                              TextOverflow
+                                  .ellipsis,
+
+                          style:
+                              const TextStyle(
+                            fontSize: 14,
+                            color:
+                                Color(
+                                    0xff111827),
                           ),
                         ),
                       ),
                     ),
-                  ),
 
-                  // =================================================
-                  // DESCRIPTION
-                  // =================================================
+                    // =========================================
+                    // DESCRIPTION
+                    // =========================================
 
-                  DataCell(
-                    SizedBox(
-                      width: 390,
-                      child: Text(
-                        description,
-                        maxLines: 2,
-                        overflow:
-                            TextOverflow
-                                .ellipsis,
-                        style:
-                            const TextStyle(
-                          fontSize: 14,
-                          color:
-                              Color(
-                            0xff111827,
+                    DataCell(
+                      SizedBox(
+                        width: 390,
+
+                        child: Text(
+                          description,
+
+                          maxLines: 2,
+
+                          overflow:
+                              TextOverflow
+                                  .ellipsis,
+
+                          style:
+                              const TextStyle(
+                            fontSize: 14,
+                            color:
+                                Color(
+                                    0xff111827),
                           ),
                         ),
                       ),
                     ),
-                  ),
 
-                  // =================================================
-                  // PHOTO
-                  // =================================================
+                    // =========================================
+                    // PHOTO
+                    // =========================================
 
-                  DataCell(
-                    buildPhoto(photo),
-                  ),
-                ],
-              );
-            }).toList(),
+                    DataCell(
+                      buildPhoto(photo),
+                    ),
+                  ],
+                );
+              },
+            ).toList(),
           ),
         ),
       ),
@@ -990,12 +1369,15 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
   // =========================================================
 
   Widget buildPhoto(String photo) {
+
     if (photo == "-" ||
         photo.trim().isEmpty) {
       return const Text(
         "—",
+
         style: TextStyle(
-          color: Color(0xff94a3b8),
+          color:
+              Color(0xff94a3b8),
           fontSize: 16,
         ),
       );
@@ -1003,23 +1385,32 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
 
     return InkWell(
       onTap: () {
+
         showDialog(
           context: context,
+
           builder: (_) {
+
             return Dialog(
-              child: InteractiveViewer(
-                child: Image.network(
+              child:
+                  InteractiveViewer(
+                child:
+                    Image.network(
                   photo,
-                  fit: BoxFit.contain,
-                  errorBuilder:
-                      (
+
+                  fit:
+                      BoxFit.contain,
+
+                  errorBuilder: (
                     context,
                     error,
                     stackTrace,
                   ) {
+
                     return const SizedBox(
                       width: 350,
                       height: 250,
+
                       child: Center(
                         child: Text(
                           "Unable to load image",
@@ -1033,22 +1424,29 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
           },
         );
       },
+
       child: ClipRRect(
         borderRadius:
             BorderRadius.circular(6),
+
         child: Image.network(
           photo,
+
           width: 45,
           height: 45,
-          fit: BoxFit.cover,
-          errorBuilder:
-              (
+
+          fit:
+              BoxFit.cover,
+
+          errorBuilder: (
             context,
             error,
             stackTrace,
           ) {
+
             return const Text(
               "—",
+
               style: TextStyle(
                 color:
                     Color(0xff94a3b8),
@@ -1065,7 +1463,10 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
   // =========================================================
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
+
     return Scaffold(
       backgroundColor:
           const Color(0xfff1f5f9),
@@ -1073,53 +1474,70 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
       body: SafeArea(
         child: Column(
           children: [
+
+            // =================================================
             // HEADER
+            // =================================================
+
             buildHeader(),
 
+            // =================================================
             // CONTENT
+            // =================================================
+
             Expanded(
               child:
                   SingleChildScrollView(
+
                 padding:
                     const EdgeInsets.only(
                   top: 8,
                   bottom: 30,
                 ),
+
                 child: Column(
                   crossAxisAlignment:
-                      CrossAxisAlignment
-                          .start,
+                      CrossAxisAlignment.start,
+
                   children: [
+
+                    // =================================================
                     // FILTER
+                    // =================================================
+
                     buildFilterSection(),
 
                     const SizedBox(
                       height: 20,
                     ),
 
+                    // =================================================
                     // RECORD COUNT
+                    // =================================================
+
                     Padding(
                       padding:
                           const EdgeInsets
                               .symmetric(
                         horizontal: 22,
                       ),
+
                       child: Row(
                         children: [
+
                           Expanded(
                             child: Text(
                               "Accident Records: "
                               "${filteredAccidents.length}",
+
                               style:
                                   const TextStyle(
                                 fontSize: 14,
                                 fontWeight:
-                                    FontWeight
-                                        .w600,
+                                    FontWeight.w600,
                                 color:
                                     Color(
-                                  0xff64748b,
-                                ),
+                                        0xff64748b),
                               ),
                             ),
                           ),
@@ -1127,8 +1545,10 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
                           IconButton(
                             tooltip:
                                 "Refresh",
+
                             onPressed:
                                 loadAccidents,
+
                             icon:
                                 const Icon(
                               Icons.refresh,
@@ -1142,7 +1562,10 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
                       height: 2,
                     ),
 
+                    // =================================================
                     // TABLE
+                    // =================================================
+
                     buildAccidentTable(),
                   ],
                 ),
@@ -1160,8 +1583,11 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
 
   @override
   void dispose() {
+
     vehicleController.dispose();
+
     reportedByController.dispose();
+
     descriptionController.dispose();
 
     super.dispose();
@@ -1174,6 +1600,7 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
 
 class AccidentHeader
     extends StatelessWidget {
+
   final String title;
 
   const AccidentHeader(
@@ -1185,13 +1612,19 @@ class AccidentHeader
   Widget build(
     BuildContext context,
   ) {
+
     return Text(
       title,
+
       maxLines: 1,
-      style: const TextStyle(
+
+      style:
+          const TextStyle(
         fontSize: 12,
-        fontWeight: FontWeight.w700,
-        color: Color(0xff94a3b8),
+        fontWeight:
+            FontWeight.w700,
+        color:
+            Color(0xff94a3b8),
         letterSpacing: 0.4,
       ),
     );

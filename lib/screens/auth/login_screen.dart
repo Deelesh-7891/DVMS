@@ -4,9 +4,11 @@ import '../../services/auth_service.dart';
 import '../driver/driver_home_screen.dart';
 import '../security/security_home_screen.dart';
 import '../corporate_admin/corporate_admin_home_screen.dart';
-import '../branch_admin/branch_admin_home_screen.dart';
+
+// import '../branch_admin/branch_admin_home_screen.dart';
+
 import '../accounts/accounts_home_screen.dart';
-import '../state_admin/state_admin_home_screen.dart';
+// import '../state_admin/state_admin_home_screen.dart';
 import '../../core/auth/user_role.dart';
 import 'package:geolocator/geolocator.dart';
 import '../../services/location_service.dart';
@@ -736,8 +738,7 @@ Future<void> login() async {
     // SHARED PREFERENCES
     // ========================================================
 
-    final prefs =
-        await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
 
     // ========================================================
     // AUTH DATA
@@ -1043,7 +1044,6 @@ Future<void> login() async {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-            // builder: (_) => const BranchAdminHomeScreen(),
             builder: (_) => const CorporateAdminHomeScreen(),
           ),
           (route) => false,
@@ -1051,20 +1051,7 @@ Future<void> login() async {
 
         break;
 
-      case "Driver":
-
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (_) =>
-                const DriverHomeScreen(),
-          ),
-          (route) => false,
-        );
-
-        break;
-
-      case "Security":
+       case "Security":
 
         Navigator.pushAndRemoveUntil(
           context,

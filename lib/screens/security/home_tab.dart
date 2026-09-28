@@ -5,6 +5,7 @@ import '../../services/auth_service.dart';
 import 'package:intl/intl.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'report_accident_screen.dart';
+import 'add_fuel_screen.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -445,6 +446,152 @@ class _HomeTabState extends State<HomeTab> {
   // ============================================================
   // SEARCH / FILTER AREA
   // ============================================================
+
+  // ============================================================
+  // VEHICLE HELPERS FOR ADD FUEL
+  // ============================================================
+
+  int? getVehicleId(Map<String, dynamic> item) {
+    final value = item["VehicleId"] ?? item["VehicleID"] ?? item["vehicleId"] ?? item["Vehicle_Id"] ?? item["Id"] ?? item["ID"];
+    if (value == null) return null;
+    if (value is int) return value;
+    return int.tryParse(value.toString());
+  }
+
+  String getRegistrationNo(Map<String, dynamic> item) {
+    return (item["RegistrationNo"] ?? item["RegistrationNumber"] ?? item["registrationNo"] ?? item["VehicleNo"] ?? "").toString().trim();
+  }
+
+  String getVehicleModel(Map<String, dynamic> item) {
+    return (item["Model"] ?? item["VehicleModel"] ?? item["model"] ?? item["Vehicle_Model"] ?? "").toString().trim();
+  }
+
+  Future<void> showAddFuelVehicleSelection() async {
+    final movements = await movementFuture;
+    if (!mounted) return;
+
+    final Map<String, Map<String, dynamic>> vehicleMap = {};
+    for (final rawItem in movements) {
+      if (rawItem is! Map) continue;
+      final item = Map<String, dynamic>.from(rawItem);
+      final registrationNo = getRegistrationNo(item);
+      if (registrationNo.isNotEmpty) {
+        vehicleMap.putIfAbsent(registrationNo.toUpperCase(), () => item);
+      }
+    }
+
+    final vehicles = vehicleMap.values.toList();
+    final searchController = TextEditingController();
+
+    await showDialog(
+      context: context,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) {
+          final search = searchController.text.trim().toLowerCase();
+          final filteredVehicles = vehicles.where((item) {
+            final reg = getRegistrationNo(item).toLowerCase();
+            final model = getVehicleModel(item).toLowerCase();
+            return search.isEmpty || reg.contains(search) || model.contains(search);
+          }).toList();
+
+          return AlertDialog(
+            title: const Text("Select Vehicle", style: TextStyle(fontWeight: FontWeight.bold)),
+            content: SizedBox(
+              width: double.maxFinite,
+              height: 430,
+              child: Column(
+                children: [
+                  TextField(
+                    controller: searchController,
+                    onChanged: (_) => setDialogState(() {}),
+                    decoration: InputDecoration(
+                      hintText: "Search vehicle / model...",
+                      prefixIcon: const Icon(Icons.search),
+                      suffixIcon: searchController.text.isNotEmpty ? IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () { searchController.clear(); setDialogState(() {}); },
+                      ) : null,
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Expanded(
+                    child: filteredVehicles.isEmpty
+                        ? const Center(child: Text("No vehicle found"))
+                        : ListView.separated(
+                            itemCount: filteredVehicles.length,
+                            separatorBuilder: (_, __) => const Divider(height: 1),
+                            itemBuilder: (context, index) {
+                              final item = filteredVehicles[index];
+                              final registrationNo = getRegistrationNo(item);
+                              final model = getVehicleModel(item);
+                              final vehicleId = getVehicleId(item);
+
+                              return ListTile(
+                                leading: const Icon(Icons.directions_car, color: Color(0xff2458A6)),
+                                title: Text(registrationNo, style: const TextStyle(fontWeight: FontWeight.bold)),
+                                subtitle: Text(model.isEmpty ? "Vehicle ID: ${vehicleId ?? '-'}" : "$model • Vehicle ID: ${vehicleId ?? '-'}"),
+                                onTap: () {
+                                  if (vehicleId == null) {
+                                    ScaffoldMessenger.of(this.context).showSnackBar(const SnackBar(content: Text("Vehicle ID is missing for this vehicle.")));
+                                    return;
+                                  }
+                                  if (model.isEmpty) {
+                                    ScaffoldMessenger.of(this.context).showSnackBar(const SnackBar(content: Text("Vehicle model is missing for this vehicle.")));
+                                    return;
+                                  }
+                                  Navigator.pop(dialogContext);
+                                  Navigator.push(
+                                    this.context,
+                                    MaterialPageRoute(
+                                      builder: (_) => AddFuelScreen(
+                                        vehicleId: vehicleId,
+                                        registrationNo: registrationNo,
+                                        model: model,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(dialogContext), child: const Text("CANCEL")),
+            ],
+          );
+        },
+      ),
+    );
+    searchController.dispose();
+  }
+
+  void confirmAddFuel() {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text("Add Fuel", style: TextStyle(fontWeight: FontWeight.bold)),
+        content: const Text("Do you want to add fuel?", style: TextStyle(fontSize: 16)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text("NO", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              showAddFuelVehicleSelection();
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xff2458A6), foregroundColor: Colors.white),
+            child: const Text("YES", style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget searchArea() {
     final bool hasDate =
@@ -987,77 +1134,94 @@ class _HomeTabState extends State<HomeTab> {
             ),
 
             // ====================================================
-            // REPORT ACCIDENT
+            // ADD FUEL + REPORT ACCIDENT
             // ====================================================
 
             Container(
-              width:
-                  double.infinity,
-              padding:
-                  const EdgeInsets
-                      .symmetric(
-                vertical: 12,
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(
+                12,
+                10,
+                12,
+                10,
               ),
-              color:
-                  const Color(0xffEEF2F7),
+              color: const Color(0xffEEF2F7),
               child: Row(
-                mainAxisAlignment:
-                    MainAxisAlignment
-                        .center,
                 children: [
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (_) =>
-                                  const ReportAccidentScreen(),
+                  // ==================================================
+                  // ADD FUEL - LEFT
+                  // ==================================================
+
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: confirmAddFuel,
+                      icon: const Icon(
+                        Icons.local_gas_station,
+                        color: Colors.white,
+                        size: 19,
+                      ),
+                      label: const Text(
+                        "Add Fuel",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
                         ),
-                      );
-                    },
-                    icon:
-                        const Icon(
-                      Icons.add,
-                      color:
-                          Colors.white,
-                      size: 20,
-                    ),
-                    label:
-                        const Text(
-                      "Report Accident",
-                      style:
-                          TextStyle(
-                        color:
-                            Colors.white,
-                        fontSize:
-                            15,
-                        fontWeight:
-                            FontWeight.w700,
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xff2458A6),
+                        foregroundColor: Colors.white,
+                        elevation: 2,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                     ),
-                    style:
-                        ElevatedButton
-                            .styleFrom(
-                      backgroundColor:
-                          const Color(
-                        0xff2458A6,
+                  ),
+
+                  const SizedBox(width: 10),
+
+                  // ==================================================
+                  // REPORT ACCIDENT - RIGHT
+                  // ==================================================
+
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const ReportAccidentScreen(),
+                          ),
+                        );
+                      },
+                      icon: const Icon(
+                        Icons.warning_amber_rounded,
+                        color: Colors.white,
+                        size: 19,
                       ),
-                      foregroundColor:
-                          Colors.white,
-                      elevation: 2,
-                      padding:
-                          const EdgeInsets
-                              .symmetric(
-                        horizontal: 20,
-                        vertical: 12,
+                      label: const Text(
+                        "Report Accident",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                      shape:
-                          RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius
-                                .circular(
-                          10,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xffD32F2F),
+                        foregroundColor: Colors.white,
+                        elevation: 2,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
                       ),
                     ),

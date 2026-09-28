@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/widgets/voice_search_button.dart';
 import '../../services/auth_service.dart';
+import 'add_vehicle_screen.dart';
 
 class VehicleListScreen extends StatefulWidget {
   const VehicleListScreen({super.key});
@@ -135,11 +136,60 @@ class _VehicleListScreenState extends State<VehicleListScreen> {
           ),
         ),
         actions: [
+          // =====================================================
+          // ADD VEHICLE
+          // =====================================================
+          ElevatedButton.icon(
+            onPressed: () async {
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const AddVehicleScreen(),
+                ),
+              );
+
+              // Add Vehicle successful hone ke baad
+              // vehicle list automatically refresh hogi.
+              if (result == true && mounted) {
+                await _loadVehicles();
+              }
+            },
+            icon: const Icon(
+              Icons.add,
+              size: 19,
+            ),
+            label: const Text(
+              "Add Vehicle",
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: const Color(0xff2458A6),
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 10,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(9),
+              ),
+            ),
+          ),
+
+          const SizedBox(width: 8),
+
+          // =====================================================
+          // REFRESH
+          // =====================================================
           IconButton(
             onPressed: _loading ? null : _loadVehicles,
             icon: const Icon(Icons.refresh),
             tooltip: "Refresh",
           ),
+
+          const SizedBox(width: 6),
         ],
       ),
 

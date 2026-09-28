@@ -6,7 +6,7 @@ import '../auth/login_screen.dart';
 import '../driver/driver_home_screen.dart';
 import '../security/security_home_screen.dart';
 import '../corporate_admin/corporate_admin_home_screen.dart';
-import '../branch_admin/branch_admin_home_screen.dart';
+// import '../branch_admin/branch_admin_home_screen.dart';
 import '../accounts/accounts_home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -79,7 +79,7 @@ class _SplashScreenState extends State<SplashScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (_) => const BranchAdminHomeScreen(),
+            builder: (_) => const CorporateAdminHomeScreen(),
           ),
         );
         break;

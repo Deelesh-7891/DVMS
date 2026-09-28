@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/auth_service.dart';
+import 'add_user_screen.dart';
 
 class UsersScreen extends StatefulWidget {
   const UsersScreen({super.key});
@@ -33,6 +35,23 @@ class _UsersScreenState extends State<UsersScreen> {
   String? errorMessage;
 
   // =========================================================
+  // CURRENT USER ROLE
+  // =========================================================
+
+  String currentUserRole = "";
+
+  // Add User is visible ONLY for CorporateAdmin and StateAdmin.
+  bool get canAddUser {
+    final role = currentUserRole
+        .trim()
+        .toLowerCase()
+        .replaceAll(" ", "");
+
+    return role == "corporateadmin" ||
+        role == "stateadmin";
+  }
+
+  // =========================================================
   // INIT
   // =========================================================
 
@@ -42,7 +61,34 @@ class _UsersScreenState extends State<UsersScreen> {
 
     searchController.addListener(applySearch);
 
+    loadCurrentUserRole();
     loadUsers();
+  }
+
+  // =========================================================
+  // GET CURRENT USER ROLE
+  // =========================================================
+
+  Future<void> loadCurrentUserRole() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Use RoleName first because your role master uses RoleName.
+    final role =
+        prefs.getString("RoleName") ??
+        prefs.getString("Role") ??
+        prefs.getString("role") ??
+        prefs.getString("UserRole") ??
+        prefs.getString("userRole") ??
+        "";
+
+    if (!mounted) return;
+
+    setState(() {
+      currentUserRole = role.trim();
+    });
+
+    debugPrint("Current User Role: $currentUserRole");
+    debugPrint("Can Add User: $canAddUser");
   }
 
   // =========================================================
@@ -1206,15 +1252,64 @@ class _UsersScreenState extends State<UsersScreen> {
               // PAGE HEADER
               // =================================================
 
-              const Text(
-                "User Management",
-                style: TextStyle(
-                  fontSize: 25,
-                  fontWeight:
-                      FontWeight.w800,
-                  color:
-                      Color(0xff0f172a),
-                ),
+              // =================================================
+              // PAGE HEADER + ADD USER
+              // =================================================
+
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Expanded(
+                    child: Text(
+                      "User Management",
+                      style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xff0f172a),
+                      ),
+                    ),
+                  ),
+
+                  // Add User is shown only to CorporateAdmin / StateAdmin.
+                  if (canAddUser)
+                    ElevatedButton.icon(
+                      onPressed: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const AddUserScreen(),
+                          ),
+                        );
+
+                        if (!mounted) return;
+
+                        await loadUsers();
+                      },
+                      icon: const Icon(
+                        Icons.person_add_alt_1,
+                        size: 18,
+                      ),
+                      label: const Text(
+                        "Add User",
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xff2161b5),
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 11,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                ],
               ),
 
               const SizedBox(
@@ -1225,8 +1320,7 @@ class _UsersScreenState extends State<UsersScreen> {
                 "Manage users, roles, locations and account status",
                 style: TextStyle(
                   fontSize: 14,
-                  color:
-                      Color(0xff64748b),
+                  color: Color(0xff64748b),
                 ),
               ),
 

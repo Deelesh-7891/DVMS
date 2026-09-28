@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../services/auth_service.dart';
+import '../security/scan_qr_screen.dart';
+import '../security/manual_entry_screen.dart';
 
 class QrMovementScreen extends StatefulWidget {
   const QrMovementScreen({super.key});
@@ -599,9 +601,13 @@ class _QrMovementScreenState
                       child:
                           OutlinedButton.icon(
                         onPressed: () {
-                          // TODO:
-                          // Manual Entry
-                        },
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const ManualEntryScreen(),
+        ),
+      );
+    },
 
                         icon:
                             const Icon(
@@ -654,10 +660,14 @@ class _QrMovementScreenState
                       height: 42,
                       child:
                           ElevatedButton.icon(
-                        onPressed: () {
-                          // TODO:
-                          // QR Scanner
-                        },
+                       onPressed: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const ScanQRScreen(),
+        ),
+      );
+    },
 
                         icon:
                             const Icon(
@@ -768,13 +778,11 @@ class _QrMovementScreenState
                       "QR Movement",
                       maxLines: 1,
                       softWrap: false,
-                      overflow:
-                          TextOverflow.ellipsis,
+                      overflow: TextOverflow.ellipsis,
 
                       style: TextStyle(
                         fontSize: 25,
-                        fontWeight:
-                            FontWeight.w800,
+                        fontWeight: FontWeight.w800,
                         color:
                             Colors.black,
                       ),
@@ -788,8 +796,7 @@ class _QrMovementScreenState
                       "Gate entry / exit log via QR scan",
                       maxLines: 1,
                       softWrap: false,
-                      overflow:
-                          TextOverflow.ellipsis,
+                      overflow: TextOverflow.ellipsis,
 
                       style: TextStyle(
                         fontSize: 14,
@@ -814,8 +821,7 @@ class _QrMovementScreenState
               SizedBox(
                 height: 43,
 
-                child:
-                    OutlinedButton.icon(
+                child: OutlinedButton.icon(
                   onPressed: () {
                     // TODO:
                     // Manual Entry

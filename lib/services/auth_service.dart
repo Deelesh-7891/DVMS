@@ -591,7 +591,7 @@ Future<List<dynamic>> getVehicles() async
 Future<List<dynamic>> getExpenseTypes() async {
   final prefs = await SharedPreferences.getInstance();
   final token = prefs.getString("token");
-
+  
   final response = await http.get(
     Uri.parse("$baseUrl/expense-types"),
     headers: {

@@ -2,7 +2,8 @@ name: pm_demo_vehicle_management
 description: PM Demo Vehicle Management.
 publish_to: 'none'
 
-version: 1.0.4+42
+version: 1.0.4+43
+
 
 environment:
   sdk: ">=3.9.0 <4.0.0"
@@ -54,7 +55,7 @@ flutter:
 flutter_native_splash:
   color: "#FFFFFF"
   image: assets/images/logo.png
-
+  fullscreen: true 
   android: true
   ios: false
 
