@@ -815,6 +815,10 @@ Future<Map<String, dynamic>> movementSave({
 
   required int odometer,
   required String driverName,
+  // Set when the guard picked the driver from the list (DriverMaster). On an
+  // Exit the server then opens a tracked trip for that driver; a typed name
+  // with no id is recorded but not tracked.
+  int? driverId,
   required String movementType,
   required String salesExecutive,
   required String customerName,
@@ -879,6 +883,7 @@ Future<Map<String, dynamic>> movementSave({
     'otherCityId': otherCityId,
     'odometer': odometer,
     'driverName': driverName,
+    if (driverId != null) 'driverId': driverId,
     'movementType': movementType,
     
     'salesExecutive': salesExecutive,

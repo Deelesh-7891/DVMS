@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
 import '../../core/services/odometer_ocr_service.dart';
+import '../../core/widgets/driver_picker_sheet.dart';
 import '../../services/auth_service.dart';
 
 // ============================================================
@@ -134,6 +135,10 @@ class _ScanQRScreenState
   final TextEditingController
       driverNameController =
       TextEditingController();
+
+  // Set when the driver is picked from the list; that is what starts live
+  // tracking on gate-out. Typing the name by hand clears it.
+  int? selectedDriverId;
 
   // ==========================================================
   // SALES EXECUTIVE
@@ -2020,6 +2025,9 @@ class _ScanQRScreenState
         driverName:
             driverName,
 
+        driverId:
+            selectedDriverId,
+
         // ======================================================
         // MOVEMENT TYPE
         // ======================================================
@@ -3046,21 +3054,55 @@ class _ScanQRScreenState
               controller:
                   driverNameController,
 
+              onChanged: (_) {
+                if (selectedDriverId != null) {
+                  setState(() => selectedDriverId = null);
+                }
+              },
+
               decoration:
                   _inputDecoration(
 
                 hint:
-                    "Enter driver name",
+                    "Pick from list or type name",
 
                 icon:
-                    Icons.person_outline,
+                    selectedDriverId != null
+                        ? Icons.gps_fixed
+                        : Icons.person_outline,
               ).copyWith(
-                suffixIcon: _speechButton(
-                  fieldName: "driverName",
-                  controller: driverNameController,
+                suffixIcon: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      tooltip: "Select driver",
+                      icon: const Icon(Icons.list_alt),
+                      onPressed: () async {
+                        final d = await showDriverPicker(context);
+                        if (d == null) return;
+                        setState(() {
+                          driverNameController.text = d["DriverName"]?.toString() ?? "";
+                          selectedDriverId = (d["DriverId"] as num?)?.toInt();
+                        });
+                      },
+                    ),
+                    _speechButton(
+                      fieldName: "driverName",
+                      controller: driverNameController,
+                    ),
+                  ],
                 ),
               ),
             ),
+
+            if (selectedDriverId != null)
+              const Padding(
+                padding: EdgeInsets.only(top: 5, left: 4),
+                child: Text(
+                  "Driver will be tracked live until the vehicle is back",
+                  style: TextStyle(fontSize: 12, color: Colors.green),
+                ),
+              ),
 
             const SizedBox(
               height: 16,
@@ -3455,6 +3497,8 @@ class _ScanQRScreenState
 
       driverNameController
           .clear();
+
+      selectedDriverId = null;
 
       // --------------------------------------------------------
       // SALES

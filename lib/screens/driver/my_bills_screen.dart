@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../auth/login_screen.dart';
 import '../driver/driver_home_screen.dart';
+import '../../services/driver_tracking_service.dart';
 import '../driver/profile_screen.dart';
 import '../../services/auth_service.dart';
 
@@ -101,6 +102,8 @@ class _MyBillsScreenState extends State<MyBillsScreen> {
                     onPressed: () async {
                       final prefs =
                           await SharedPreferences.getInstance();
+
+                      await DriverTracker.instance.stop();
 
                       await prefs.clear();
 
