@@ -68,5 +68,13 @@
 		</array>
 		<key>UIStatusBarHidden</key>
 		<false/>
-	</dict>
+		<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Your location is shared with the company while you are out with a company vehicle.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Your location is shared with the company while you are out with a company vehicle.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+	</array>
+</dict>
 </plist>

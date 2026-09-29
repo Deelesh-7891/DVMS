@@ -242,14 +242,29 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
       attachmentId = uploadResult.attachmentId;
     }
 
-    await _authService.saveFuel(
-      vehicleId: widget.vehicleId,
-      txnDate: DateTime.now().toIso8601String().substring(0, 10),
-      fuelStation: stationController.text.trim(),
-      amount: amount,
-      odometer: odometer,
-      attachmentId: attachmentId,
-    );
+    // Litres are optional on this form, but sent when filled in so the
+    // mileage report has them.
+    final liters = double.tryParse(litersController.text.trim());
+
+    Future<void> save({bool confirm = false}) => _authService.saveFuel(
+          vehicleId: widget.vehicleId,
+          txnDate: DateTime.now().toIso8601String().substring(0, 10),
+          fuelStation: stationController.text.trim(),
+          amount: amount,
+          odometer: odometer,
+          quantity: (liters != null && liters > 0) ? liters : null,
+          attachmentId: attachmentId,
+          confirmDuplicate: confirm,
+        );
+
+    try {
+      await save();
+    } on DuplicateFuelException catch (dup) {
+      if (!mounted) return;
+      final ok = await confirmDuplicateFuel(context, dup.message);
+      if (!ok) return;
+      await save(confirm: true);
+    }
 
     if (!mounted) return;
 

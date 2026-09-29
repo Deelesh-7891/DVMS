@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:flutter/material.dart';
 
 // POST /attachments returns both an "attachmentId" (int FK, used by
 // /fuel, /accidents, etc.) and a "url" (root-relative path, used by
@@ -17,6 +18,31 @@ class AttachmentUploadResult {
     required this.attachmentId,
     required this.url,
   });
+}
+
+/// POST /fuel found the same vehicle + litres within two hours.
+class DuplicateFuelException implements Exception {
+  final String message;
+  const DuplicateFuelException(this.message);
+  @override
+  String toString() => message;
+}
+
+/// Asks whether to save a fuel entry the server flagged as a possible
+/// duplicate. Shared by the Driver and Security fuel screens.
+Future<bool> confirmDuplicateFuel(BuildContext context, String message) async {
+  final ok = await showDialog<bool>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: const Text("Possible duplicate"),
+      content: Text(message),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text("Cancel")),
+        ElevatedButton(onPressed: () => Navigator.pop(ctx, true), child: const Text("Save anyway")),
+      ],
+    ),
+  );
+  return ok == true;
 }
 
 class AuthService {
@@ -675,6 +701,10 @@ Future<void> saveExpense({
   // after uploading the receipt/odometer photo, so it actually gets linked
   // to this FuelTransaction (dvms.js's POST /fuel already reads and stores
   // AttachmentId; the caller just wasn't sending one before this).
+  // quantity (litres) was never sent before, so every app entry was saved
+  // with no litres and the mileage report had nothing to work with.
+  // Throws DuplicateFuelException on a 409; call again with
+  // confirmDuplicate: true once the user confirms it is a real second fill.
   Future<void> saveFuel(
   {
     required int vehicleId,
@@ -682,7 +712,9 @@ Future<void> saveExpense({
     required String fuelStation,
     required double amount,
     required int odometer,
+    double? quantity,
     int? attachmentId,
+    bool confirmDuplicate = false,
   }) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
@@ -693,7 +725,9 @@ Future<void> saveExpense({
       "FuelStation": fuelStation,
       "Amount": amount,
       "Odometer": odometer,
+      if (quantity != null) "Quantity": quantity,
       "AttachmentId": attachmentId,
+      if (confirmDuplicate) "confirmDuplicate": true,
     };
 
     final response = await http.post(
@@ -710,9 +744,28 @@ Future<void> saveExpense({
 
     print("Response: ${response.body}");
 
+    if (response.statusCode == 409) {
+      String msg = "A matching fuel entry already exists. Save this one anyway?";
+      try {
+        final j = jsonDecode(response.body);
+        if (j is Map && j["duplicate"] == true) {
+          msg = j["message"]?.toString() ?? msg;
+          throw DuplicateFuelException(msg);
+        }
+      } on DuplicateFuelException {
+        rethrow;
+      } catch (_) {}
+    }
+
     if (response.statusCode != 200 &&
         response.statusCode != 201) {
-      throw Exception(response.body);
+      // Show the server's own error text, not the raw JSON body.
+      String msg = response.body;
+      try {
+        final j = jsonDecode(response.body);
+        if (j is Map && j["error"] != null) msg = j["error"].toString();
+      } catch (_) {}
+      throw Exception(msg);
     }
   }
 
@@ -815,6 +868,10 @@ Future<Map<String, dynamic>> movementSave({
 
   required int odometer,
   required String driverName,
+  // Set when the guard picked the driver from the list (DriverMaster). On an
+  // Exit the server then opens a tracked trip for that driver; a typed name
+  // with no id is recorded but not tracked.
+  int? driverId,
   required String movementType,
   required String salesExecutive,
   required String customerName,
@@ -879,6 +936,7 @@ Future<Map<String, dynamic>> movementSave({
     'otherCityId': otherCityId,
     'odometer': odometer,
     'driverName': driverName,
+    if (driverId != null) 'driverId': driverId,
     'movementType': movementType,
     
     'salesExecutive': salesExecutive,

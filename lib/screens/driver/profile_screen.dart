@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../driver/driver_home_screen.dart';
+import '../../services/driver_tracking_service.dart';
 import '../driver/my_bills_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -137,6 +138,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> logout() async {
     final prefs =
         await SharedPreferences.getInstance();
+
+    await DriverTracker.instance.stop();
 
     await prefs.clear();
 

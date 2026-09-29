@@ -11,6 +11,7 @@ import '../driver/report_damage_screen.dart';
 import '../driver/my_bills_screen.dart';
 import '../driver/profile_screen.dart';
 import '../../services/auth_service.dart';
+import '../../services/driver_tracking_service.dart';
 
 
 class DriverHomeScreen extends StatefulWidget {
@@ -22,7 +23,9 @@ class DriverHomeScreen extends StatefulWidget {
 
 
 
-class _DriverHomeScreenState extends State<DriverHomeScreen> {
+class _DriverHomeScreenState extends State<DriverHomeScreen>
+    with WidgetsBindingObserver {
+  final DriverTracker tracker = DriverTracker.instance;
   String name = "";
   bool showMenu = false;
   final AuthService _authService = AuthService();
@@ -46,8 +49,91 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     loadUser();
     loadVehicles();
+    tracker.start();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  // Opening the app right after the guard logs the vehicle out picks up the
+  // new trip at once instead of waiting for the next minute's check.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) tracker.checkNow();
+  }
+
+  /// Trip / live-location banner at the top of the home screen.
+  Widget tripCard(TrackerStatus s) {
+    Color bg;
+    IconData icon;
+    String title;
+    switch (s.state) {
+      case TrackerState.tracking:
+        bg = const Color(0xff16A34A);
+        icon = Icons.gps_fixed;
+        title = "On trip · ${s.vehicle ?? ''}";
+        break;
+      case TrackerState.permissionNeeded:
+        bg = const Color(0xffDC2626);
+        icon = Icons.location_off;
+        title = "Location needed";
+        break;
+      case TrackerState.noDriverLink:
+        bg = const Color(0xffD97706);
+        icon = Icons.link_off;
+        title = "Not linked to a driver";
+        break;
+      case TrackerState.error:
+        bg = const Color(0xffD97706);
+        icon = Icons.cloud_off;
+        title = "Connection problem";
+        break;
+      case TrackerState.idle:
+        bg = const Color(0xff64748B);
+        icon = Icons.gps_not_fixed;
+        title = "Not on a trip";
+        break;
+    }
+    final lines = <String>[
+      s.message,
+      if (s.state == TrackerState.tracking && s.since != null)
+        "Out since ${TimeOfDay.fromDateTime(s.since!.toLocal()).format(context)}",
+      if (s.queued > 0) "${s.queued} points waiting for network",
+    ];
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(14)),
+      child: Row(
+        children: [
+          Icon(icon, color: Colors.white, size: 28),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+                const SizedBox(height: 3),
+                Text(lines.join(" · "), style: const TextStyle(color: Colors.white70, fontSize: 13)),
+              ],
+            ),
+          ),
+          if (s.state != TrackerState.tracking)
+            IconButton(
+              tooltip: "Check again",
+              icon: const Icon(Icons.refresh, color: Colors.white),
+              onPressed: () => tracker.checkNow(),
+            ),
+        ],
+      ),
+    );
   }
 
 
@@ -167,6 +253,8 @@ return Scaffold(
               TextButton.icon(
                 onPressed: () async {
 
+                  await tracker.stop();
+
                   final prefs =
                       await SharedPreferences.getInstance();
 
@@ -203,6 +291,12 @@ return Scaffold(
               padding: const EdgeInsets.all(14),
               child: Column(
                 children: [
+
+                  /// TRIP / LIVE LOCATION
+                  ValueListenableBuilder<TrackerStatus>(
+                    valueListenable: tracker.status,
+                    builder: (_, s, __) => tripCard(s),
+                  ),
 
                   /// VEHICLE CARD
                   Container(

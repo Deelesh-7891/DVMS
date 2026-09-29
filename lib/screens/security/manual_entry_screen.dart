@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/services/odometer_ocr_service.dart';
+import '../../core/widgets/driver_picker_sheet.dart';
 import '../../services/auth_service.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
@@ -141,6 +142,14 @@ class _ManualEntryScreenState
 
   final TextEditingController driverController =
       TextEditingController();
+
+  // Driver picked from the list (starts live tracking on gate-out). If the
+  // guard then edits the name by hand, the pick no longer applies.
+  int? selectedDriverId;
+  String? pickedDriverName;
+  bool get _pickedDriverStillValid =>
+      selectedDriverId != null &&
+      driverController.text.trim() == (pickedDriverName ?? "").trim();
 
   final TextEditingController salesExecutiveController =
       TextEditingController();
@@ -1604,6 +1613,9 @@ final prefs = await SharedPreferences.getInstance();
         driverName:
             driverName,
 
+        driverId:
+            _pickedDriverStillValid ? selectedDriverId : null,
+
         movementType:
             movementType,
 
@@ -1669,6 +1681,8 @@ final prefs = await SharedPreferences.getInstance();
       odometerController.clear();
 
       driverController.clear();
+      selectedDriverId = null;
+      pickedDriverName = null;
 
       salesExecutiveController.clear();
 
@@ -2126,6 +2140,31 @@ speechText: () {
                         ? ""
                         : "Driver name, $value.";
                   },
+                ),
+
+                Row(
+                  children: [
+                    TextButton.icon(
+                      onPressed: () async {
+                        final d = await showDriverPicker(context);
+                        if (d == null) return;
+                        setState(() {
+                          pickedDriverName = d["DriverName"]?.toString() ?? "";
+                          selectedDriverId = (d["DriverId"] as num?)?.toInt();
+                          driverController.text = pickedDriverName!;
+                        });
+                      },
+                      icon: const Icon(Icons.list_alt, size: 18),
+                      label: const Text("Select from driver list"),
+                    ),
+                    if (_pickedDriverStillValid)
+                      const Expanded(
+                        child: Text(
+                          "Tracked live while out",
+                          style: TextStyle(fontSize: 12, color: Colors.green),
+                        ),
+                      ),
+                  ],
                 ),
                 // ==================================================
                 // ODOMETER IMAGE PREVIEW

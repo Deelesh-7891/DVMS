@@ -485,16 +485,28 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
         "AttachmentId: $attachmentId",
       );
 
-      await _authService.saveFuel(
-        vehicleId: widget.vehicleId,
-        txnDate: DateTime.now()
-            .toIso8601String()
-            .substring(0, 10),
-        fuelStation: fuelStation,
-        amount: amount,
-        odometer: odometer,
-        attachmentId: attachmentId,
-      );
+      Future<void> save({bool confirm = false}) =>
+          _authService.saveFuel(
+            vehicleId: widget.vehicleId,
+            txnDate: DateTime.now()
+                .toIso8601String()
+                .substring(0, 10),
+            fuelStation: fuelStation,
+            amount: amount,
+            odometer: odometer,
+            quantity: liters,
+            attachmentId: attachmentId,
+            confirmDuplicate: confirm,
+          );
+
+      try {
+        await save();
+      } on DuplicateFuelException catch (dup) {
+        if (!mounted) return;
+        final ok = await confirmDuplicateFuel(context, dup.message);
+        if (!ok) return;
+        await save(confirm: true);
+      }
 
       // =====================================================
       // SUCCESS
