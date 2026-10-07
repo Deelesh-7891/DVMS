@@ -8,8 +8,7 @@ class ReportsScreen extends StatefulWidget {
 }
 
 class _ReportsScreenState extends State<ReportsScreen> {
-  final TextEditingController searchController =
-      TextEditingController();
+  final TextEditingController searchController = TextEditingController();
 
   String selectedReport = "All reports";
 
@@ -89,27 +88,15 @@ class _ReportsScreenState extends State<ReportsScreen> {
   // ============================================================
 
   void applyFilter() {
-    final search =
-        searchController.text.trim().toLowerCase();
+    final search = searchController.text.trim().toLowerCase();
 
     setState(() {
-      filteredReports =
-          allReports.where((report) {
+      filteredReports = allReports.where((report) {
+        final reportId = report["reportId"].toString().toLowerCase();
 
-        final reportId =
-            report["reportId"]
-                .toString()
-                .toLowerCase();
+        final vehicleNo = report["vehicleNo"].toString().toLowerCase();
 
-        final vehicleNo =
-            report["vehicleNo"]
-                .toString()
-                .toLowerCase();
-
-        final description =
-            report["description"]
-                .toString()
-                .toLowerCase();
+        final description = report["description"].toString().toLowerCase();
 
         final matchesSearch =
             reportId.contains(search) ||
@@ -117,11 +104,9 @@ class _ReportsScreenState extends State<ReportsScreen> {
             description.contains(search);
 
         final matchesType =
-            selectedReport == "All reports" ||
-            report["type"] == selectedReport;
+            selectedReport == "All reports" || report["type"] == selectedReport;
 
         return matchesSearch && matchesType;
-
       }).toList();
     });
   }
@@ -139,8 +124,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
       fromDate = null;
       toDate = null;
 
-      filteredReports =
-          List.from(allReports);
+      filteredReports = List.from(allReports);
     });
   }
 
@@ -152,14 +136,11 @@ class _ReportsScreenState extends State<ReportsScreen> {
     final picked = await showDatePicker(
       context: context,
 
-      initialDate:
-          fromDate ?? DateTime.now(),
+      initialDate: fromDate ?? DateTime.now(),
 
-      firstDate:
-          DateTime(2020),
+      firstDate: DateTime(2020),
 
-      lastDate:
-          DateTime(2035),
+      lastDate: DateTime(2035),
     );
 
     if (picked != null) {
@@ -173,14 +154,11 @@ class _ReportsScreenState extends State<ReportsScreen> {
     final picked = await showDatePicker(
       context: context,
 
-      initialDate:
-          toDate ?? DateTime.now(),
+      initialDate: toDate ?? DateTime.now(),
 
-      firstDate:
-          DateTime(2020),
+      firstDate: DateTime(2020),
 
-      lastDate:
-          DateTime(2035),
+      lastDate: DateTime(2035),
     );
 
     if (picked != null) {
@@ -196,44 +174,32 @@ class _ReportsScreenState extends State<ReportsScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-    final width =
-        MediaQuery.of(context).size.width;
+    final width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor:
-          const Color(0xffF4F7FB),
+      backgroundColor: const Color(0xffF4F7FB),
 
       // ========================================================
       // APP BAR
       // ========================================================
-
       appBar: AppBar(
         elevation: 0,
 
-        backgroundColor:
-            const Color(0xff2458A6),
+        backgroundColor: const Color(0xff2458A6),
 
-        foregroundColor:
-            Colors.white,
+        foregroundColor: Colors.white,
 
         title: const Text(
           "Reports",
-          style: TextStyle(
-            fontWeight:
-                FontWeight.bold,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
 
         actions: [
-
           IconButton(
             tooltip: "Export",
             onPressed: exportReport,
 
-            icon: const Icon(
-              Icons.download,
-            ),
+            icon: const Icon(Icons.download),
           ),
         ],
       ),
@@ -241,121 +207,70 @@ class _ReportsScreenState extends State<ReportsScreen> {
       // ========================================================
       // BODY
       // ========================================================
-
       body: SafeArea(
         child: Padding(
-          padding:
-              const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8),
 
           child: Column(
             children: [
-
               // ==================================================
               // FILTER
               // ==================================================
-
               Container(
-                width:
-                    double.infinity,
+                width: double.infinity,
 
-                padding:
-                    const EdgeInsets.all(18),
+                padding: const EdgeInsets.all(18),
 
-                decoration:
-                    BoxDecoration(
-                  color:
-                      const Color(
-                    0xffF1F4F8,
-                  ),
+                decoration: BoxDecoration(
+                  color: const Color(0xffF1F4F8),
 
-                  borderRadius:
-                      BorderRadius.circular(
-                    16,
-                  ),
+                  borderRadius: BorderRadius.circular(16),
 
-                  border:
-                      Border.all(
-                    color:
-                        const Color(
-                      0xffDCE3EC,
-                    ),
-                  ),
+                  border: Border.all(color: const Color(0xffDCE3EC)),
 
                   boxShadow: const [
                     BoxShadow(
-                      color:
-                          Colors.black12,
+                      color: Colors.black12,
                       blurRadius: 4,
-                      offset:
-                          Offset(0, 2),
+                      offset: Offset(0, 2),
                     ),
                   ],
                 ),
 
-                child:
-                    LayoutBuilder(
-                  builder:
-                      (context, constraints) {
-
-                    final isSmall =
-                        width < 700;
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isSmall = width < 700;
 
                     if (isSmall) {
-
                       return Column(
                         children: [
-
                           searchBox(),
 
-                          const SizedBox(
-                            height: 10,
-                          ),
+                          const SizedBox(height: 10),
 
                           reportTypeDropdown(),
 
-                          const SizedBox(
-                            height: 10,
-                          ),
+                          const SizedBox(height: 10),
 
                           Row(
                             children: [
+                              Expanded(child: fromDateButton()),
 
-                              Expanded(
-                                child:
-                                    fromDateButton(),
-                              ),
+                              const SizedBox(width: 10),
 
-                              const SizedBox(
-                                width: 10,
-                              ),
-
-                              Expanded(
-                                child:
-                                    toDateButton(),
-                              ),
+                              Expanded(child: toDateButton()),
                             ],
                           ),
 
-                          const SizedBox(
-                            height: 10,
-                          ),
+                          const SizedBox(height: 10),
 
                           Row(
                             children: [
+                              Expanded(child: filterButton()),
 
-                              Expanded(
-                                child:
-                                    filterButton(),
-                              ),
+                              const SizedBox(width: 10),
 
-                              const SizedBox(
-                                width: 10,
-                              ),
-
-                              Expanded(
-                                child:
-                                    resetButton(),
-                              ),
+                              Expanded(child: resetButton()),
                             ],
                           ),
                         ],
@@ -364,52 +279,25 @@ class _ReportsScreenState extends State<ReportsScreen> {
 
                     return Row(
                       children: [
+                        SizedBox(width: 250, child: searchBox()),
 
-                        SizedBox(
-                          width: 250,
-                          child:
-                              searchBox(),
-                        ),
+                        const SizedBox(width: 12),
 
-                        const SizedBox(
-                          width: 12,
-                        ),
+                        SizedBox(width: 160, child: reportTypeDropdown()),
 
-                        SizedBox(
-                          width: 160,
-                          child:
-                              reportTypeDropdown(),
-                        ),
+                        const SizedBox(width: 12),
 
-                        const SizedBox(
-                          width: 12,
-                        ),
+                        SizedBox(width: 150, child: fromDateButton()),
 
-                        SizedBox(
-                          width: 150,
-                          child:
-                              fromDateButton(),
-                        ),
+                        const SizedBox(width: 12),
 
-                        const SizedBox(
-                          width: 12,
-                        ),
+                        SizedBox(width: 150, child: toDateButton()),
 
-                        SizedBox(
-                          width: 150,
-                          child:
-                              toDateButton(),
-                        ),
-
-                        const SizedBox(
-                          width: 12,
-                        ),
+                        const SizedBox(width: 12),
 
                         filterButton(),
 
-                        const SizedBox(
-                          width: 12,
-                        ),
+                        const SizedBox(width: 12),
 
                         resetButton(),
                       ],
@@ -418,24 +306,18 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 ),
               ),
 
-              const SizedBox(
-                height: 16,
-              ),
+              const SizedBox(height: 16),
 
               // ==================================================
               // SUMMARY CARDS
               // ==================================================
-
               SizedBox(
                 height: 95,
 
-                child:
-                    ListView(
-                  scrollDirection:
-                      Axis.horizontal,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
 
                   children: [
-
                     summaryCard(
                       "TOTAL REPORTS",
                       "${filteredReports.length}",
@@ -467,232 +349,112 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 ),
               ),
 
-              const SizedBox(
-                height: 16,
-              ),
+              const SizedBox(height: 16),
 
               // ==================================================
               // TABLE
               // ==================================================
-
               Expanded(
-                child:
-                    Container(
-                  width:
-                      double.infinity,
+                child: Container(
+                  width: double.infinity,
 
-                  decoration:
-                      BoxDecoration(
-                    color:
-                        Colors.white,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
 
-                    borderRadius:
-                        BorderRadius.circular(
-                      16,
-                    ),
+                    borderRadius: BorderRadius.circular(16),
 
-                    border:
-                        Border.all(
-                      color:
-                          const Color(
-                        0xffDCE3EC,
-                      ),
-                    ),
+                    border: Border.all(color: const Color(0xffDCE3EC)),
                   ),
 
-                  child:
-                      ClipRRect(
-                    borderRadius:
-                        BorderRadius.circular(
-                      16,
-                    ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
 
-                    child:
-                        SingleChildScrollView(
-                      scrollDirection:
-                          Axis.horizontal,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
 
-                      child:
-                          SingleChildScrollView(
-                        child:
-                            DataTable(
+                      child: SingleChildScrollView(
+                        child: DataTable(
+                          headingRowHeight: 48,
 
-                          headingRowHeight:
-                              48,
+                          dataRowMinHeight: 66,
 
-                          dataRowMinHeight:
-                              66,
+                          dataRowMaxHeight: 66,
 
-                          dataRowMaxHeight:
-                              66,
+                          columnSpacing: 30,
 
-                          columnSpacing:
-                              30,
-
-                          headingRowColor:
-                              WidgetStateProperty
-                                  .all(
-                            const Color(
-                              0xffF8FAFD,
-                            ),
+                          headingRowColor: WidgetStateProperty.all(
+                            const Color(0xffF8FAFD),
                           ),
 
-                          columns:
-                              const [
+                          columns: const [
+                            DataColumn(label: Text("REPORT ID")),
 
-                            DataColumn(
-                              label:
-                                  Text(
-                                "REPORT ID",
-                              ),
-                            ),
+                            DataColumn(label: Text("DATE")),
 
-                            DataColumn(
-                              label:
-                                  Text(
-                                "DATE",
-                              ),
-                            ),
+                            DataColumn(label: Text("TYPE")),
 
-                            DataColumn(
-                              label:
-                                  Text(
-                                "TYPE",
-                              ),
-                            ),
+                            DataColumn(label: Text("VEHICLE NO")),
 
-                            DataColumn(
-                              label:
-                                  Text(
-                                "VEHICLE NO",
-                              ),
-                            ),
+                            DataColumn(label: Text("DESCRIPTION")),
 
-                            DataColumn(
-                              label:
-                                  Text(
-                                "DESCRIPTION",
-                              ),
-                            ),
+                            DataColumn(label: Text("AMOUNT")),
 
-                            DataColumn(
-                              label:
-                                  Text(
-                                "AMOUNT",
-                              ),
-                            ),
+                            DataColumn(label: Text("STATUS")),
 
-                            DataColumn(
-                              label:
-                                  Text(
-                                "STATUS",
-                              ),
-                            ),
-
-                            DataColumn(
-                              label:
-                                  Text(
-                                "VIEW",
-                              ),
-                            ),
+                            DataColumn(label: Text("VIEW")),
                           ],
 
-                          rows:
-                              filteredReports
-                                  .map(
-                            (report) {
-
-                              return DataRow(
-                                cells: [
-
-                                  DataCell(
-                                    Text(
-                                      report[
-                                          "reportId"],
-                                      style:
-                                          const TextStyle(
-                                        fontWeight:
-                                            FontWeight
-                                                .bold,
-                                        color:
-                                            Color(
-                                          0xff172033,
-                                        ),
-                                      ),
+                          rows: filteredReports.map((report) {
+                            return DataRow(
+                              cells: [
+                                DataCell(
+                                  Text(
+                                    report["reportId"],
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xff172033),
                                     ),
                                   ),
+                                ),
 
-                                  DataCell(
-                                    Text(
-                                      report[
-                                          "date"],
+                                DataCell(Text(report["date"])),
+
+                                DataCell(typeBadge(report["type"])),
+
+                                DataCell(
+                                  Text(
+                                    report["vehicleNo"],
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
                                     ),
                                   ),
+                                ),
 
-                                  DataCell(
-                                    typeBadge(
-                                      report[
-                                          "type"],
+                                DataCell(Text(report["description"])),
+
+                                DataCell(
+                                  Text(
+                                    report["amount"],
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
+                                ),
 
-                                  DataCell(
-                                    Text(
-                                      report[
-                                          "vehicleNo"],
-                                      style:
-                                          const TextStyle(
-                                        fontWeight:
-                                            FontWeight
-                                                .w600,
-                                      ),
-                                    ),
-                                  ),
+                                DataCell(statusBadge(report["status"])),
 
-                                  DataCell(
-                                    Text(
-                                      report[
-                                          "description"],
-                                    ),
+                                DataCell(
+                                  outlineButton(
+                                    "View",
+                                    icon: Icons.visibility,
+                                    onPressed: () {
+                                      viewReport(report);
+                                    },
                                   ),
-
-                                  DataCell(
-                                    Text(
-                                      report[
-                                          "amount"],
-                                      style:
-                                          const TextStyle(
-                                        fontWeight:
-                                            FontWeight
-                                                .bold,
-                                      ),
-                                    ),
-                                  ),
-
-                                  DataCell(
-                                    statusBadge(
-                                      report[
-                                          "status"],
-                                    ),
-                                  ),
-
-                                  DataCell(
-                                    outlineButton(
-                                      "View",
-                                      icon:
-                                          Icons.visibility,
-                                      onPressed:
-                                          () {
-                                        viewReport(
-                                          report,
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              );
-                            },
-                          ).toList(),
+                                ),
+                              ],
+                            );
+                          }).toList(),
                         ),
                       ),
                     ),
@@ -700,23 +462,17 @@ class _ReportsScreenState extends State<ReportsScreen> {
                 ),
               ),
 
-              const SizedBox(
-                height: 8,
-              ),
+              const SizedBox(height: 8),
 
               Align(
-                alignment:
-                    Alignment.centerLeft,
+                alignment: Alignment.centerLeft,
 
                 child: Text(
                   "${filteredReports.length} reports found",
 
-                  style:
-                      const TextStyle(
-                    color:
-                        Colors.grey,
-                    fontWeight:
-                        FontWeight.w600,
+                  style: const TextStyle(
+                    color: Colors.grey,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
@@ -732,54 +488,30 @@ class _ReportsScreenState extends State<ReportsScreen> {
   // ============================================================
 
   Widget searchBox() {
-
     return TextField(
-      controller:
-          searchController,
+      controller: searchController,
 
-      decoration:
-          InputDecoration(
-        hintText:
-            "Search report / vehicle no...",
+      decoration: InputDecoration(
+        hintText: "Search report / vehicle no...",
 
-        prefixIcon:
-            const Icon(
-          Icons.search,
-          size: 20,
-        ),
+        prefixIcon: const Icon(Icons.search, size: 20),
 
         filled: true,
 
-        fillColor:
-            Colors.white,
+        fillColor: Colors.white,
 
-        contentPadding:
-            const EdgeInsets.symmetric(
-          horizontal: 14,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 14),
+
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+
+          borderSide: const BorderSide(color: Color(0xffDCE3EC)),
         ),
 
-        border:
-            OutlineInputBorder(
-          borderRadius:
-              BorderRadius.circular(10),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
 
-          borderSide:
-              const BorderSide(
-            color:
-                Color(0xffDCE3EC),
-          ),
-        ),
-
-        enabledBorder:
-            OutlineInputBorder(
-          borderRadius:
-              BorderRadius.circular(10),
-
-          borderSide:
-              const BorderSide(
-            color:
-                Color(0xffDCE3EC),
-          ),
+          borderSide: const BorderSide(color: Color(0xffDCE3EC)),
         ),
       ),
     );
@@ -790,59 +522,32 @@ class _ReportsScreenState extends State<ReportsScreen> {
   // ============================================================
 
   Widget reportTypeDropdown() {
-
-    final types = [
-      "All reports",
-      "Fuel",
-      "Service",
-      "Insurance",
-    ];
+    final types = ["All reports", "Fuel", "Service", "Insurance"];
 
     return DropdownButtonFormField<String>(
-      value:
-          selectedReport,
+      value: selectedReport,
 
-      decoration:
-          InputDecoration(
+      decoration: InputDecoration(
         filled: true,
 
-        fillColor:
-            Colors.white,
+        fillColor: Colors.white,
 
-        contentPadding:
-            const EdgeInsets.symmetric(
-          horizontal: 14,
-        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 14),
 
-        border:
-            OutlineInputBorder(
-          borderRadius:
-              BorderRadius.circular(10),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
 
-          borderSide:
-              const BorderSide(
-            color:
-                Color(0xffDCE3EC),
-          ),
+          borderSide: const BorderSide(color: Color(0xffDCE3EC)),
         ),
       ),
 
-      items:
-          types.map((type) {
-
-        return DropdownMenuItem<String>(
-          value: type,
-          child:
-              Text(type),
-        );
+      items: types.map((type) {
+        return DropdownMenuItem<String>(value: type, child: Text(type));
       }).toList(),
 
-      onChanged:
-          (value) {
-
+      onChanged: (value) {
         setState(() {
-          selectedReport =
-              value!;
+          selectedReport = value!;
         });
       },
     );
@@ -853,51 +558,23 @@ class _ReportsScreenState extends State<ReportsScreen> {
   // ============================================================
 
   Widget fromDateButton() {
-
     return OutlinedButton.icon(
-      onPressed:
-          selectFromDate,
+      onPressed: selectFromDate,
 
-      icon:
-          const Icon(
-        Icons.calendar_today,
-        size: 16,
-      ),
+      icon: const Icon(Icons.calendar_today, size: 16),
 
-      label:
-          Text(
-        fromDate == null
-            ? "From Date"
-            : formatDate(fromDate!),
-      ),
+      label: Text(fromDate == null ? "From Date" : formatDate(fromDate!)),
 
-      style:
-          OutlinedButton.styleFrom(
-        foregroundColor:
-            const Color(
-          0xff334155,
-        ),
+      style: OutlinedButton.styleFrom(
+        foregroundColor: const Color(0xff334155),
 
-        backgroundColor:
-            Colors.white,
+        backgroundColor: Colors.white,
 
-        padding:
-            const EdgeInsets.symmetric(
-          horizontal: 12,
-          vertical: 16,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
 
-        side:
-            const BorderSide(
-          color:
-              Color(0xffDCE3EC),
-        ),
+        side: const BorderSide(color: Color(0xffDCE3EC)),
 
-        shape:
-            RoundedRectangleBorder(
-          borderRadius:
-              BorderRadius.circular(10),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
   }
@@ -907,51 +584,23 @@ class _ReportsScreenState extends State<ReportsScreen> {
   // ============================================================
 
   Widget toDateButton() {
-
     return OutlinedButton.icon(
-      onPressed:
-          selectToDate,
+      onPressed: selectToDate,
 
-      icon:
-          const Icon(
-        Icons.calendar_today,
-        size: 16,
-      ),
+      icon: const Icon(Icons.calendar_today, size: 16),
 
-      label:
-          Text(
-        toDate == null
-            ? "To Date"
-            : formatDate(toDate!),
-      ),
+      label: Text(toDate == null ? "To Date" : formatDate(toDate!)),
 
-      style:
-          OutlinedButton.styleFrom(
-        foregroundColor:
-            const Color(
-          0xff334155,
-        ),
+      style: OutlinedButton.styleFrom(
+        foregroundColor: const Color(0xff334155),
 
-        backgroundColor:
-            Colors.white,
+        backgroundColor: Colors.white,
 
-        padding:
-            const EdgeInsets.symmetric(
-          horizontal: 12,
-          vertical: 16,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
 
-        side:
-            const BorderSide(
-          color:
-              Color(0xffDCE3EC),
-        ),
+        side: const BorderSide(color: Color(0xffDCE3EC)),
 
-        shape:
-            RoundedRectangleBorder(
-          borderRadius:
-              BorderRadius.circular(10),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
   }
@@ -961,42 +610,22 @@ class _ReportsScreenState extends State<ReportsScreen> {
   // ============================================================
 
   Widget filterButton() {
-
     return ElevatedButton(
-      onPressed:
-          applyFilter,
+      onPressed: applyFilter,
 
-      style:
-          ElevatedButton.styleFrom(
-        backgroundColor:
-            const Color(
-          0xff2458A6,
-        ),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xff2458A6),
 
-        foregroundColor:
-            Colors.white,
+        foregroundColor: Colors.white,
 
-        padding:
-            const EdgeInsets.symmetric(
-          horizontal: 22,
-          vertical: 16,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
 
-        shape:
-            RoundedRectangleBorder(
-          borderRadius:
-              BorderRadius.circular(10),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
 
-      child:
-          const Text(
+      child: const Text(
         "Filter",
-        style:
-            TextStyle(
-          fontWeight:
-              FontWeight.bold,
-        ),
+        style: TextStyle(fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -1006,46 +635,20 @@ class _ReportsScreenState extends State<ReportsScreen> {
   // ============================================================
 
   Widget resetButton() {
-
     return OutlinedButton(
-      onPressed:
-          resetFilter,
+      onPressed: resetFilter,
 
-      style:
-          OutlinedButton.styleFrom(
-        foregroundColor:
-            const Color(
-          0xff475569,
-        ),
+      style: OutlinedButton.styleFrom(
+        foregroundColor: const Color(0xff475569),
 
-        padding:
-            const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 16,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
 
-        side:
-            const BorderSide(
-          color:
-              Color(0xffDCE3EC),
-        ),
+        side: const BorderSide(color: Color(0xffDCE3EC)),
 
-        shape:
-            RoundedRectangleBorder(
-          borderRadius:
-              BorderRadius.circular(10),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
 
-      child:
-          const Text(
-        "Reset",
-        style:
-            TextStyle(
-          fontWeight:
-              FontWeight.bold,
-        ),
-      ),
+      child: const Text("Reset", style: TextStyle(fontWeight: FontWeight.bold)),
     );
   }
 
@@ -1053,93 +656,54 @@ class _ReportsScreenState extends State<ReportsScreen> {
   // SUMMARY CARD
   // ============================================================
 
-  Widget summaryCard(
-    String title,
-    String value,
-    IconData icon,
-    Color color,
-  ) {
-
+  Widget summaryCard(String title, String value, IconData icon, Color color) {
     return Container(
       width: 180,
 
-      margin:
-          const EdgeInsets.only(
-        right: 12,
+      margin: const EdgeInsets.only(right: 12),
+
+      padding: const EdgeInsets.all(15),
+
+      decoration: BoxDecoration(
+        color: Colors.white,
+
+        borderRadius: BorderRadius.circular(14),
+
+        border: Border.all(color: const Color(0xffDCE3EC)),
       ),
 
-      padding:
-          const EdgeInsets.all(15),
-
-      decoration:
-          BoxDecoration(
-        color:
-            Colors.white,
-
-        borderRadius:
-            BorderRadius.circular(14),
-
-        border:
-            Border.all(
-          color:
-              const Color(
-            0xffDCE3EC,
-          ),
-        ),
-      ),
-
-      child:
-          Row(
+      child: Row(
         children: [
-
           CircleAvatar(
-            backgroundColor:
-                color.withOpacity(.12),
+            backgroundColor: color.withOpacity(.12),
 
-            child:
-                Icon(
-              icon,
-              color:
-                  color,
-            ),
+            child: Icon(icon, color: color),
           ),
 
-          const SizedBox(
-            width: 10,
-          ),
+          const SizedBox(width: 10),
 
           Column(
-            crossAxisAlignment:
-                CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
 
-            mainAxisAlignment:
-                MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
 
             children: [
-
               Text(
                 title,
-                style:
-                    const TextStyle(
+                style: const TextStyle(
                   fontSize: 11,
-                  color:
-                      Colors.grey,
-                  fontWeight:
-                      FontWeight.bold,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
 
-              const SizedBox(
-                height: 4,
-              ),
+              const SizedBox(height: 4),
 
               Text(
                 value,
-                style:
-                    const TextStyle(
+                style: const TextStyle(
                   fontSize: 22,
-                  fontWeight:
-                      FontWeight.bold,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
@@ -1153,10 +717,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
   // TYPE BADGE
   // ============================================================
 
-  Widget typeBadge(
-    String type,
-  ) {
-
+  Widget typeBadge(String type) {
     Color color;
 
     if (type == "Fuel") {
@@ -1168,33 +729,18 @@ class _ReportsScreenState extends State<ReportsScreen> {
     }
 
     return Container(
-      padding:
-          const EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 6,
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+
+      decoration: BoxDecoration(
+        color: color.withOpacity(.10),
+
+        borderRadius: BorderRadius.circular(15),
       ),
 
-      decoration:
-          BoxDecoration(
-        color:
-            color.withOpacity(.10),
-
-        borderRadius:
-            BorderRadius.circular(15),
-      ),
-
-      child:
-          Text(
+      child: Text(
         type,
 
-        style:
-            TextStyle(
-          color:
-              color,
-
-          fontWeight:
-              FontWeight.w600,
-        ),
+        style: TextStyle(color: color, fontWeight: FontWeight.w600),
       ),
     );
   }
@@ -1203,83 +749,43 @@ class _ReportsScreenState extends State<ReportsScreen> {
   // STATUS BADGE
   // ============================================================
 
-  Widget statusBadge(
-    String status,
-  ) {
+  Widget statusBadge(String status) {
+    final bool completed = status == "Completed";
 
-    final bool completed =
-        status == "Completed";
+    final Color color = completed
+        ? const Color(0xff16A34A)
+        : const Color(0xffD97706);
 
-    final Color color =
-        completed
-            ? const Color(
-                0xff16A34A,
-              )
-            : const Color(
-                0xffD97706,
-              );
-
-    final Color background =
-        completed
-            ? const Color(
-                0xffDCFCE7,
-              )
-            : const Color(
-                0xffFEF3C7,
-              );
+    final Color background = completed
+        ? const Color(0xffDCFCE7)
+        : const Color(0xffFEF3C7);
 
     return Container(
-      padding:
-          const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 7,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+
+      decoration: BoxDecoration(
+        color: background,
+
+        borderRadius: BorderRadius.circular(20),
       ),
 
-      decoration:
-          BoxDecoration(
-        color:
-            background,
-
-        borderRadius:
-            BorderRadius.circular(20),
-      ),
-
-      child:
-          Row(
-        mainAxisSize:
-            MainAxisSize.min,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
 
         children: [
-
           Container(
             width: 8,
             height: 8,
 
-            decoration:
-                BoxDecoration(
-              color:
-                  color,
-
-              shape:
-                  BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           ),
 
-          const SizedBox(
-            width: 6,
-          ),
+          const SizedBox(width: 6),
 
           Text(
             status,
 
-            style:
-                TextStyle(
-              color:
-                  color,
-
-              fontWeight:
-                  FontWeight.w600,
-            ),
+            style: TextStyle(color: color, fontWeight: FontWeight.w600),
           ),
         ],
       ),
@@ -1295,44 +801,21 @@ class _ReportsScreenState extends State<ReportsScreen> {
     required IconData icon,
     required VoidCallback onPressed,
   }) {
-
     return OutlinedButton.icon(
-      onPressed:
-          onPressed,
+      onPressed: onPressed,
 
-      icon:
-          Icon(
-        icon,
-        size: 16,
-      ),
+      icon: Icon(icon, size: 16),
 
-      label:
-          Text(text),
+      label: Text(text),
 
-      style:
-          OutlinedButton.styleFrom(
-        foregroundColor:
-            const Color(
-          0xff334155,
-        ),
+      style: OutlinedButton.styleFrom(
+        foregroundColor: const Color(0xff334155),
 
-        side:
-            const BorderSide(
-          color:
-              Color(0xffDCE3EC),
-        ),
+        side: const BorderSide(color: Color(0xffDCE3EC)),
 
-        padding:
-            const EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 10,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
 
-        shape:
-            RoundedRectangleBorder(
-          borderRadius:
-              BorderRadius.circular(10),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
   }
@@ -1341,26 +824,15 @@ class _ReportsScreenState extends State<ReportsScreen> {
   // COUNT REPORT TYPE
   // ============================================================
 
-  int countType(
-    String type,
-  ) {
-
-    return filteredReports
-        .where(
-          (report) =>
-              report["type"] == type,
-        )
-        .length;
+  int countType(String type) {
+    return filteredReports.where((report) => report["type"] == type).length;
   }
 
   // ============================================================
   // FORMAT DATE
   // ============================================================
 
-  String formatDate(
-    DateTime date,
-  ) {
-
+  String formatDate(DateTime date) {
     return "${date.day.toString().padLeft(2, '0')}-"
         "${date.month.toString().padLeft(2, '0')}-"
         "${date.year}";
@@ -1370,90 +842,51 @@ class _ReportsScreenState extends State<ReportsScreen> {
   // VIEW REPORT
   // ============================================================
 
-  void viewReport(
-    Map<String, dynamic> report,
-  ) {
-
+  void viewReport(Map<String, dynamic> report) {
     showDialog(
       context: context,
 
-      builder:
-          (context) {
-
+      builder: (context) {
         return AlertDialog(
+          title: Text("Report ${report["reportId"]}"),
 
-          title:
-              Text(
-            "Report ${report["reportId"]}",
-          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
 
-          content:
-              Column(
-            mainAxisSize:
-                MainAxisSize.min,
-
-            crossAxisAlignment:
-                CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
 
             children: [
+              Text("Date: ${report["date"]}"),
 
-              Text(
-                "Date: ${report["date"]}",
-              ),
+              const SizedBox(height: 8),
 
-              const SizedBox(
-                height: 8,
-              ),
+              Text("Type: ${report["type"]}"),
 
-              Text(
-                "Type: ${report["type"]}",
-              ),
+              const SizedBox(height: 8),
 
-              const SizedBox(
-                height: 8,
-              ),
+              Text("Vehicle: ${report["vehicleNo"]}"),
 
-              Text(
-                "Vehicle: ${report["vehicleNo"]}",
-              ),
+              const SizedBox(height: 8),
 
-              const SizedBox(
-                height: 8,
-              ),
+              Text("Description: ${report["description"]}"),
 
-              Text(
-                "Description: ${report["description"]}",
-              ),
+              const SizedBox(height: 8),
 
-              const SizedBox(
-                height: 8,
-              ),
+              Text("Amount: ${report["amount"]}"),
 
-              Text(
-                "Amount: ${report["amount"]}",
-              ),
+              const SizedBox(height: 8),
 
-              const SizedBox(
-                height: 8,
-              ),
-
-              Text(
-                "Status: ${report["status"]}",
-              ),
+              Text("Status: ${report["status"]}"),
             ],
           ),
 
           actions: [
-
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
 
-              child:
-                  const Text(
-                "Close",
-              ),
+              child: const Text("Close"),
             ),
           ],
         );
@@ -1466,15 +899,8 @@ class _ReportsScreenState extends State<ReportsScreen> {
   // ============================================================
 
   void exportReport() {
-
-    ScaffoldMessenger.of(context)
-        .showSnackBar(
-      const SnackBar(
-        content:
-            Text(
-          "Report export will be available here",
-        ),
-      ),
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Report export will be available here")),
     );
   }
 }

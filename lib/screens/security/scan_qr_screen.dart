@@ -1,4 +1,4 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -33,28 +33,14 @@ class CityModel {
     required this.pinCode,
   });
 
-  factory CityModel.fromJson(
-    Map<String, dynamic> json,
-  ) {
+  factory CityModel.fromJson(Map<String, dynamic> json) {
     return CityModel(
-      cityId:
-          int.tryParse(
-                json['CityId']?.toString() ?? '',
-              ) ??
-              0,
-      stateId:
-          int.tryParse(
-                json['StateId']?.toString() ?? '',
-              ) ??
-              0,
-      cityName:
-          json['CityName']?.toString() ?? '',
-      locationName:
-          json['LocationName']?.toString() ?? '',
-      locationType:
-          json['LocationType']?.toString() ?? '',
-      pinCode:
-          json['PinCode']?.toString() ?? '',
+      cityId: int.tryParse(json['CityId']?.toString() ?? '') ?? 0,
+      stateId: int.tryParse(json['StateId']?.toString() ?? '') ?? 0,
+      cityName: json['CityName']?.toString() ?? '',
+      locationName: json['LocationName']?.toString() ?? '',
+      locationType: json['LocationType']?.toString() ?? '',
+      pinCode: json['PinCode']?.toString() ?? '',
     );
   }
 }
@@ -64,67 +50,52 @@ class CityModel {
 // ============================================================
 
 class ScanQRScreen extends StatefulWidget {
-  const ScanQRScreen({
-    super.key,
-  });
+  const ScanQRScreen({super.key});
 
   @override
-  State<ScanQRScreen> createState() =>
-      _ScanQRScreenState();
+  State<ScanQRScreen> createState() => _ScanQRScreenState();
 }
 
-class _ScanQRScreenState
-    extends State<ScanQRScreen> {
-
+class _ScanQRScreenState extends State<ScanQRScreen> {
   // ==========================================================
   // AUTH SERVICE
   // ==========================================================
 
-  final AuthService _authService =
-      AuthService();
+  final AuthService _authService = AuthService();
 
   // ==========================================================
   // QR SCANNER
   // ==========================================================
 
-  final MobileScannerController
-      controller =
-      MobileScannerController(
+  final MobileScannerController controller = MobileScannerController(
     facing: CameraFacing.back,
-    detectionSpeed:
-        DetectionSpeed.normal,
+    detectionSpeed: DetectionSpeed.normal,
   );
 
   bool isScanned = false;
   bool isLoadingVehicle = false;
 
-  String scannedCode =
-      "No QR Code Detected";
+  String scannedCode = "No QR Code Detected";
 
-  Map<String, dynamic>?
-      vehicleDetails;
+  Map<String, dynamic>? vehicleDetails;
 
   // ==========================================================
   // ODOMETER
   // ==========================================================
 
-  final TextEditingController
-      odometerController =
-      TextEditingController();
+  final TextEditingController odometerController = TextEditingController();
 
   // ==========================================================
   // ODOMETER PHOTO
   // ==========================================================
 
-  final ImagePicker _imagePicker =
-      ImagePicker();
+  final ImagePicker _imagePicker = ImagePicker();
 
   XFile? odometerImage;
 
   Uint8List? odometerImageBytes;
 
-  bool isTakingOdometerPhoto =
-      false;
+  bool isTakingOdometerPhoto = false;
 
   bool isReadingOdometer = false;
 
@@ -132,9 +103,7 @@ class _ScanQRScreenState
   // DRIVER
   // ==========================================================
 
-  final TextEditingController
-      driverNameController =
-      TextEditingController();
+  final TextEditingController driverNameController = TextEditingController();
 
   // Set when the driver is picked from the list; that is what starts live
   // tracking on gate-out. Typing the name by hand clears it.
@@ -144,25 +113,20 @@ class _ScanQRScreenState
   // SALES EXECUTIVE
   // ==========================================================
 
-  final TextEditingController
-      salesExecutiveController =
+  final TextEditingController salesExecutiveController =
       TextEditingController();
 
   // ==========================================================
   // CUSTOMER
   // ==========================================================
 
-  final TextEditingController
-      customerNameController =
-      TextEditingController();
+  final TextEditingController customerNameController = TextEditingController();
 
   // ==========================================================
   // PURPOSE
   // ==========================================================
 
-  final TextEditingController
-      purposeController =
-      TextEditingController();
+  final TextEditingController purposeController = TextEditingController();
 
   // ==========================================================
   // DIRECTION — auto-detected server-side now (see computeAutoDirection
@@ -176,7 +140,6 @@ class _ScanQRScreenState
   String? resultDirection;
   String? resultNewStatus;
   bool showSuccessOverlay = false;
-
 
   // ==========================================================
   // SPEECH TO TEXT
@@ -205,10 +168,7 @@ class _ScanQRScreenState
               isListening = false;
               _activeSpeechField = null;
             });
-            showMessage(
-              'Speech error: ${error.errorMsg}',
-              isError: true,
-            );
+            showMessage('Speech error: ${error.errorMsg}', isError: true);
           }
         },
       );
@@ -233,25 +193,41 @@ class _ScanQRScreenState
   String _normalizeNumberSpeech(String input) {
     final text = input.toLowerCase().trim();
     const map = <String, String>{
-      'zero': '0', 'oh': '0', 'o': '0', 'शून्य': '0', 'जीरो': '0',
-      'one': '1', 'एक': '1',
-      'two': '2', 'to': '2', 'too': '2', 'दो': '2',
-      'three': '3', 'तीन': '3',
-      'four': '4', 'for': '4', 'चार': '4',
-      'five': '5', 'पांच': '5', 'पाँच': '5',
-      'six': '6', 'छह': '6', 'छः': '6',
-      'seven': '7', 'सात': '7',
-      'eight': '8', 'आठ': '8',
-      'nine': '9', 'नौ': '9',
+      'zero': '0',
+      'oh': '0',
+      'o': '0',
+      'शून्य': '0',
+      'जीरो': '0',
+      'one': '1',
+      'एक': '1',
+      'two': '2',
+      'to': '2',
+      'too': '2',
+      'दो': '2',
+      'three': '3',
+      'तीन': '3',
+      'four': '4',
+      'for': '4',
+      'चार': '4',
+      'five': '5',
+      'पांच': '5',
+      'पाँच': '5',
+      'six': '6',
+      'छह': '6',
+      'छः': '6',
+      'seven': '7',
+      'सात': '7',
+      'eight': '8',
+      'आठ': '8',
+      'nine': '9',
+      'नौ': '9',
     };
 
     if (RegExp(r'^\s*[0-9, .-]+\s*$').hasMatch(text)) {
       return text.replaceAll(RegExp(r'[^0-9]'), '');
     }
 
-    final tokens = text
-        .replaceAll(RegExp(r'[,.-]'), ' ')
-        .split(RegExp(r'\s+'));
+    final tokens = text.replaceAll(RegExp(r'[,.-]'), ' ').split(RegExp(r'\s+'));
 
     final out = StringBuffer();
     for (final token in tokens) {
@@ -267,10 +243,7 @@ class _ScanQRScreenState
   }
 
   String? _movementFromSpeech(String text) {
-    final v = text.trim().toLowerCase().replaceAll(
-          RegExp(r'[\s\-_]'),
-          '',
-        );
+    final v = text.trim().toLowerCase().replaceAll(RegExp(r'[\s\-_]'), '');
 
     if (v.contains('demo') || text.contains('डेमो')) return 'Demo';
     if (v.contains('testdrive') ||
@@ -435,7 +408,6 @@ class _ScanQRScreenState
     );
   }
 
-
   Future<void> _listenGate() async {
     try {
       if (isListening) {
@@ -491,7 +463,6 @@ class _ScanQRScreenState
     }
   }
 
-
   Widget _gateSpeechButton() {
     final active = isListening && _activeSpeechField == 'gate';
 
@@ -529,10 +500,7 @@ class _ScanQRScreenState
         if (active) {
           await _stopSpeech();
         } else {
-          await _listenTextField(
-            fieldName: fieldName,
-            controller: controller,
-          );
+          await _listenTextField(fieldName: fieldName, controller: controller);
         }
       },
     );
@@ -544,8 +512,7 @@ class _ScanQRScreenState
   // place" the vehicle is going to/coming from, regardless of direction.
   // ==========================================================
 
-  final TextEditingController otherLocationController =
-      TextEditingController();
+  final TextEditingController otherLocationController = TextEditingController();
   int? otherCityId;
   Map<String, dynamic>? selectedOtherLocation;
 
@@ -598,47 +565,26 @@ class _ScanQRScreenState
   // ============================================================
 
   Future<void> loadLoginData() async {
-
-    final prefs =
-        await SharedPreferences
-            .getInstance();
+    final prefs = await SharedPreferences.getInstance();
 
     // ----------------------------------------------------------
     // CITY NAME
     // ----------------------------------------------------------
 
-    String cityName =
-        prefs.getString(
-              "cityName",
-            ) ??
-            "";
+    String cityName = prefs.getString("cityName") ?? "";
 
     if (cityName.trim().isEmpty) {
-
-      cityName =
-          prefs.getString(
-                "CityName",
-              ) ??
-              "";
+      cityName = prefs.getString("CityName") ?? "";
     }
 
     // ----------------------------------------------------------
     // STATE ID
     // ----------------------------------------------------------
 
-    int savedStateId =
-        prefs.getInt(
-              "stateId",
-            ) ??
-            0;
+    int savedStateId = prefs.getInt("stateId") ?? 0;
 
     if (savedStateId == 0) {
-
-      savedStateId =
-          prefs.getInt(
-                "StateId",
-              ) ??
-              0;
+      savedStateId = prefs.getInt("StateId") ?? 0;
     }
 
     if (!mounted) {
@@ -646,33 +592,20 @@ class _ScanQRScreenState
     }
 
     setState(() {
+      gateCityName = cityName.trim();
 
-      gateCityName =
-          cityName.trim();
-
-      stateId =
-          savedStateId;
+      stateId = savedStateId;
     });
 
-    debugPrint(
-      "======================================",
-    );
+    debugPrint("======================================");
 
-    debugPrint(
-      "LOGIN / GATE DATA",
-    );
+    debugPrint("LOGIN / GATE DATA");
 
-    debugPrint(
-      "CityName: $gateCityName",
-    );
+    debugPrint("CityName: $gateCityName");
 
-    debugPrint(
-      "StateId: $stateId",
-    );
+    debugPrint("StateId: $stateId");
 
-    debugPrint(
-      "======================================",
-    );
+    debugPrint("======================================");
   }
 
   // ============================================================
@@ -680,136 +613,81 @@ class _ScanQRScreenState
   // ============================================================
 
   Future<void> loadCities() async {
-
     if (mounted) {
-
       setState(() {
-
-        isLoadingCities =
-            true;
+        isLoadingCities = true;
       });
     }
 
     try {
-
-      final response =
-          await http.get(
-        Uri.parse(
-          "http://103.168.210.85:4001/api/cities",
-        ),
-        headers: {
-          "Accept":
-              "application/json",
-        },
+      final response = await http.get(
+        Uri.parse("http://103.168.210.85:4001/api/cities"),
+        headers: {"Accept": "application/json"},
       );
 
-      debugPrint(
-        "======================================",
-      );
+      debugPrint("======================================");
 
       debugPrint(
         "CITIES API STATUS: "
         "${response.statusCode}",
       );
 
-      debugPrint(
-        "CITIES API RESPONSE:",
-      );
+      debugPrint("CITIES API RESPONSE:");
 
-      debugPrint(
-        response.body,
-      );
+      debugPrint(response.body);
 
-      debugPrint(
-        "======================================",
-      );
+      debugPrint("======================================");
 
       if (response.statusCode != 200) {
-
         throw Exception(
           "Cities API failed: "
           "${response.statusCode}",
         );
       }
 
-      final decoded =
-          jsonDecode(
-        response.body,
-      );
+      final decoded = jsonDecode(response.body);
 
       if (decoded is! Map) {
-
-        throw Exception(
-          "Invalid cities API response",
-        );
+        throw Exception("Invalid cities API response");
       }
 
-      final dynamic rawData =
-          decoded["data"];
+      final dynamic rawData = decoded["data"];
 
       if (rawData is! List) {
-
-        throw Exception(
-          "City data not found",
-        );
+        throw Exception("City data not found");
       }
 
-      final List<CityModel>
-          result =
-          rawData
-              .where(
-                (item) =>
-                    item is Map,
-              )
-              .map(
-                (item) =>
-                    CityModel.fromJson(
-                  Map<String, dynamic>
-                      .from(
-                    item,
-                  ),
-                ),
-              )
-              .toList();
+      final List<CityModel> result = rawData
+          .where((item) => item is Map)
+          .map((item) => CityModel.fromJson(Map<String, dynamic>.from(item)))
+          .toList();
 
       if (!mounted) {
         return;
       }
 
       setState(() {
+        allCities = result;
 
-        allCities =
-            result;
-
-        isLoadingCities =
-            false;
+        isLoadingCities = false;
       });
 
       debugPrint(
         "TOTAL CITIES: "
         "${allCities.length}",
       );
-
     } catch (e) {
-
       if (!mounted) {
         return;
       }
 
       setState(() {
-
-        isLoadingCities =
-            false;
+        isLoadingCities = false;
       });
 
-      debugPrint(
-        "CITIES API ERROR: $e",
-      );
+      debugPrint("CITIES API ERROR: $e");
 
-      showMessage(
-        "Unable to load cities",
-        isError: true,
-      );
+      showMessage("Unable to load cities", isError: true);
     }
   }
 
@@ -817,44 +695,29 @@ class _ScanQRScreenState
   // SEARCH CITIES
   // ============================================================
 
-  List<Map<String, dynamic>>
-      searchCities(
-    String query,
-  ) {
-
-    final String search =
-        query
-            .trim()
-            .toLowerCase();
+  List<Map<String, dynamic>> searchCities(String query) {
+    final String search = query.trim().toLowerCase();
 
     // ----------------------------------------------------------
     // EMPTY SEARCH
     // ----------------------------------------------------------
 
     if (search.isEmpty) {
-
       return allCities
           .take(20)
           .map(
             (city) => {
+              "CityId": city.cityId,
 
-              "CityId":
-                  city.cityId,
+              "StateId": city.stateId,
 
-              "StateId":
-                  city.stateId,
+              "CityName": city.cityName,
 
-              "CityName":
-                  city.cityName,
+              "LocationName": city.locationName,
 
-              "LocationName":
-                  city.locationName,
+              "LocationType": city.locationType,
 
-              "LocationType":
-                  city.locationType,
-
-              "PinCode":
-                  city.pinCode,
+              "PinCode": city.pinCode,
             },
           )
           .toList();
@@ -865,69 +728,37 @@ class _ScanQRScreenState
     // ----------------------------------------------------------
 
     return allCities
-        .where(
-          (city) {
+        .where((city) {
+          final cityName = city.cityName.toLowerCase();
 
-            final cityName =
-                city.cityName
-                    .toLowerCase();
+          final locationName = city.locationName.toLowerCase();
 
-            final locationName =
-                city.locationName
-                    .toLowerCase();
+          final locationType = city.locationType.toLowerCase();
 
-            final locationType =
-                city.locationType
-                    .toLowerCase();
+          final pinCode = city.pinCode.toLowerCase();
 
-            final pinCode =
-                city.pinCode
-                    .toLowerCase();
+          final cityId = city.cityId.toString().toLowerCase();
 
-            final cityId =
-                city.cityId
-                    .toString()
-                    .toLowerCase();
-
-            return
-                cityName.contains(
-                  search,
-                ) ||
-                locationName.contains(
-                  search,
-                ) ||
-                locationType.contains(
-                  search,
-                ) ||
-                pinCode.contains(
-                  search,
-                ) ||
-                cityId.contains(
-                  search,
-                );
-          },
-        )
+          return cityName.contains(search) ||
+              locationName.contains(search) ||
+              locationType.contains(search) ||
+              pinCode.contains(search) ||
+              cityId.contains(search);
+        })
         .take(20)
         .map(
           (city) => {
+            "CityId": city.cityId,
 
-            "CityId":
-                city.cityId,
+            "StateId": city.stateId,
 
-            "StateId":
-                city.stateId,
+            "CityName": city.cityName,
 
-            "CityName":
-                city.cityName,
+            "LocationName": city.locationName,
 
-            "LocationName":
-                city.locationName,
+            "LocationType": city.locationType,
 
-            "LocationType":
-                city.locationType,
-
-            "PinCode":
-                city.pinCode,
+            "PinCode": city.pinCode,
           },
         )
         .toList();
@@ -937,27 +768,15 @@ class _ScanQRScreenState
   // FIND CITY ID BY CITY NAME
   // ============================================================
 
-  int? findCityIdByName(
-    String cityName,
-  ) {
-
-    final search =
-        cityName
-            .trim()
-            .toLowerCase();
+  int? findCityIdByName(String cityName) {
+    final search = cityName.trim().toLowerCase();
 
     if (search.isEmpty) {
       return null;
     }
 
-    for (final city
-        in allCities) {
-
-      if (city.cityName
-              .trim()
-              .toLowerCase() ==
-          search) {
-
+    for (final city in allCities) {
+      if (city.cityName.trim().toLowerCase() == search) {
         return city.cityId;
       }
     }
@@ -970,9 +789,7 @@ class _ScanQRScreenState
   // ============================================================
 
   Widget _locationSearchField({
-
-    required TextEditingController
-        controller,
+    required TextEditingController controller,
 
     required String hint,
 
@@ -984,55 +801,33 @@ class _ScanQRScreenState
 
     required bool isGateField,
 
-    required ValueChanged<
-            Map<String, dynamic>>
-        onSelected,
-
+    required ValueChanged<Map<String, dynamic>> onSelected,
   }) {
-
-    return Autocomplete<
-        Map<String, dynamic>>(
-      
+    return Autocomplete<Map<String, dynamic>>(
       // ========================================================
       // DISPLAY VALUE
       // ========================================================
-
-      displayStringForOption:
-          (location) {
-
-        return location[
-                    "LocationName"]
-                ?.toString() ??
-            "";
+      displayStringForOption: (location) {
+        return location["LocationName"]?.toString() ?? "";
       },
 
       // ========================================================
       // OPTIONS
       // ========================================================
-
-      optionsBuilder:
-          (TextEditingValue value) {
-
+      optionsBuilder: (TextEditingValue value) {
         // ------------------------------------------------------
         // LOGIN / GATE FIELD
         // ------------------------------------------------------
 
-        if (!enabled ||
-            readOnly ||
-            isGateField) {
-
-          return const Iterable<
-              Map<String, dynamic>>.empty();
+        if (!enabled || readOnly || isGateField) {
+          return const Iterable<Map<String, dynamic>>.empty();
         }
 
         // ------------------------------------------------------
         // SEARCH
         // ------------------------------------------------------
 
-        final results =
-            searchCities(
-          value.text,
-        );
+        final results = searchCities(value.text);
 
         debugPrint(
           "LOCATION SEARCH: "
@@ -1050,39 +845,18 @@ class _ScanQRScreenState
       // ========================================================
       // SELECT LOCATION
       // ========================================================
+      onSelected: (Map<String, dynamic> location) {
+        final String locationName = location["LocationName"]?.toString() ?? "";
 
-      onSelected:
-          (Map<String, dynamic>
-              location) {
+        final int? cityId = int.tryParse(location["CityId"]?.toString() ?? "");
 
-        final String locationName =
-            location[
-                        "LocationName"]
-                    ?.toString() ??
-                "";
+        controller.text = locationName;
 
-        final int? cityId =
-            int.tryParse(
-          location[
-                      "CityId"]
-                  ?.toString() ??
-              "",
-        );
+        onSelected(location);
 
-        controller.text =
-            locationName;
+        debugPrint("======================================");
 
-        onSelected(
-          location,
-        );
-
-        debugPrint(
-          "======================================",
-        );
-
-        debugPrint(
-          "SELECTED LOCATION",
-        );
+        debugPrint("SELECTED LOCATION");
 
         debugPrint(
           "LocationName: "
@@ -1104,266 +878,162 @@ class _ScanQRScreenState
           "${location["LocationType"]}",
         );
 
-        debugPrint(
-          "======================================",
-        );
+        debugPrint("======================================");
       },
 
       // ========================================================
       // FIELD VIEW
       // ========================================================
+      fieldViewBuilder:
+          (
+            BuildContext context,
 
-      fieldViewBuilder: (
+            TextEditingController fieldController,
 
-        BuildContext context,
+            FocusNode focusNode,
 
-        TextEditingController
-            fieldController,
+            VoidCallback onFieldSubmitted,
+          ) {
+            if (fieldController.text != controller.text) {
+              fieldController.value = TextEditingValue(
+                text: controller.text,
 
-        FocusNode focusNode,
+                selection: TextSelection.collapsed(
+                  offset: controller.text.length,
+                ),
+              );
+            }
 
-        VoidCallback
-            onFieldSubmitted,
+            return TextField(
+              controller: fieldController,
 
-      ) {
+              focusNode: focusNode,
 
-        if (fieldController.text !=
-            controller.text) {
+              enabled: enabled,
 
-          fieldController.value =
-              TextEditingValue(
+              readOnly: readOnly,
 
-            text:
-                controller.text,
+              textCapitalization: TextCapitalization.words,
 
-            selection:
-                TextSelection
-                    .collapsed(
-              offset:
-                  controller.text.length,
-            ),
-          );
-        }
-
-        return TextField(
-
-          controller:
-              fieldController,
-
-          focusNode:
-              focusNode,
-
-          enabled:
-              enabled,
-
-          readOnly:
-              readOnly,
-
-          textCapitalization:
-              TextCapitalization.words,
-
-          decoration:
-              _inputDecoration(
-            hint: hint,
-            icon: icon,
-            suffix: isLoadingCities ? "Loading..." : null,
-          ).copyWith(
-            suffixIcon: isGateField
-                ? null
-                : _locationSpeechButton(
-                    fieldName: "otherLocation",
-                    controller: controller,
+              decoration:
+                  _inputDecoration(
+                    hint: hint,
+                    icon: icon,
+                    suffix: isLoadingCities ? "Loading..." : null,
+                  ).copyWith(
+                    suffixIcon: isGateField
+                        ? null
+                        : _locationSpeechButton(
+                            fieldName: "otherLocation",
+                            controller: controller,
+                          ),
                   ),
-          ),
-        );
-      },
+            );
+          },
 
       // ========================================================
       // OPTIONS VIEW
       // ========================================================
+      optionsViewBuilder:
+          (
+            BuildContext context,
 
-      optionsViewBuilder: (
+            AutocompleteOnSelected<Map<String, dynamic>> onSelected,
 
-        BuildContext context,
+            Iterable<Map<String, dynamic>> options,
+          ) {
+            final optionList = options.toList();
 
-        AutocompleteOnSelected<
-                Map<String, dynamic>>
-            onSelected,
+            if (optionList.isEmpty) {
+              return const SizedBox.shrink();
+            }
 
-        Iterable<
-                Map<String, dynamic>>
-            options,
+            return Align(
+              alignment: Alignment.topLeft,
 
-      ) {
+              child: Material(
+                elevation: 8,
 
-        final optionList =
-            options.toList();
+                borderRadius: BorderRadius.circular(12),
 
-        if (optionList.isEmpty) {
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.43,
 
-          return const SizedBox
-              .shrink();
-        }
+                  constraints: const BoxConstraints(maxHeight: 300),
 
-        return Align(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
 
-          alignment:
-              Alignment.topLeft,
+                    borderRadius: BorderRadius.circular(12),
 
-          child: Material(
+                    border: Border.all(color: Colors.grey.shade300),
+                  ),
 
-            elevation: 8,
+                  child: ListView.separated(
+                    padding: EdgeInsets.zero,
 
-            borderRadius:
-                BorderRadius.circular(
-              12,
-            ),
+                    shrinkWrap: true,
 
-            child: Container(
+                    itemCount: optionList.length,
 
-              width:
-                  MediaQuery.of(context)
-                          .size
-                          .width *
-                      0.43,
+                    separatorBuilder: (_, __) {
+                      return const Divider(height: 1);
+                    },
 
-              constraints:
-                  const BoxConstraints(
-                maxHeight: 300,
-              ),
+                    itemBuilder: (context, index) {
+                      final location = optionList[index];
 
-              decoration:
-                  BoxDecoration(
+                      final locationName =
+                          location["LocationName"]?.toString() ?? "";
 
-                color:
-                    Colors.white,
+                      final cityName = location["CityName"]?.toString() ?? "";
 
-                borderRadius:
-                    BorderRadius.circular(
-                  12,
-                ),
+                      final cityId = location["CityId"]?.toString() ?? "";
 
-                border:
-                    Border.all(
-                  color:
-                      Colors.grey.shade300,
-                ),
-              ),
+                      final locationType =
+                          location["LocationType"]?.toString() ?? "";
 
-              child:
-                  ListView.separated(
+                      final pinCode = location["PinCode"]?.toString() ?? "";
 
-                padding:
-                    EdgeInsets.zero,
+                      return ListTile(
+                        dense: true,
 
-                shrinkWrap:
-                    true,
+                        leading: const Icon(
+                          Icons.location_on,
+                          color: Color(0xff2458A6),
+                        ),
 
-                itemCount:
-                    optionList.length,
+                        title: Text(
+                          locationName,
 
-                separatorBuilder:
-                    (_, __) {
+                          maxLines: 2,
 
-                  return const Divider(
-                    height: 1,
-                  );
-                },
+                          overflow: TextOverflow.ellipsis,
 
-                itemBuilder:
-                    (context, index) {
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
 
-                  final location =
-                      optionList[index];
+                        subtitle: Text(
+                          cityName,
 
-                  final locationName =
-                      location[
-                                  "LocationName"]
-                              ?.toString() ??
-                          "";
+                          maxLines: 2,
 
-                  final cityName =
-                      location[
-                                  "CityName"]
-                              ?.toString() ??
-                          "";
+                          overflow: TextOverflow.ellipsis,
+                        ),
 
-                  final cityId =
-                      location[
-                                  "CityId"]
-                              ?.toString() ??
-                          "";
-
-                  final locationType =
-                      location[
-                                  "LocationType"]
-                              ?.toString() ??
-                          "";
-
-                  final pinCode =
-                      location[
-                                  "PinCode"]
-                              ?.toString() ??
-                          "";
-
-                  return ListTile(
-
-                    dense:
-                        true,
-
-                    leading:
-                        const Icon(
-                      Icons.location_on,
-                      color:
-                          Color(
-                        0xff2458A6,
-                      ),
-                    ),
-
-                    title:
-                        Text(
-
-                      locationName,
-
-                      maxLines: 2,
-
-                      overflow:
-                          TextOverflow
-                              .ellipsis,
-
-                      style:
-                          const TextStyle(
-                        fontSize: 14,
-                        fontWeight:
-                            FontWeight.w600,
-                      ),
-                    ),
-
-                    subtitle:
-                        Text(
-
-                      cityName,
-
-                      maxLines: 2,
-
-                      overflow:
-                          TextOverflow
-                              .ellipsis,
-                    ),
-
-                    onTap: () {
-
-                      onSelected(
-                        location,
+                        onTap: () {
+                          onSelected(location);
+                        },
                       );
                     },
-                  );
-                },
+                  ),
+                ),
               ),
-            ),
-          ),
-        );
-      },
+            );
+          },
     );
   }
 
@@ -1371,79 +1041,56 @@ class _ScanQRScreenState
   // ODOMETER PHOTO
   // ============================================================
 
-  Future<void>
-      takeOdometerPhoto() async {
-
+  Future<void> takeOdometerPhoto() async {
     if (isTakingOdometerPhoto) {
       return;
     }
 
     setState(() {
-
-      isTakingOdometerPhoto =
-          true;
+      isTakingOdometerPhoto = true;
     });
 
     try {
+      final XFile? image = await _imagePicker.pickImage(
+        source: ImageSource.camera,
 
-      final XFile? image =
-          await _imagePicker
-              .pickImage(
+        imageQuality: 85,
 
-        source:
-            ImageSource.camera,
+        maxWidth: 1600,
 
-        imageQuality:
-            85,
-
-        maxWidth:
-            1600,
-
-        maxHeight:
-            1600,
+        maxHeight: 1600,
       );
 
       if (image == null) {
-
         if (mounted) {
-
           setState(() {
-
-            isTakingOdometerPhoto =
-                false;
+            isTakingOdometerPhoto = false;
           });
         }
 
         return;
       }
 
-      final Uint8List bytes =
-          await image.readAsBytes();
+      final Uint8List bytes = await image.readAsBytes();
 
       if (!mounted) {
         return;
       }
 
       setState(() {
+        odometerImage = image;
 
-        odometerImage =
-            image;
+        odometerImageBytes = bytes;
 
-        odometerImageBytes =
-            bytes;
+        isTakingOdometerPhoto = false;
 
-        isTakingOdometerPhoto =
-            false;
-
-        isReadingOdometer =
-            true;
+        isReadingOdometer = true;
       });
 
       // Best-effort OCR — same digit-extraction approach as the web's
       // Tesseract.js odometer reader on fuel.html. Never blocks the flow:
       // the field stays editable either way, this just pre-fills it.
-      final reading =
-          await OdometerOcrService.recognizeFromPath(image.path);
+      final reading = await OdometerOcrService.recognizeFromPath(image.path);
 
       if (!mounted) {
         return;
@@ -1462,27 +1109,18 @@ class _ScanQRScreenState
             : "Odometer photo captured — couldn't read a number, please enter it manually.",
         isError: false,
       );
-
     } catch (e) {
-
       if (!mounted) {
         return;
       }
 
       setState(() {
-
-        isTakingOdometerPhoto =
-            false;
+        isTakingOdometerPhoto = false;
       });
 
-      debugPrint(
-        "ODOMETER PHOTO ERROR: $e",
-      );
+      debugPrint("ODOMETER PHOTO ERROR: $e");
 
-      showMessage(
-        "Unable to open camera: $e",
-        isError: true,
-      );
+      showMessage("Unable to open camera: $e", isError: true);
     }
   }
 
@@ -1491,21 +1129,13 @@ class _ScanQRScreenState
   // ============================================================
 
   Widget _buildOdometerPhoto() {
-
     return Column(
-
-      crossAxisAlignment:
-          CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
 
       children: [
+        _sectionLabel("Odometer Photo"),
 
-        _sectionLabel(
-          "Odometer Photo",
-        ),
-
-        const SizedBox(
-          height: 7,
-        ),
+        const SizedBox(height: 7),
 
         if (isReadingOdometer)
           const Padding(
@@ -1526,171 +1156,90 @@ class _ScanQRScreenState
             ),
           ),
 
-        if (odometerImageBytes !=
-            null) ...[
-
+        if (odometerImageBytes != null) ...[
           Container(
+            width: double.infinity,
 
-            width:
-                double.infinity,
+            height: 190,
 
-            height:
-                190,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
 
-            decoration:
-                BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
 
-              color:
-                  Colors.grey.shade100,
-
-              borderRadius:
-                  BorderRadius.circular(
-                12,
-              ),
-
-              border:
-                  Border.all(
-                color:
-                    Colors.grey.shade300,
-              ),
+              border: Border.all(color: Colors.grey.shade300),
             ),
 
-            clipBehavior:
-                Clip.antiAlias,
+            clipBehavior: Clip.antiAlias,
 
-            child:
-                Image.memory(
-
+            child: Image.memory(
               odometerImageBytes!,
 
-              width:
-                  double.infinity,
+              width: double.infinity,
 
-              height:
-                  190,
+              height: 190,
 
-              fit:
-                  BoxFit.cover,
+              fit: BoxFit.cover,
             ),
           ),
 
-          const SizedBox(
-            height: 8,
-          ),
+          const SizedBox(height: 8),
 
           Row(
-
             children: [
-
               Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: isTakingOdometerPhoto ? null : takeOdometerPhoto,
 
-                child:
-                    OutlinedButton.icon(
+                  icon: const Icon(Icons.camera_alt),
 
-                  onPressed:
-                      isTakingOdometerPhoto
-                          ? null
-                          : takeOdometerPhoto,
-
-                  icon:
-                      const Icon(
-                    Icons.camera_alt,
-                  ),
-
-                  label:
-                      const Text(
-                    "Retake Photo",
-                  ),
+                  label: const Text("Retake Photo"),
                 ),
               ),
 
-              const SizedBox(
-                width: 10,
-              ),
+              const SizedBox(width: 10),
 
               IconButton(
-
-                tooltip:
-                    "Remove Photo",
+                tooltip: "Remove Photo",
 
                 onPressed: () {
-
                   setState(() {
+                    odometerImage = null;
 
-                    odometerImage =
-                        null;
-
-                    odometerImageBytes =
-                        null;
+                    odometerImageBytes = null;
                   });
                 },
 
-                icon:
-                    const Icon(
-                  Icons.delete_outline,
-                  color:
-                      Colors.red,
-                ),
+                icon: const Icon(Icons.delete_outline, color: Colors.red),
               ),
             ],
           ),
-
         ] else ...[
-
           SizedBox(
+            width: double.infinity,
 
-            width:
-                double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: isTakingOdometerPhoto ? null : takeOdometerPhoto,
 
-            child:
-                OutlinedButton.icon(
+              icon: isTakingOdometerPhoto
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.camera_alt),
 
-              onPressed:
-                  isTakingOdometerPhoto
-                      ? null
-                      : takeOdometerPhoto,
-
-              icon:
-                  isTakingOdometerPhoto
-
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child:
-                              CircularProgressIndicator(
-                            strokeWidth: 2,
-                          ),
-                        )
-
-                      : const Icon(
-                          Icons.camera_alt,
-                        ),
-
-              label:
-                  Text(
-
+              label: Text(
                 isTakingOdometerPhoto
-
                     ? "Opening Camera..."
-
                     : "Take Odometer Photo",
               ),
 
-              style:
-                  OutlinedButton.styleFrom(
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size(0, 52),
 
-                minimumSize:
-                    const Size(
-                  0,
-                  52,
-                ),
-
-                shape:
-                    RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(
-                    12,
-                  ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
             ),
@@ -1704,17 +1253,12 @@ class _ScanQRScreenState
   // SAVE MOVEMENT
   // ============================================================
   Future<void> saveMovement() async {
-
     // ==========================================================
     // VEHICLE CHECK
     // ==========================================================
 
     if (vehicleDetails == null) {
-
-      showMessage(
-        "Please scan vehicle QR",
-        isError: true,
-      );
+      showMessage("Please scan vehicle QR", isError: true);
 
       return;
     }
@@ -1723,16 +1267,8 @@ class _ScanQRScreenState
     // MOVEMENT TYPE CHECK
     // ==========================================================
 
-    if (selectedMovementType ==
-            null ||
-        selectedMovementType!
-            .trim()
-            .isEmpty) {
-
-      showMessage(
-        "Please select Movement Type",
-        isError: true,
-      );
+    if (selectedMovementType == null || selectedMovementType!.trim().isEmpty) {
+      showMessage("Please select Movement Type", isError: true);
 
       return;
     }
@@ -1741,18 +1277,10 @@ class _ScanQRScreenState
     // ODOMETER
     // ==========================================================
 
-    final int? odometer =
-        int.tryParse(
-      odometerController.text
-          .trim(),
-    );
+    final int? odometer = int.tryParse(odometerController.text.trim());
 
     if (odometer == null) {
-
-      showMessage(
-        "Please enter valid Odometer",
-        isError: true,
-      );
+      showMessage("Please enter valid Odometer", isError: true);
 
       return;
     }
@@ -1761,16 +1289,10 @@ class _ScanQRScreenState
     // DRIVER
     // ==========================================================
 
-    final String driverName =
-        driverNameController.text
-            .trim();
+    final String driverName = driverNameController.text.trim();
 
     if (driverName.isEmpty) {
-
-      showMessage(
-        "Please enter Driver Name",
-        isError: true,
-      );
+      showMessage("Please enter Driver Name", isError: true);
 
       return;
     }
@@ -1779,93 +1301,58 @@ class _ScanQRScreenState
     // OTHER LOCATION
     // ==========================================================
 
-    final String otherLocation =
-        otherLocationController.text
-            .trim();
+    final String otherLocation = otherLocationController.text.trim();
 
     // ==========================================================
     // LOCATION REQUIRED
     // ==========================================================
 
     final bool locationRequired =
-        selectedMovementType !=
-                "Demo" &&
-            selectedMovementType !=
-                "TestDrive";
+        selectedMovementType != "Demo" && selectedMovementType != "TestDrive";
 
-    if (locationRequired &&
-        otherLocation.isEmpty) {
-
-      showMessage(
-        "Please select the other location",
-        isError: true,
-      );
+    if (locationRequired && otherLocation.isEmpty) {
+      showMessage("Please select the other location", isError: true);
 
       return;
     }
 
     try {
-
       // ========================================================
       // VEHICLE DATA
       // ========================================================
 
-      final rawData =
-          vehicleDetails!["data"];
+      final rawData = vehicleDetails!["data"];
 
       if (rawData is! Map) {
-
-        throw Exception(
-          "Vehicle data not found",
-        );
+        throw Exception("Vehicle data not found");
       }
 
-      final Map<String, dynamic>
-          data =
-          Map<String, dynamic>
-              .from(
-        rawData,
-      );
+      final Map<String, dynamic> data = Map<String, dynamic>.from(rawData);
 
       // ========================================================
       // VEHICLE ID
       // ========================================================
 
       final int vehicleId =
-          int.tryParse(
-                data["VehicleId"]
-                        ?.toString() ??
-                    "",
-              ) ??
-              0;
+          int.tryParse(data["VehicleId"]?.toString() ?? "") ?? 0;
 
       if (vehicleId == 0) {
-
-        throw Exception(
-          "VehicleId not found",
-        );
+        throw Exception("VehicleId not found");
       }
 
       // ========================================================
       // QR TOKEN
       // ========================================================
 
-      final Uri? uri =
-          Uri.tryParse(
-        scannedCode,
-      );
+      final Uri? uri = Uri.tryParse(scannedCode);
 
       String? qrToken;
 
       if (uri != null) {
-
-        qrToken =
-            uri.queryParameters[
-                "token"];
+        qrToken = uri.queryParameters["token"];
       }
 
-      qrToken ??=
-          scannedCode;
+      qrToken ??= scannedCode;
 
       // ========================================================
       // BRANCH
@@ -1879,22 +1366,13 @@ class _ScanQRScreenState
 
       String? uploadedImagePath;
 
-      if (odometerImageBytes !=
-          null) {
+      if (odometerImageBytes != null) {
+        final uploadResult = await _authService.uploadAttachment(
+          bytes: odometerImageBytes!,
 
-        final uploadResult =
-            await _authService
-                .uploadAttachment(
+          fileName: odometerImage?.name ?? "odometer.jpg",
 
-          bytes:
-              odometerImageBytes!,
-
-          fileName:
-              odometerImage?.name ??
-                  "odometer.jpg",
-
-          entityType:
-              "Movement",
+          entityType: "Movement",
         );
 
         uploadedImagePath = uploadResult.url;
@@ -1909,29 +1387,17 @@ class _ScanQRScreenState
       // DEBUG
       // ========================================================
 
-      debugPrint(
-        "======================================",
-      );
+      debugPrint("======================================");
 
-      debugPrint(
-        "MOVEMENT SAVE",
-      );
+      debugPrint("MOVEMENT SAVE");
 
-      debugPrint(
-        "======================================",
-      );
+      debugPrint("======================================");
 
-      debugPrint(
-        "BranchId       : $branchId",
-      );
+      debugPrint("BranchId       : $branchId");
 
-      debugPrint(
-        "VehicleId      : $vehicleId",
-      );
+      debugPrint("VehicleId      : $vehicleId");
 
-      debugPrint(
-        "QR Token       : $qrToken",
-      );
+      debugPrint("QR Token       : $qrToken");
 
       debugPrint(
         "Movement Type  : "
@@ -1978,96 +1444,63 @@ class _ScanQRScreenState
         "$uploadedImagePath",
       );
 
-      debugPrint(
-        "======================================",
-      );
+      debugPrint("======================================");
 
       // ========================================================
       // MOVEMENT API
       // ========================================================
 
       final movementResult = await _authService.movementSave(
+        branchId: branchId,
 
-        branchId:
-            branchId,
-
-        vehicleId:
-            vehicleId,
+        vehicleId: vehicleId,
 
         // qrToken: qrToken,
-
-        txnDate:
-            DateTime.now()
-                .toIso8601String(),
+        txnDate: DateTime.now().toIso8601String(),
         // Direction is auto-detected by the backend.
         direction: null,
 
         // ======================================================
         // OTHER LOCATION
         // ======================================================
-
-        otherCityIdOverride:
-            locationRequired
-                ? otherCityId
-                : null,
+        otherCityIdOverride: locationRequired ? otherCityId : null,
 
         // ======================================================
         // ODOMETER
         // ======================================================
-
-        odometer:
-            odometer,
+        odometer: odometer,
 
         // ======================================================
         // DRIVER
         // ======================================================
+        driverName: driverName,
 
-        driverName:
-            driverName,
-
-        driverId:
-            selectedDriverId,
+        driverId: selectedDriverId,
 
         // ======================================================
         // MOVEMENT TYPE
         // ======================================================
-
-        movementType:
-            selectedMovementType!,
+        movementType: selectedMovementType!,
 
         // ======================================================
         // SALES EXECUTIVE
         // ======================================================
-
-        salesExecutive:
-            salesExecutiveController
-                .text
-                .trim(),
+        salesExecutive: salesExecutiveController.text.trim(),
 
         // ======================================================
         // CUSTOMER
         // ======================================================
-
-        customerName:
-            customerNameController
-                .text
-                .trim(),
+        customerName: customerNameController.text.trim(),
 
         // ======================================================
         // PURPOSE
         // ======================================================
-
-        purpose:
-            purposeController
-                .text
-                .trim(),
+        purpose: purposeController.text.trim(),
 
         // ======================================================
         // PHOTO
         // ======================================================
-
-        imagePath:
-            uploadedImagePath,
+        imagePath: uploadedImagePath,
       );
 
       // ========================================================
@@ -2080,10 +1513,8 @@ class _ScanQRScreenState
       }
 
       setState(() {
-        resultDirection =
-            movementResult["direction"]?.toString();
-        resultNewStatus =
-            movementResult["newStatus"]?.toString();
+        resultDirection = movementResult["direction"]?.toString();
+        resultNewStatus = movementResult["newStatus"]?.toString();
         showSuccessOverlay = true;
       });
 
@@ -2097,50 +1528,31 @@ class _ScanQRScreenState
       // SCAN AGAIN
       // ========================================================
 
-      Future.delayed(
-        const Duration(
-          milliseconds: 1600,
-        ),
-        () {
+      Future.delayed(const Duration(milliseconds: 1600), () {
+        if (!mounted) {
+          return;
+        }
 
-          if (!mounted) {
-            return;
-          }
+        setState(() {
+          showSuccessOverlay = false;
+        });
 
-          setState(() {
-            showSuccessOverlay = false;
-          });
-
-          _scanAgain();
-        },
-      );
-
+        _scanAgain();
+      });
     } catch (e) {
-
       if (!mounted) {
         return;
       }
 
-      debugPrint(
-        "======================================",
-      );
+      debugPrint("======================================");
 
-      debugPrint(
-        "MOVEMENT SAVE ERROR",
-      );
+      debugPrint("MOVEMENT SAVE ERROR");
 
-      debugPrint(
-        "$e",
-      );
+      debugPrint("$e");
 
-      debugPrint(
-        "======================================",
-      );
+      debugPrint("======================================");
 
-      showMessage(
-        "Save failed: $e",
-        isError: true,
-      );
+      showMessage("Save failed: $e", isError: true);
     }
   }
 
@@ -2169,34 +1581,27 @@ class _ScanQRScreenState
   // ============================================================
 
   Widget _buildLocationFields() {
-
     // ==========================================================
     // DEMO / TEST DRIVE — no location needed at all
     // ==========================================================
 
-    if (selectedMovementType == "Demo" ||
-        selectedMovementType == "TestDrive") {
+    if (selectedMovementType == "Demo" || selectedMovementType == "TestDrive") {
       return const SizedBox.shrink();
     }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
         // ------------------------------------------------------
         // GATE — fixed, read-only, just for confirmation
         // ------------------------------------------------------
-
         _sectionLabel("Your Gate"),
 
         const SizedBox(height: 7),
 
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(
-            horizontal: 14,
-            vertical: 7,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
           decoration: BoxDecoration(
             color: Colors.grey.shade100,
             borderRadius: BorderRadius.circular(12),
@@ -2204,19 +1609,14 @@ class _ScanQRScreenState
           ),
           child: Row(
             children: [
-              const Icon(
-                Icons.location_on,
-                color: Color(0xff2458A6),
-              ),
+              const Icon(Icons.location_on, color: Color(0xff2458A6)),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
                   gateCityName.trim().isEmpty
                       ? "Gate location not set"
                       : gateCityName,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
               ),
               _gateSpeechButton(),
@@ -2229,7 +1629,6 @@ class _ScanQRScreenState
         // ------------------------------------------------------
         // OTHER LOCATION — the only thing the guard picks
         // ------------------------------------------------------
-
         _sectionLabel("Other Location"),
 
         const SizedBox(height: 7),
@@ -2248,9 +1647,7 @@ class _ScanQRScreenState
               otherLocationController.text =
                   location["LocationName"]?.toString() ?? "";
 
-              otherCityId = int.tryParse(
-                location["CityId"]?.toString() ?? "",
-              );
+              otherCityId = int.tryParse(location["CityId"]?.toString() ?? "");
             });
           },
         ),
@@ -2262,10 +1659,7 @@ class _ScanQRScreenState
   // QR DETECT
   // ============================================================
 
-  Future<void> _onDetect(
-    BarcodeCapture capture,
-  ) async {
-
+  Future<void> _onDetect(BarcodeCapture capture) async {
     if (isScanned) {
       return;
     }
@@ -2274,116 +1668,70 @@ class _ScanQRScreenState
       return;
     }
 
-    final barcode =
-        capture.barcodes.first;
+    final barcode = capture.barcodes.first;
 
-    final String? qrValue =
-        barcode.rawValue;
+    final String? qrValue = barcode.rawValue;
 
-    if (qrValue == null ||
-        qrValue.trim().isEmpty) {
-
+    if (qrValue == null || qrValue.trim().isEmpty) {
       return;
     }
 
     setState(() {
+      isScanned = true;
 
-      isScanned =
-          true;
+      isLoadingVehicle = true;
 
-      isLoadingVehicle =
-          true;
-
-      scannedCode =
-          qrValue.trim();
+      scannedCode = qrValue.trim();
     });
 
     try {
-
-      final uri =
-          Uri.tryParse(
-        qrValue,
-      );
+      final uri = Uri.tryParse(qrValue);
 
       String? token;
 
       if (uri != null) {
-
-        token =
-            uri.queryParameters[
-                "token"];
+        token = uri.queryParameters["token"];
       }
 
-      token ??=
-          qrValue;
+      token ??= qrValue;
 
-      debugPrint(
-        "QR TOKEN: $token",
-      );
+      debugPrint("QR TOKEN: $token");
 
-      final vehicle =
-          await _authService
-              .getVehicleByQRToken(
-        token,
-      );
+      final vehicle = await _authService.getVehicleByQRToken(token);
 
       if (!mounted) {
         return;
       }
 
       setState(() {
+        vehicleDetails = vehicle;
 
-        vehicleDetails =
-            vehicle;
-
-        isLoadingVehicle =
-            false;
+        isLoadingVehicle = false;
       });
 
-      final data =
-          vehicle["data"];
+      final data = vehicle["data"];
 
       if (data is Map) {
-
-        if (data[
-                "CurrentOdometer"] !=
-            null) {
-
-          odometerController
-              .text =
-              data[
-                      "CurrentOdometer"]
-                  .toString();
+        if (data["CurrentOdometer"] != null) {
+          odometerController.text = data["CurrentOdometer"].toString();
         }
       }
 
-      showMessage(
-        "Vehicle details loaded",
-        isError: false,
-      );
-
+      showMessage("Vehicle details loaded", isError: false);
     } catch (e) {
-
       if (!mounted) {
         return;
       }
 
       setState(() {
+        vehicleDetails = null;
 
-        vehicleDetails =
-            null;
+        isLoadingVehicle = false;
 
-        isLoadingVehicle =
-            false;
-
-        isScanned =
-            false;
+        isScanned = false;
       });
 
-      showMessage(
-        "Vehicle not found: $e",
-        isError: true,
-      );
+      showMessage("Vehicle not found: $e", isError: true);
     }
   }
 
@@ -2392,19 +1740,11 @@ class _ScanQRScreenState
   // ============================================================
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
-
+  Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xff12386B),
 
-      backgroundColor:
-          const Color(
-        0xff12386B,
-      ),
-
-      appBar:
-          AppBar(
+      appBar: AppBar(
         actions: [
           PopupMenuButton<String>(
             tooltip: 'Voice language',
@@ -2419,107 +1759,58 @@ class _ScanQRScreenState
               setState(() => _speechLocaleId = value);
             },
             itemBuilder: (context) => const [
-              PopupMenuItem(
-                value: 'en_IN',
-                child: Text('English (India)'),
-              ),
-              PopupMenuItem(
-                value: 'hi_IN',
-                child: Text('हिंदी (India)'),
-              ),
+              PopupMenuItem(value: 'en_IN', child: Text('English (India)')),
+              PopupMenuItem(value: 'hi_IN', child: Text('हिंदी (India)')),
             ],
           ),
         ],
-        backgroundColor:
-            const Color(
-          0xff12386B,
-        ),
+        backgroundColor: const Color(0xff12386B),
 
-        foregroundColor:
-            Colors.white,
+        foregroundColor: Colors.white,
 
-        elevation:
-            0,
+        elevation: 0,
 
-        title:
-            const Text(
+        title: const Text(
           "Scan Vehicle QR",
-          style:
-              TextStyle(
-            fontWeight:
-                FontWeight.bold,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
 
-      body:
-          SafeArea(
-
-        child:
-            Stack(
-
+      body: SafeArea(
+        child: Stack(
           children: [
-
             // ==================================================
             // CAMERA
             // ==================================================
-
             Positioned.fill(
-
-              child:
-                  Padding(
-
-                padding:
-                    const EdgeInsets.only(
+              child: Padding(
+                padding: const EdgeInsets.only(
                   left: 20,
                   right: 20,
                   top: 10,
                   bottom: 190,
                 ),
 
-                child:
-                    Container(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black,
 
-                  decoration:
-                      BoxDecoration(
-
-                    color:
-                        Colors.black,
-
-                    borderRadius:
-                        BorderRadius.circular(
-                      18,
-                    ),
+                    borderRadius: BorderRadius.circular(18),
                   ),
 
-                  child:
-                      Center(
+                  child: Center(
+                    child: SizedBox(
+                      width: 250,
 
-                    child:
-                        SizedBox(
+                      height: 250,
 
-                      width:
-                          250,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
 
-                      height:
-                          250,
+                        child: MobileScanner(
+                          controller: controller,
 
-                      child:
-                          ClipRRect(
-
-                        borderRadius:
-                            BorderRadius.circular(
-                          12,
-                        ),
-
-                        child:
-                            MobileScanner(
-
-                          controller:
-                              controller,
-
-                          onDetect:
-                              _onDetect,
+                          onDetect: _onDetect,
                         ),
                       ),
                     ),
@@ -2531,162 +1822,84 @@ class _ScanQRScreenState
             // ==================================================
             // FORM
             // ==================================================
-
             Align(
+              alignment: Alignment.bottomCenter,
 
-              alignment:
-                  Alignment.bottomCenter,
-
-              child:
-                  Container(
-
-                constraints:
-                    BoxConstraints(
-
-                  maxHeight:
-                      MediaQuery.of(
-                            context,
-                          ).size.height *
-                          0.80,
+              child: Container(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.80,
                 ),
 
-                padding:
-                    const EdgeInsets.all(
-                  18,
+                padding: const EdgeInsets.all(18),
+
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                 ),
 
-                decoration:
-                    const BoxDecoration(
-
-                  color:
-                      Colors.white,
-
-                  borderRadius:
-                      BorderRadius.vertical(
-                    top:
-                        Radius.circular(
-                      24,
-                    ),
-                  ),
-                ),
-
-                child:
-                    SingleChildScrollView(
-
-                  child:
-                      Column(
-
-                    crossAxisAlignment:
-                        CrossAxisAlignment.start,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
 
                     children: [
-
                       const Text(
                         "Log Gate Movement",
 
-                        style:
-                            TextStyle(
+                        style: TextStyle(
                           fontSize: 22,
-                          fontWeight:
-                              FontWeight.bold,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
 
-                      const SizedBox(
-                        height: 15,
-                      ),
+                      const SizedBox(height: 15),
 
                       if (isLoadingVehicle)
+                        const Center(child: CircularProgressIndicator()),
 
-                        const Center(
-                          child:
-                              CircularProgressIndicator(),
-                        ),
+                      if (vehicleDetails != null) _buildVehicleCard(),
 
-                      if (vehicleDetails !=
-                          null)
-
-                        _buildVehicleCard(),
-
-                      const SizedBox(
-                        height: 15,
-                      ),
+                      const SizedBox(height: 15),
 
                       Text(
                         "QR Code: "
                         "$scannedCode",
 
-                        maxLines:
-                            2,
+                        maxLines: 2,
 
-                        overflow:
-                            TextOverflow
-                                .ellipsis,
+                        overflow: TextOverflow.ellipsis,
                       ),
 
-                      if (vehicleDetails !=
-                          null) ...[
-
-                        const SizedBox(
-                          height: 18,
-                        ),
+                      if (vehicleDetails != null) ...[
+                        const SizedBox(height: 18),
 
                         SizedBox(
+                          width: double.infinity,
 
-                          width:
-                              double.infinity,
+                          child: ElevatedButton(
+                            onPressed: saveMovement,
 
-                          child:
-                              ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xff2458A6),
 
-                            onPressed:
-                                saveMovement,
+                              foregroundColor: Colors.white,
 
-                            style:
-                                ElevatedButton
-                                    .styleFrom(
-
-                              backgroundColor:
-                                  const Color(
-                                0xff2458A6,
-                              ),
-
-                              foregroundColor:
-                                  Colors.white,
-
-                              minimumSize:
-                                  const Size(
-                                0,
-                                52,
-                              ),
+                              minimumSize: const Size(0, 52),
                             ),
 
-                            child:
-                                const Text(
-                              "SAVE MOVEMENT",
-                            ),
+                            child: const Text("SAVE MOVEMENT"),
                           ),
                         ),
 
-                        const SizedBox(
-                          height: 10,
-                        ),
+                        const SizedBox(height: 10),
 
                         SizedBox(
+                          width: double.infinity,
 
-                          width:
-                              double.infinity,
+                          child: OutlinedButton(
+                            onPressed: _scanAgain,
 
-                          child:
-                              OutlinedButton(
-
-                            onPressed:
-                                _scanAgain,
-
-                            child:
-                                const Text(
-                              "Scan Again",
-                            ),
+                            child: const Text("Scan Again"),
                           ),
                         ),
                       ],
@@ -2702,7 +1915,6 @@ class _ScanQRScreenState
             // green, a giant checkmark, and the SERVER's auto-detected
             // direction/status spelled out in plain words.
             // ==================================================
-
             if (showSuccessOverlay)
               Positioned.fill(
                 child: IgnorePointer(
@@ -2722,8 +1934,8 @@ class _ScanQRScreenState
                             resultDirection == "Exit"
                                 ? "VEHICLE OUT"
                                 : resultDirection == "Entry"
-                                    ? "VEHICLE IN"
-                                    : "RECORDED",
+                                ? "VEHICLE IN"
+                                : "RECORDED",
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 30,
@@ -2758,301 +1970,179 @@ class _ScanQRScreenState
   // ============================================================
 
   Widget _buildVehicleCard() {
-
-    final rawData =
-        vehicleDetails?["data"];
+    final rawData = vehicleDetails?["data"];
 
     if (rawData is! Map) {
-
-      return const Text(
-        "Vehicle data not available",
-      );
+      return const Text("Vehicle data not available");
     }
 
-    final data =
-        Map<String, dynamic>.from(
-      rawData,
-    );
+    final data = Map<String, dynamic>.from(rawData);
 
     return Card(
+      elevation: 3,
 
-      elevation:
-          3,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
 
-      child:
-          Padding(
-
-        padding:
-            const EdgeInsets.all(
-          16,
-        ),
-
-        child:
-            Column(
-
-          crossAxisAlignment:
-              CrossAxisAlignment.start,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
 
           children: [
-
             // ==================================================
             // VEHICLE HEADER
             // ==================================================
-
             Row(
-
               children: [
+                const Icon(Icons.directions_car, color: Color(0xff2458A6)),
 
-                const Icon(
-                  Icons.directions_car,
-                  color:
-                      Color(
-                    0xff2458A6,
-                  ),
-                ),
-
-                const SizedBox(
-                  width: 10,
-                ),
+                const SizedBox(width: 10),
 
                 const Text(
                   "Vehicle Details",
 
-                  style:
-                      TextStyle(
-                    fontSize: 20,
-                    fontWeight:
-                        FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
 
-            const SizedBox(
-              height: 15,
-            ),
+            const SizedBox(height: 15),
 
             // ==================================================
             // VEHICLE NO
             // ==================================================
-
             _vehicleInfoRow(
-              title:
-                  "Vehicle No",
+              title: "Vehicle No",
 
-              value:
-                  data[
-                          "RegistrationNo"]
-                      ?.toString() ??
-                  "-",
+              value: data["RegistrationNo"]?.toString() ?? "-",
             ),
 
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
 
             // ==================================================
             // MODEL
             // ==================================================
-
             _vehicleInfoRow(
-              title:
-                  "Model",
+              title: "Model",
 
-              value:
-                  data[
-                          "Model"]
-                      ?.toString() ??
-                  "-",
+              value: data["Model"]?.toString() ?? "-",
             ),
 
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
 
             // ==================================================
             // VARIANT
             // ==================================================
-
             _vehicleInfoRow(
-              title:
-                  "Variant",
+              title: "Variant",
 
-              value:
-                  data[
-                          "Variant"]
-                      ?.toString() ??
-                  "-",
+              value: data["Variant"]?.toString() ?? "-",
             ),
 
-            const SizedBox(
-              height: 18,
-            ),
+            const SizedBox(height: 18),
 
             // ==================================================
             // MOVEMENT TYPE — Direction is auto-detected server-side,
             // so there's no Direction dropdown here anymore.
             // ==================================================
+            _sectionLabel("Movement Type"),
 
-            _sectionLabel(
-              "Movement Type",
-            ),
-
-            const SizedBox(
-              height: 7,
-            ),
+            const SizedBox(height: 7),
 
             DropdownButtonFormField<String>(
+              value: selectedMovementType,
 
-              value:
-                  selectedMovementType,
+              isExpanded: true,
 
-              isExpanded:
-                  true,
-
-              decoration:
-                  _inputDecoration(
+              decoration: _inputDecoration(
                 hint: "Select movement type",
                 icon: Icons.swap_horiz,
-              ).copyWith(
-                suffixIcon: _movementSpeechButton(),
-              ),
+              ).copyWith(suffixIcon: _movementSpeechButton()),
 
-              items:
-                  movementTypes.map(
-                (type) {
+              items: movementTypes.map((type) {
+                return DropdownMenuItem<String>(value: type, child: Text(type));
+              }).toList(),
 
-                  return
-                      DropdownMenuItem<String>(
-
-                    value:
-                        type,
-
-                    child:
-                        Text(
-                      type,
-                    ),
-                  );
-                },
-              ).toList(),
-
-              onChanged:
-                  (value) {
-
+              onChanged: (value) {
                 setState(() {
-
-                  selectedMovementType =
-                      value;
+                  selectedMovementType = value;
 
                   // ------------------------------------------------
                   // CLEAR OTHER LOCATION
                   // ------------------------------------------------
 
-                  otherLocationController
-                      .clear();
+                  otherLocationController.clear();
 
-                  otherCityId =
-                      null;
+                  otherCityId = null;
 
-                  selectedOtherLocation =
-                      null;
+                  selectedOtherLocation = null;
                 });
               },
             ),
 
-            const SizedBox(
-              height: 16,
-            ),
+            const SizedBox(height: 16),
 
             // ==================================================
             // LOCATIONS
             // ==================================================
-
             _buildLocationFields(),
 
-            const SizedBox(
-              height: 16,
-            ),
+            const SizedBox(height: 16),
 
             // ==================================================
             // ODOMETER
             // ==================================================
+            _sectionLabel("Odometer (km)"),
 
-            _sectionLabel(
-              "Odometer (km)",
-            ),
-
-            const SizedBox(
-              height: 7,
-            ),
+            const SizedBox(height: 7),
 
             TextField(
+              controller: odometerController,
 
-              controller:
-                  odometerController,
-
-              keyboardType:
-                  TextInputType.number,
+              keyboardType: TextInputType.number,
 
               decoration:
                   _inputDecoration(
+                    hint: "Enter odometer",
 
-                hint:
-                    "Enter odometer",
+                    icon: Icons.speed,
 
-                icon:
-                    Icons.speed,
-
-                suffix:
-                    "",
-              ).copyWith(
-                suffixIcon: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _speechButton(
-                      fieldName: "odometer",
-                      controller: odometerController,
-                      numberOnly: true,
+                    suffix: "",
+                  ).copyWith(
+                    suffixIcon: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _speechButton(
+                          fieldName: "odometer",
+                          controller: odometerController,
+                          numberOnly: true,
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(right: 8),
+                          child: Text(""),
+                        ),
+                      ],
                     ),
-                    const Padding(
-                      padding: EdgeInsets.only(right: 8),
-                      child: Text(""),
-                    ),
-                  ],
-                ),
-              ),
+                  ),
             ),
 
-            const SizedBox(
-              height: 16,
-            ),
+            const SizedBox(height: 16),
 
             // ==================================================
             // PHOTO
             // ==================================================
-
             _buildOdometerPhoto(),
 
-            const SizedBox(
-              height: 16,
-            ),
+            const SizedBox(height: 16),
 
             // ==================================================
             // DRIVER
             // ==================================================
+            _sectionLabel("Driver Name"),
 
-            _sectionLabel(
-              "Driver Name",
-            ),
-
-            const SizedBox(
-              height: 7,
-            ),
+            const SizedBox(height: 7),
 
             TextField(
-
-              controller:
-                  driverNameController,
+              controller: driverNameController,
 
               onChanged: (_) {
                 if (selectedDriverId != null) {
@@ -3062,37 +2152,36 @@ class _ScanQRScreenState
 
               decoration:
                   _inputDecoration(
+                    hint: "Pick from list or type name",
 
-                hint:
-                    "Pick from list or type name",
-
-                icon:
-                    selectedDriverId != null
+                    icon: selectedDriverId != null
                         ? Icons.gps_fixed
                         : Icons.person_outline,
-              ).copyWith(
-                suffixIcon: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      tooltip: "Select driver",
-                      icon: const Icon(Icons.list_alt),
-                      onPressed: () async {
-                        final d = await showDriverPicker(context);
-                        if (d == null) return;
-                        setState(() {
-                          driverNameController.text = d["DriverName"]?.toString() ?? "";
-                          selectedDriverId = (d["DriverId"] as num?)?.toInt();
-                        });
-                      },
+                  ).copyWith(
+                    suffixIcon: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          tooltip: "Select driver",
+                          icon: const Icon(Icons.list_alt),
+                          onPressed: () async {
+                            final d = await showDriverPicker(context);
+                            if (d == null) return;
+                            setState(() {
+                              driverNameController.text =
+                                  d["DriverName"]?.toString() ?? "";
+                              selectedDriverId = (d["DriverId"] as num?)
+                                  ?.toInt();
+                            });
+                          },
+                        ),
+                        _speechButton(
+                          fieldName: "driverName",
+                          controller: driverNameController,
+                        ),
+                      ],
                     ),
-                    _speechButton(
-                      fieldName: "driverName",
-                      controller: driverNameController,
-                    ),
-                  ],
-                ),
-              ),
+                  ),
             ),
 
             if (selectedDriverId != null)
@@ -3104,118 +2193,81 @@ class _ScanQRScreenState
                 ),
               ),
 
-            const SizedBox(
-              height: 16,
-            ),
+            const SizedBox(height: 16),
 
             // ==================================================
             // SALES EXECUTIVE
             // ==================================================
+            _sectionLabel("Sales Executive"),
 
-            _sectionLabel(
-              "Sales Executive",
-            ),
-
-            const SizedBox(
-              height: 7,
-            ),
+            const SizedBox(height: 7),
 
             TextField(
-
-              controller:
-                  salesExecutiveController,
+              controller: salesExecutiveController,
 
               decoration:
                   _inputDecoration(
+                    hint: "Enter sales executive",
 
-                hint:
-                    "Enter sales executive",
-
-                icon:
-                    Icons.person_outline,
-              ).copyWith(
-                suffixIcon: _speechButton(
-                  fieldName: "salesExecutive",
-                  controller: salesExecutiveController,
-                ),
-              ),
+                    icon: Icons.person_outline,
+                  ).copyWith(
+                    suffixIcon: _speechButton(
+                      fieldName: "salesExecutive",
+                      controller: salesExecutiveController,
+                    ),
+                  ),
             ),
 
-            const SizedBox(
-              height: 16,
-            ),
+            const SizedBox(height: 16),
 
             // ==================================================
             // CUSTOMER
             // ==================================================
+            _sectionLabel("Customer Name"),
 
-            _sectionLabel(
-              "Customer Name",
-            ),
-
-            const SizedBox(
-              height: 7,
-            ),
+            const SizedBox(height: 7),
 
             TextField(
-
-              controller:
-                  customerNameController,
+              controller: customerNameController,
 
               decoration:
                   _inputDecoration(
+                    hint: "Enter customer name",
 
-                hint:
-                    "Enter customer name",
-
-                icon:
-                    Icons.person,
-              ).copyWith(
-                suffixIcon: _speechButton(
-                  fieldName: "customerName",
-                  controller: customerNameController,
-                ),
-              ),
+                    icon: Icons.person,
+                  ).copyWith(
+                    suffixIcon: _speechButton(
+                      fieldName: "customerName",
+                      controller: customerNameController,
+                    ),
+                  ),
             ),
 
-            const SizedBox(
-              height: 16,
-            ),
+            const SizedBox(height: 16),
 
             // ==================================================
             // PURPOSE
             // ==================================================
+            _sectionLabel("Purpose"),
 
-            _sectionLabel(
-              "Purpose",
-            ),
-
-            const SizedBox(
-              height: 7,
-            ),
+            const SizedBox(height: 7),
 
             TextField(
+              controller: purposeController,
 
-              controller:
-                  purposeController,
-
-              maxLines:
-                  2,
+              maxLines: 2,
 
               decoration:
                   _inputDecoration(
+                    hint: "Enter purpose",
 
-                hint:
-                    "Enter purpose",
-
-                icon:
-                    Icons.description_outlined,
-              ).copyWith(
-                suffixIcon: _speechButton(
-                  fieldName: "purpose",
-                  controller: purposeController,
-                ),
-              ),
+                    icon: Icons.description_outlined,
+                  ).copyWith(
+                    suffixIcon: _speechButton(
+                      fieldName: "purpose",
+                      controller: purposeController,
+                    ),
+                  ),
             ),
           ],
         ),
@@ -3227,56 +2279,24 @@ class _ScanQRScreenState
   // VEHICLE INFO ROW
   // ============================================================
 
-  Widget _vehicleInfoRow({
-
-    required String title,
-
-    required String value,
-
-  }) {
-
+  Widget _vehicleInfoRow({required String title, required String value}) {
     return Row(
-
       children: [
-
         SizedBox(
+          width: 110,
 
-          width:
-              110,
-
-          child:
-              Text(
-
+          child: Text(
             title,
 
-            style:
-                TextStyle(
-
-              color:
-                  Colors.grey.shade600,
-
-              fontSize:
-                  13,
-            ),
+            style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
           ),
         ),
 
         Expanded(
-
-          child:
-              Text(
-
+          child: Text(
             value,
 
-            style:
-                const TextStyle(
-
-              fontWeight:
-                  FontWeight.w600,
-
-              fontSize:
-                  15,
-            ),
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
           ),
         ),
       ],
@@ -3287,27 +2307,16 @@ class _ScanQRScreenState
   // SECTION LABEL
   // ============================================================
 
-  Widget _sectionLabel(
-    String text,
-  ) {
-
+  Widget _sectionLabel(String text) {
     return Text(
-
       text,
 
-      style:
-          const TextStyle(
+      style: const TextStyle(
+        fontSize: 14,
 
-        fontSize:
-            14,
+        fontWeight: FontWeight.w600,
 
-        fontWeight:
-            FontWeight.w600,
-
-        color:
-            Color(
-          0xff4B5B73,
-        ),
+        color: Color(0xff4B5B73),
       ),
     );
   }
@@ -3317,89 +2326,41 @@ class _ScanQRScreenState
   // ============================================================
 
   InputDecoration _inputDecoration({
-
     required String hint,
 
     IconData? icon,
 
     String? suffix,
-
   }) {
-
     return InputDecoration(
+      hintText: hint,
 
-      hintText:
-          hint,
+      prefixIcon: icon != null ? Icon(icon) : null,
 
-      prefixIcon:
-          icon != null
-              ? Icon(icon)
-              : null,
+      suffixText: suffix,
 
-      suffixText:
-          suffix,
+      filled: true,
 
-      filled:
-          true,
+      fillColor: Colors.white,
 
-      fillColor:
-          Colors.white,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 15),
 
-      contentPadding:
-          const EdgeInsets.symmetric(
-        horizontal: 14,
-        vertical: 15,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+
+        borderSide: BorderSide(color: Colors.grey.shade300),
       ),
 
-      border:
-          OutlineInputBorder(
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
 
-        borderRadius:
-            BorderRadius.circular(
-          12,
-        ),
-
-        borderSide:
-            BorderSide(
-          color:
-              Colors.grey.shade300,
-        ),
+        borderSide: BorderSide(color: Colors.grey.shade300),
       ),
 
-      enabledBorder:
-          OutlineInputBorder(
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
 
-        borderRadius:
-            BorderRadius.circular(
-          12,
-        ),
-
-        borderSide:
-            BorderSide(
-          color:
-              Colors.grey.shade300,
-        ),
-      ),
-
-      focusedBorder:
-          OutlineInputBorder(
-
-        borderRadius:
-            BorderRadius.circular(
-          12,
-        ),
-
-        borderSide:
-            const BorderSide(
-
-          color:
-              Color(
-            0xff2458A6,
-          ),
-
-          width:
-              2,
-        ),
+        borderSide: const BorderSide(color: Color(0xff2458A6), width: 2),
       ),
     );
   }
@@ -3408,26 +2369,12 @@ class _ScanQRScreenState
   // MESSAGE
   // ============================================================
 
-  void showMessage(
-    String message, {
-    required bool isError,
-  }) {
-
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(
-
+  void showMessage(String message, {required bool isError}) {
+    ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
+        content: Text(message),
 
-        content:
-            Text(
-          message,
-        ),
-
-        backgroundColor:
-            isError
-                ? Colors.red
-                : Colors.green,
+        backgroundColor: isError ? Colors.red : Colors.green,
       ),
     );
   }
@@ -3437,66 +2384,50 @@ class _ScanQRScreenState
   // ============================================================
 
   void _scanAgain() {
-
     setState(() {
+      isScanned = false;
 
-      isScanned =
-          false;
+      scannedCode = "No QR Code Detected";
 
-      scannedCode =
-          "No QR Code Detected";
+      vehicleDetails = null;
 
-      vehicleDetails =
-          null;
+      resultDirection = null;
 
-      resultDirection =
-          null;
+      resultNewStatus = null;
 
-      resultNewStatus =
-          null;
-
-      selectedMovementType =
-          null;
+      selectedMovementType = null;
 
       // --------------------------------------------------------
       // OTHER LOCATION
       // --------------------------------------------------------
 
-      otherLocationController
-          .clear();
+      otherLocationController.clear();
 
-      otherCityId =
-          null;
+      otherCityId = null;
 
-      selectedOtherLocation =
-          null;
+      selectedOtherLocation = null;
 
       // --------------------------------------------------------
       // ODOMETER
       // --------------------------------------------------------
 
-      odometerController
-          .clear();
+      odometerController.clear();
 
       // --------------------------------------------------------
       // PHOTO
       // --------------------------------------------------------
 
-      odometerImage =
-          null;
+      odometerImage = null;
 
-      odometerImageBytes =
-          null;
+      odometerImageBytes = null;
 
-      isReadingOdometer =
-          false;
+      isReadingOdometer = false;
 
       // --------------------------------------------------------
       // DRIVER
       // --------------------------------------------------------
 
-      driverNameController
-          .clear();
+      driverNameController.clear();
 
       selectedDriverId = null;
 
@@ -3504,22 +2435,19 @@ class _ScanQRScreenState
       // SALES
       // --------------------------------------------------------
 
-      salesExecutiveController
-          .clear();
+      salesExecutiveController.clear();
 
       // --------------------------------------------------------
       // CUSTOMER
       // --------------------------------------------------------
 
-      customerNameController
-          .clear();
+      customerNameController.clear();
 
       // --------------------------------------------------------
       // PURPOSE
       // --------------------------------------------------------
 
-      purposeController
-          .clear();
+      purposeController.clear();
     });
 
     controller.start();
@@ -3535,25 +2463,18 @@ class _ScanQRScreenState
 
     controller.dispose();
 
-    odometerController
-        .dispose();
+    odometerController.dispose();
 
-    driverNameController
-        .dispose();
+    driverNameController.dispose();
 
-    salesExecutiveController
-        .dispose();
+    salesExecutiveController.dispose();
 
-    customerNameController
-        .dispose();
+    customerNameController.dispose();
 
-    purposeController
-        .dispose();
+    purposeController.dispose();
 
-    otherLocationController
-        .dispose();
+    otherLocationController.dispose();
 
     super.dispose();
   }
 }
-

@@ -29,10 +29,16 @@ enum TrackerState { idle, noDriverLink, permissionNeeded, tracking, error }
 class TrackerStatus {
   final TrackerState state;
   final String message;
-  final String? vehicle;      // e.g. "RJ14AB1234 · Swift"
+  final String? vehicle; // e.g. "RJ14AB1234 · Swift"
   final DateTime? since;
-  final int queued;           // points waiting for network
-  const TrackerStatus(this.state, this.message, {this.vehicle, this.since, this.queued = 0});
+  final int queued; // points waiting for network
+  const TrackerStatus(
+    this.state,
+    this.message, {
+    this.vehicle,
+    this.since,
+    this.queued = 0,
+  });
 }
 
 class DriverTracker {
@@ -43,11 +49,12 @@ class DriverTracker {
   static final DriverTracker instance = DriverTracker._();
 
   String _token = '';
-  final ValueNotifier<TrackerStatus> status =
-      ValueNotifier(const TrackerStatus(TrackerState.idle, 'Not on a trip'));
+  final ValueNotifier<TrackerStatus> status = ValueNotifier(
+    const TrackerStatus(TrackerState.idle, 'Not on a trip'),
+  );
 
   static const _queueKey = 'dvms_ping_queue';
-  static const _maxQueue = 5000;               // ~40 h at 30 s — plenty for a trip offline
+  static const _maxQueue = 5000; // ~40 h at 30 s — plenty for a trip offline
   static const _batchSize = 200;
 
   int? _tripId;
@@ -58,12 +65,17 @@ class DriverTracker {
   Timer? _flushTimer;
   bool _flushing = false;
 
-  Map<String, String> get _headers =>
-      {'Content-Type': 'application/json', 'Authorization': 'Bearer $_token'};
+  Map<String, String> get _headers => {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer $_token',
+  };
 
   /// Starts watching for trips. Safe to call more than once.
   Future<void> start() async {
-    _pollTimer ??= Timer.periodic(const Duration(seconds: 60), (_) => checkNow());
+    _pollTimer ??= Timer.periodic(
+      const Duration(seconds: 60),
+      (_) => checkNow(),
+    );
     await checkNow();
   }
 
@@ -83,15 +95,20 @@ class DriverTracker {
       final body = jsonDecode(res.body) as Map<String, dynamic>;
       if (body['driver'] == null) {
         await _stopStream();
-        _set(TrackerState.noDriverLink, body['message']?.toString() ?? 'Login not linked to a driver');
+        _set(
+          TrackerState.noDriverLink,
+          body['message']?.toString() ?? 'Login not linked to a driver',
+        );
         return;
       }
-      _pingInterval = Duration(seconds: (body['pingIntervalSec'] as num?)?.toInt() ?? 30);
+      _pingInterval = Duration(
+        seconds: (body['pingIntervalSec'] as num?)?.toInt() ?? 30,
+      );
       _minDistanceM = (body['minDistanceM'] as num?)?.toInt() ?? 25;
       final trip = body['data'] as Map<String, dynamic>?;
       if (trip == null) {
         await _stopStream();
-        await _flush();                        // send anything left from the last trip
+        await _flush(); // send anything left from the last trip
         _set(TrackerState.idle, 'Not on a trip');
         return;
       }
@@ -103,10 +120,16 @@ class DriverTracker {
         final ok = await _startStream();
         if (!ok) return;
       }
-      _set(TrackerState.tracking, 'Sharing location', vehicle: vehicle, since: since);
+      _set(
+        TrackerState.tracking,
+        'Sharing location',
+        vehicle: vehicle,
+        since: since,
+      );
     } catch (e) {
       // Offline: keep whatever is running; points queue locally.
-      if (_posSub == null) _set(TrackerState.error, 'No connection — will retry');
+      if (_posSub == null)
+        _set(TrackerState.error, 'No connection — will retry');
     }
   }
 
@@ -117,9 +140,14 @@ class DriverTracker {
       return false;
     }
     var perm = await Geolocator.checkPermission();
-    if (perm == LocationPermission.denied) perm = await Geolocator.requestPermission();
-    if (perm == LocationPermission.denied || perm == LocationPermission.deniedForever) {
-      _set(TrackerState.permissionNeeded, 'Allow location for DVMS in phone Settings');
+    if (perm == LocationPermission.denied)
+      perm = await Geolocator.requestPermission();
+    if (perm == LocationPermission.denied ||
+        perm == LocationPermission.deniedForever) {
+      _set(
+        TrackerState.permissionNeeded,
+        'Allow location for DVMS in phone Settings',
+      );
       return false;
     }
     // "While in use" still works with the foreground notification on Android,
@@ -130,7 +158,10 @@ class DriverTracker {
 
     late LocationSettings settings;
     if (kIsWeb) {
-      settings = LocationSettings(accuracy: LocationAccuracy.high, distanceFilter: _minDistanceM);
+      settings = LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: _minDistanceM,
+      );
     } else if (Platform.isAndroid) {
       settings = AndroidSettings(
         accuracy: LocationAccuracy.high,
@@ -138,7 +169,8 @@ class DriverTracker {
         intervalDuration: _pingInterval,
         foregroundNotificationConfig: const ForegroundNotificationConfig(
           notificationTitle: 'DVMS trip in progress',
-          notificationText: 'Your location is shared with the company until the vehicle is back at the gate.',
+          notificationText:
+              'Your location is shared with the company until the vehicle is back at the gate.',
           enableWakeLock: true,
           setOngoing: true,
         ),
@@ -153,7 +185,10 @@ class DriverTracker {
         allowBackgroundLocationUpdates: true,
       );
     } else {
-      settings = LocationSettings(accuracy: LocationAccuracy.high, distanceFilter: _minDistanceM);
+      settings = LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: _minDistanceM,
+      );
     }
 
     _posSub = Geolocator.getPositionStream(locationSettings: settings).listen(
@@ -178,7 +213,7 @@ class DriverTracker {
       'lat': p.latitude,
       'lng': p.longitude,
       'accuracy': p.accuracy,
-      'speed': p.speed,          // m/s — the server converts to km/h
+      'speed': p.speed, // m/s — the server converts to km/h
       'heading': p.heading,
       'time': p.timestamp.toUtc().toIso8601String(),
     });
@@ -201,14 +236,22 @@ class DriverTracker {
       final prefs = await SharedPreferences.getInstance();
       var q = prefs.getStringList(_queueKey) ?? <String>[];
       while (q.isNotEmpty) {
-        final batch = q.take(_batchSize).map((s) => jsonDecode(s) as Map<String, dynamic>).toList();
+        final batch = q
+            .take(_batchSize)
+            .map((s) => jsonDecode(s) as Map<String, dynamic>)
+            .toList();
         final tripId = batch.first['tripId'];
         final sameTrip = batch.takeWhile((p) => p['tripId'] == tripId).toList();
         final res = await http
-            .post(Uri.parse('$kApiBase/driver/trip/$tripId/pings'),
-                headers: _headers, body: jsonEncode({'points': sameTrip}))
+            .post(
+              Uri.parse('$kApiBase/driver/trip/$tripId/pings'),
+              headers: _headers,
+              body: jsonEncode({'points': sameTrip}),
+            )
             .timeout(const Duration(seconds: 20));
-        if (res.statusCode == 200 || res.statusCode == 404 || res.statusCode == 410) {
+        if (res.statusCode == 200 ||
+            res.statusCode == 404 ||
+            res.statusCode == 410) {
           // 404/410: trip gone or closed — those points can never be stored, drop them.
           q = q.sublist(sameTrip.length);
           await prefs.setStringList(_queueKey, q);
@@ -218,7 +261,7 @@ class DriverTracker {
             _set(TrackerState.idle, 'Trip ended — vehicle is back');
           }
         } else {
-          break;                               // server/network trouble: retry next tick
+          break; // server/network trouble: retry next tick
         }
       }
       _refreshQueued(q.length);
@@ -231,11 +274,23 @@ class DriverTracker {
 
   void _refreshQueued(int n) {
     final s = status.value;
-    status.value = TrackerStatus(s.state, s.message, vehicle: s.vehicle, since: s.since, queued: n);
+    status.value = TrackerStatus(
+      s.state,
+      s.message,
+      vehicle: s.vehicle,
+      since: s.since,
+      queued: n,
+    );
   }
 
   void _set(TrackerState st, String msg, {String? vehicle, DateTime? since}) {
-    status.value = TrackerStatus(st, msg, vehicle: vehicle, since: since, queued: status.value.queued);
+    status.value = TrackerStatus(
+      st,
+      msg,
+      vehicle: vehicle,
+      since: since,
+      queued: status.value.queued,
+    );
   }
 
   /// Call on logout: stops the GPS stream and the trip polling.

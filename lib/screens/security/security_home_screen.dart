@@ -7,18 +7,13 @@ import 'scan_qr_screen.dart';
 import 'manual_entry_screen.dart';
 
 class SecurityHomeScreen extends StatefulWidget {
-  const SecurityHomeScreen({
-    super.key,
-  });
+  const SecurityHomeScreen({super.key});
 
   @override
-  State<SecurityHomeScreen> createState() =>
-      _SecurityHomeScreenState();
+  State<SecurityHomeScreen> createState() => _SecurityHomeScreenState();
 }
 
-class _SecurityHomeScreenState
-    extends State<SecurityHomeScreen> {
-
+class _SecurityHomeScreenState extends State<SecurityHomeScreen> {
   // ==========================================================
   // SELECTED TAB
   // ==========================================================
@@ -45,8 +40,7 @@ class _SecurityHomeScreenState
 
   Future<void> logout() async {
     try {
-      final prefs =
-          await SharedPreferences.getInstance();
+      final prefs = await SharedPreferences.getInstance();
 
       await prefs.clear();
 
@@ -56,29 +50,20 @@ class _SecurityHomeScreenState
 
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(
-          builder: (_) =>
-              const LoginScreen(),
-        ),
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
         (route) => false,
       );
     } catch (e) {
-      debugPrint(
-        "LOGOUT ERROR: $e",
-      );
+      debugPrint("LOGOUT ERROR: $e");
 
       if (!mounted) {
         return;
       }
 
-      ScaffoldMessenger.of(context)
-          .showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            "Logout failed: $e",
-          ),
-          backgroundColor:
-              Colors.red,
+          content: Text("Logout failed: $e"),
+          backgroundColor: Colors.red,
         ),
       );
     }
@@ -88,15 +73,10 @@ class _SecurityHomeScreenState
   // TAB CHANGE
   // ==========================================================
 
-  void onTabChanged(
-    int index,
-  ) {
+  void onTabChanged(int index) {
     // Safety check
-    if (index < 0 ||
-        index >= pages.length) {
-      debugPrint(
-        "Invalid tab index: $index",
-      );
+    if (index < 0 || index >= pages.length) {
+      debugPrint("Invalid tab index: $index");
       return;
     }
 
@@ -110,90 +90,58 @@ class _SecurityHomeScreenState
   // ==========================================================
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          const Color(0xffF1F5F9),
+      backgroundColor: const Color(0xffF1F5F9),
 
       // ======================================================
       // BODY
       // ======================================================
-
-      body: IndexedStack(
-        index: selectedIndex,
-        children: pages,
-      ),
+      body: IndexedStack(index: selectedIndex, children: pages),
 
       // ======================================================
       // BOTTOM NAVIGATION
       // ======================================================
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: selectedIndex,
 
-      bottomNavigationBar:
-          BottomNavigationBar(
-        currentIndex:
-            selectedIndex,
+        type: BottomNavigationBarType.fixed,
 
-        type:
-            BottomNavigationBarType.fixed,
+        selectedItemColor: const Color(0xff12386B),
 
-        selectedItemColor:
-            const Color(0xff12386B),
+        unselectedItemColor: Colors.grey,
 
-        unselectedItemColor:
-            Colors.grey,
+        backgroundColor: Colors.white,
 
-        backgroundColor:
-            Colors.white,
+        elevation: 10,
 
-        elevation:
-            10,
-
-        onTap:
-            onTabChanged,
+        onTap: onTabChanged,
 
         items: const [
-
           // ==================================================
           // HOME
           // ==================================================
-
           BottomNavigationBarItem(
-            icon: Icon(
-              Icons.home_rounded,
-            ),
-            activeIcon: Icon(
-              Icons.home_rounded,
-            ),
+            icon: Icon(Icons.home_rounded),
+            activeIcon: Icon(Icons.home_rounded),
             label: "Home",
           ),
 
           // ==================================================
           // SCAN QR
           // ==================================================
-
           BottomNavigationBarItem(
-            icon: Icon(
-              Icons.qr_code_scanner,
-            ),
-            activeIcon: Icon(
-              Icons.qr_code_scanner,
-            ),
+            icon: Icon(Icons.qr_code_scanner),
+            activeIcon: Icon(Icons.qr_code_scanner),
             label: "Scan QR",
           ),
 
           // ==================================================
           // MANUAL ENTRY
           // ==================================================
-
           BottomNavigationBarItem(
-            icon: Icon(
-              Icons.edit_note,
-            ),
-            activeIcon: Icon(
-              Icons.edit_note,
-            ),
+            icon: Icon(Icons.edit_note),
+            activeIcon: Icon(Icons.edit_note),
             label: "Manual Entry",
           ),
         ],

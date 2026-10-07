@@ -2,7 +2,7 @@ name: pm_demo_vehicle_management
 description: PM Demo Vehicle Management.
 publish_to: 'none'
 
-version: 1.0.4+43
+version: 1.0.4+44
 
 
 environment:

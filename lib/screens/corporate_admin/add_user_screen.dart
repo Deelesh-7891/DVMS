@@ -22,35 +22,28 @@ class _AddUserScreenState extends State<AddUserScreen> {
   // CONTROLLERS
   // ============================================================
 
-  final TextEditingController nameController =
-      TextEditingController();
+  final TextEditingController nameController = TextEditingController();
 
-  final TextEditingController emailController =
-      TextEditingController();
+  final TextEditingController emailController = TextEditingController();
 
-  final TextEditingController phoneController =
-      TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
 
-  final TextEditingController passwordController =
-      TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
-  final TextEditingController gateLocationController =
-      TextEditingController();
+  final TextEditingController gateLocationController = TextEditingController();
 
   final TextEditingController assignedLocationController =
       TextEditingController();
 
-  final TextEditingController latitudeController =
-      TextEditingController();
+  final TextEditingController latitudeController = TextEditingController();
 
-  final TextEditingController longitudeController =
-      TextEditingController();
+  final TextEditingController longitudeController = TextEditingController();
 
-  final TextEditingController radiusController =
-      TextEditingController(text: "500");
+  final TextEditingController radiusController = TextEditingController(
+    text: "500",
+  );
 
-  final TextEditingController stateSearchController =
-      TextEditingController();
+  final TextEditingController stateSearchController = TextEditingController();
 
   final TextEditingController locationSearchController =
       TextEditingController();
@@ -152,10 +145,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
   Future<void> loadCurrentUserRole() async {
     final prefs = await SharedPreferences.getInstance();
 
-    final role =
-        prefs.getString("roleName") ??
-        prefs.getString("role") ??
-        "";
+    final role = prefs.getString("roleName") ?? prefs.getString("role") ?? "";
 
     if (!mounted) return;
 
@@ -163,9 +153,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
       currentUserRole = role.trim();
     });
 
-    debugPrint(
-      "CURRENT USER ROLE: $currentUserRole",
-    );
+    debugPrint("CURRENT USER ROLE: $currentUserRole");
   }
 
   // ============================================================
@@ -217,10 +205,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
         roles = [];
       });
 
-      showMessage(
-        "Unable to load roles\n$e",
-        isError: true,
-      );
+      showMessage("Unable to load roles\n$e", isError: true);
     }
   }
 
@@ -254,10 +239,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
         states = [];
       });
 
-      showMessage(
-        "Unable to load states\n$e",
-        isError: true,
-      );
+      showMessage("Unable to load states\n$e", isError: true);
     }
   }
 
@@ -291,8 +273,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
 
       for (final stateId in selectedStateIds) {
         try {
-          final data =
-              await _authService.getLocations(stateId);
+          final data = await _authService.getLocations(stateId);
 
           final cityData = data["data"] ?? [];
 
@@ -300,9 +281,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
             allLocations.addAll(cityData);
           }
         } catch (e) {
-          debugPrint(
-            "Location error for StateId $stateId: $e",
-          );
+          debugPrint("Location error for StateId $stateId: $e");
         }
       }
 
@@ -313,9 +292,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
       final Map<int, dynamic> uniqueCities = {};
 
       for (final city in allLocations) {
-        final cityId = int.tryParse(
-          city["CityId"].toString(),
-        );
+        final cityId = int.tryParse(city["CityId"].toString());
 
         if (cityId != null) {
           uniqueCities[cityId] = city;
@@ -334,13 +311,9 @@ class _AddUserScreenState extends State<AddUserScreen> {
         isLoadingLocations = false;
       });
 
-      debugPrint(
-        "ADD USER LOCATIONS: $locations",
-      );
+      debugPrint("ADD USER LOCATIONS: $locations");
     } catch (e) {
-      debugPrint(
-        "ADD USER LOCATION ERROR: $e",
-      );
+      debugPrint("ADD USER LOCATION ERROR: $e");
 
       if (!mounted) return;
 
@@ -349,10 +322,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
         isLoadingLocations = false;
       });
 
-      showMessage(
-        "Unable to load locations\n$e",
-        isError: true,
-      );
+      showMessage("Unable to load locations\n$e", isError: true);
     }
   }
 
@@ -360,10 +330,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
   // ROLE SELECT
   // ============================================================
 
-  void onRoleSelected(
-    String roleName,
-    int roleId,
-  ) {
+  void onRoleSelected(String roleName, int roleId) {
     setState(() {
       selectedRole = roleName;
       selectedRoleId = roleId;
@@ -386,11 +353,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
   // STATE SELECT
   // ============================================================
 
-  void onStateSelected(
-    int stateId,
-    String stateName,
-    bool selected,
-  ) {
+  void onStateSelected(int stateId, String stateName, bool selected) {
     setState(() {
       if (selected) {
         if (!selectedStateIds.contains(stateId)) {
@@ -407,9 +370,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
       selectedLocationNames.clear();
     });
 
-    debugPrint(
-      "SELECTED STATE IDS: $selectedStateIds",
-    );
+    debugPrint("SELECTED STATE IDS: $selectedStateIds");
 
     loadLocationsForSelectedStates();
   }
@@ -418,11 +379,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
   // LOCATION SELECT
   // ============================================================
 
-  void onLocationSelected(
-    int cityId,
-    String cityName,
-    bool selected,
-  ) {
+  void onLocationSelected(int cityId, String cityName, bool selected) {
     setState(() {
       if (selected) {
         if (!selectedLocationIds.contains(cityId)) {
@@ -435,9 +392,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
       }
     });
 
-    debugPrint(
-      "SELECTED LOCATION IDS: $selectedLocationIds",
-    );
+    debugPrint("SELECTED LOCATION IDS: $selectedLocationIds");
   }
 
   // ============================================================
@@ -450,14 +405,10 @@ class _AddUserScreenState extends State<AddUserScreen> {
       selectedStateNames.clear();
 
       for (final state in states) {
-        final int? stateId = int.tryParse(
-          state["StateId"].toString(),
-        );
+        final int? stateId = int.tryParse(state["StateId"].toString());
 
         final String stateName =
-            state["StateName"]?.toString() ??
-            state["Name"]?.toString() ??
-            "";
+            state["StateName"]?.toString() ?? state["Name"]?.toString() ?? "";
 
         if (stateId != null) {
           selectedStateIds.add(stateId);
@@ -498,9 +449,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
       selectedLocationNames.clear();
 
       for (final location in locations) {
-        final int? cityId = int.tryParse(
-          location["CityId"].toString(),
-        );
+        final int? cityId = int.tryParse(location["CityId"].toString());
 
         final String cityName =
             location["CityName"]?.toString() ??
@@ -531,11 +480,9 @@ class _AddUserScreenState extends State<AddUserScreen> {
   // ============================================================
 
   Future<void> openGoogleMaps() async {
-    final lat =
-        double.tryParse(latitudeController.text.trim());
+    final lat = double.tryParse(latitudeController.text.trim());
 
-    final lng =
-        double.tryParse(longitudeController.text.trim());
+    final lng = double.tryParse(longitudeController.text.trim());
 
     Uri url;
 
@@ -544,23 +491,14 @@ class _AddUserScreenState extends State<AddUserScreen> {
         "https://www.google.com/maps/search/?api=1&query=$lat,$lng",
       );
     } else if (gateLocationController.text.trim().isNotEmpty) {
-      final query = Uri.encodeComponent(
-        gateLocationController.text.trim(),
-      );
+      final query = Uri.encodeComponent(gateLocationController.text.trim());
 
-      url = Uri.parse(
-        "https://www.google.com/maps/search/?api=1&query=$query",
-      );
+      url = Uri.parse("https://www.google.com/maps/search/?api=1&query=$query");
     } else {
-      url = Uri.parse(
-        "https://www.google.com/maps",
-      );
+      url = Uri.parse("https://www.google.com/maps");
     }
 
-    await launchUrl(
-      url,
-      mode: LaunchMode.externalApplication,
-    );
+    await launchUrl(url, mode: LaunchMode.externalApplication);
   }
 
   // ============================================================
@@ -568,11 +506,9 @@ class _AddUserScreenState extends State<AddUserScreen> {
   // ============================================================
 
   Future<void> openOpenStreetMap() async {
-    final lat =
-        double.tryParse(latitudeController.text.trim());
+    final lat = double.tryParse(latitudeController.text.trim());
 
-    final lng =
-        double.tryParse(longitudeController.text.trim());
+    final lng = double.tryParse(longitudeController.text.trim());
 
     Uri url;
 
@@ -581,15 +517,10 @@ class _AddUserScreenState extends State<AddUserScreen> {
         "https://www.openstreetmap.org/?mlat=$lat&mlon=$lng#map=17/$lat/$lng",
       );
     } else {
-      url = Uri.parse(
-        "https://www.openstreetmap.org/",
-      );
+      url = Uri.parse("https://www.openstreetmap.org/");
     }
 
-    await launchUrl(
-      url,
-      mode: LaunchMode.externalApplication,
-    );
+    await launchUrl(url, mode: LaunchMode.externalApplication);
   }
 
   // ============================================================
@@ -598,62 +529,39 @@ class _AddUserScreenState extends State<AddUserScreen> {
 
   bool validateForm() {
     if (nameController.text.trim().isEmpty) {
-      showMessage(
-        "Please enter Full Name",
-        isError: true,
-      );
+      showMessage("Please enter Full Name", isError: true);
       return false;
     }
 
     if (emailController.text.trim().isEmpty) {
-      showMessage(
-        "Please enter Email",
-        isError: true,
-      );
+      showMessage("Please enter Email", isError: true);
       return false;
     }
 
     if (phoneController.text.trim().isEmpty) {
-      showMessage(
-        "Please enter Phone",
-        isError: true,
-      );
+      showMessage("Please enter Phone", isError: true);
       return false;
     }
 
     if (selectedRoleId == null) {
-      showMessage(
-        "Please select Role",
-        isError: true,
-      );
+      showMessage("Please select Role", isError: true);
       return false;
     }
 
     // Same LoginScreen rule
-    if (isStateRequired() &&
-        selectedStateIds.isEmpty) {
-      showMessage(
-        "Please select at least one State",
-        isError: true,
-      );
+    if (isStateRequired() && selectedStateIds.isEmpty) {
+      showMessage("Please select at least one State", isError: true);
       return false;
     }
 
     // Same LoginScreen rule
-    if (isLocationRequired() &&
-        selectedLocationIds.isEmpty) {
-      showMessage(
-        "Please select at least one Location",
-        isError: true,
-      );
+    if (isLocationRequired() && selectedLocationIds.isEmpty) {
+      showMessage("Please select at least one Location", isError: true);
       return false;
     }
 
     if (passwordController.text.trim().isEmpty) {
-      showMessage(
-        "Please enter Temporary Password",
-        isError: true,
-      );
+      showMessage("Please enter Temporary Password", isError: true);
       return false;
     }
 
@@ -689,81 +597,45 @@ class _AddUserScreenState extends State<AddUserScreen> {
 
         "RoleName": selectedRole,
 
-        "StateIds":
-            isStateRequired()
-                ? selectedStateIds
-                : <int>[],
+        "StateIds": isStateRequired() ? selectedStateIds : <int>[],
 
-        "StateNames":
-            isStateRequired()
-                ? selectedStateNames
-                : <String>[],
+        "StateNames": isStateRequired() ? selectedStateNames : <String>[],
 
-        "CityIds":
-            isLocationRequired()
-                ? selectedLocationIds
-                : <int>[],
+        "CityIds": isLocationRequired() ? selectedLocationIds : <int>[],
 
-        "CityNames":
-            isLocationRequired()
-                ? selectedLocationNames
-                : <String>[],
+        "CityNames": isLocationRequired() ? selectedLocationNames : <String>[],
 
-        "TemporaryPassword":
-            passwordController.text.trim(),
+        "TemporaryPassword": passwordController.text.trim(),
 
-        "GateLocation":
-            gateLocationController.text.trim(),
+        "GateLocation": gateLocationController.text.trim(),
 
-        "AssignedLocation":
-            assignedLocationController.text.trim(),
+        "AssignedLocation": assignedLocationController.text.trim(),
 
-        "Latitude":
-            double.tryParse(
-              latitudeController.text.trim(),
-            ),
+        "Latitude": double.tryParse(latitudeController.text.trim()),
 
-        "Longitude":
-            double.tryParse(
-              longitudeController.text.trim(),
-            ),
+        "Longitude": double.tryParse(longitudeController.text.trim()),
 
-        "AllowedRadius":
-            int.tryParse(
-              radiusController.text.trim(),
-            ) ??
-                500,
+        "AllowedRadius": int.tryParse(radiusController.text.trim()) ?? 500,
 
         // false = Active
         // true = Locked
         "IsLocked": isUserLocked,
 
         // Convenience field
-        "Status":
-            isUserLocked
-                ? "Locked"
-                : "Active",
+        "Status": isUserLocked ? "Locked" : "Active",
       };
 
       // ========================================================
       // DEBUG
       // ========================================================
 
-      debugPrint(
-        "======================================",
-      );
+      debugPrint("======================================");
 
-      debugPrint(
-        "CREATE USER DATA",
-      );
+      debugPrint("CREATE USER DATA");
 
-      debugPrint(
-        "$userData",
-      );
+      debugPrint("$userData");
 
-      debugPrint(
-        "======================================",
-      );
+      debugPrint("======================================");
 
       // ========================================================
       // TODO:
@@ -783,26 +655,16 @@ class _AddUserScreenState extends State<AddUserScreen> {
         isSaving = false;
       });
 
-      showMessage(
-        "User data ready for API",
-        isError: false,
-      );
+      showMessage("User data ready for API", isError: false);
 
       // Parent UsersScreen ko data return
-      await Future.delayed(
-        const Duration(milliseconds: 500),
-      );
+      await Future.delayed(const Duration(milliseconds: 500));
 
       if (!mounted) return;
 
-      Navigator.pop(
-        context,
-        userData,
-      );
+      Navigator.pop(context, userData);
     } catch (e) {
-      debugPrint(
-        "CREATE USER ERROR: $e",
-      );
+      debugPrint("CREATE USER ERROR: $e");
 
       if (!mounted) return;
 
@@ -810,13 +672,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
         isSaving = false;
       });
 
-      showMessage(
-        e.toString().replaceFirst(
-          "Exception: ",
-          "",
-        ),
-        isError: true,
-      );
+      showMessage(e.toString().replaceFirst("Exception: ", ""), isError: true);
     }
   }
 
@@ -824,22 +680,15 @@ class _AddUserScreenState extends State<AddUserScreen> {
   // MESSAGE
   // ============================================================
 
-  void showMessage(
-    String message, {
-    bool isError = true,
-  }) {
+  void showMessage(String message, {bool isError = true}) {
     if (!mounted) return;
 
-    ScaffoldMessenger.of(context)
-        .hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor:
-            isError
-                ? Colors.red
-                : const Color(0xff16a34a),
+        backgroundColor: isError ? Colors.red : const Color(0xff16a34a),
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -860,8 +709,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
     int maxLines = 1,
   }) {
     return Column(
-      crossAxisAlignment:
-          CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
@@ -881,9 +729,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
           maxLines: maxLines,
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: const TextStyle(
-              color: Color(0xff94a3b8),
-            ),
+            hintStyle: const TextStyle(color: Color(0xff94a3b8)),
 
             prefixIcon: prefixIcon,
 
@@ -892,33 +738,23 @@ class _AddUserScreenState extends State<AddUserScreen> {
             filled: true,
             fillColor: Colors.white,
 
-            contentPadding:
-                const EdgeInsets.symmetric(
+            contentPadding: const EdgeInsets.symmetric(
               horizontal: 15,
               vertical: 15,
             ),
 
             border: OutlineInputBorder(
-              borderRadius:
-                  BorderRadius.circular(12),
-              borderSide: const BorderSide(
-                color: Color(0xffdbe3ef),
-              ),
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xffdbe3ef)),
             ),
 
-            enabledBorder:
-                OutlineInputBorder(
-              borderRadius:
-                  BorderRadius.circular(12),
-              borderSide: const BorderSide(
-                color: Color(0xffdbe3ef),
-              ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xffdbe3ef)),
             ),
 
-            focusedBorder:
-                OutlineInputBorder(
-              borderRadius:
-                  BorderRadius.circular(12),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(
                 color: Color(0xff2161b5),
                 width: 1.5,
@@ -936,8 +772,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
 
   Widget buildRoleDropdown() {
     return Column(
-      crossAxisAlignment:
-          CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
           "Role",
@@ -955,111 +790,66 @@ class _AddUserScreenState extends State<AddUserScreen> {
                 height: 55,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Color(0xffdbe3ef),
-                  ),
-                  borderRadius:
-                      BorderRadius.circular(12),
+                  border: Border.all(color: Color(0xffdbe3ef)),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                child:
-                    const CircularProgressIndicator(),
+                child: const CircularProgressIndicator(),
               )
             : DropdownButtonFormField<int>(
                 value: selectedRoleId,
                 isExpanded: true,
 
-                decoration:
-                    InputDecoration(
+                decoration: InputDecoration(
                   hintText: "Select Role",
-                  prefixIcon:
-                      const Icon(
-                    Icons.person_outline,
-                  ),
+                  prefixIcon: const Icon(Icons.person_outline),
 
                   filled: true,
                   fillColor: Colors.white,
 
-                  border:
-                      OutlineInputBorder(
-                    borderRadius:
-                        BorderRadius.circular(12),
-                    borderSide:
-                        const BorderSide(
-                      color:
-                          Color(0xffdbe3ef),
-                    ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Color(0xffdbe3ef)),
                   ),
 
-                  enabledBorder:
-                      OutlineInputBorder(
-                    borderRadius:
-                        BorderRadius.circular(12),
-                    borderSide:
-                        const BorderSide(
-                      color:
-                          Color(0xffdbe3ef),
-                    ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Color(0xffdbe3ef)),
                   ),
                 ),
 
                 items: roles
-                    .map<
-                        DropdownMenuItem<int>>(
-                  (role) {
-                    final int? roleId =
-                        int.tryParse(
-                      role["RoleId"]
-                          .toString(),
-                    );
+                    .map<DropdownMenuItem<int>>((role) {
+                      final int? roleId = int.tryParse(
+                        role["RoleId"].toString(),
+                      );
 
-                    final String roleName =
-                        role["RoleName"]
-                                ?.toString() ??
-                            "";
+                      final String roleName =
+                          role["RoleName"]?.toString() ?? "";
 
-                    if (roleId == null) {
-                      // return null;
-                    }
+                      if (roleId == null) {
+                        // return null;
+                      }
 
-                    return DropdownMenuItem<int>(
-                      value: roleId,
-                      child: Text(
-                        roleName,
-                        overflow:
-                            TextOverflow.ellipsis,
-                      ),
-                    );
-                  },
-                )
-                    .whereType<
-                        DropdownMenuItem<int>>()
+                      return DropdownMenuItem<int>(
+                        value: roleId,
+                        child: Text(roleName, overflow: TextOverflow.ellipsis),
+                      );
+                    })
+                    .whereType<DropdownMenuItem<int>>()
                     .toList(),
 
-                onChanged:
-                    (int? value) {
+                onChanged: (int? value) {
                   if (value == null) {
                     return;
                   }
 
-                  final role =
-                      roles.firstWhere(
-                    (role) =>
-                        int.tryParse(
-                          role["RoleId"]
-                              .toString(),
-                        ) ==
-                        value,
+                  final role = roles.firstWhere(
+                    (role) => int.tryParse(role["RoleId"].toString()) == value,
                   );
 
-                  final roleName =
-                      role["RoleName"]
-                              ?.toString() ??
-                          "";
+                  final roleName = role["RoleName"]?.toString() ?? "";
 
-                  onRoleSelected(
-                    roleName,
-                    value,
-                  );
+                  onRoleSelected(roleName, value);
                 },
               ),
       ],
@@ -1075,26 +865,17 @@ class _AddUserScreenState extends State<AddUserScreen> {
       return const SizedBox.shrink();
     }
 
-    final search =
-        stateSearchController.text
-            .trim()
-            .toLowerCase();
+    final search = stateSearchController.text.trim().toLowerCase();
 
-    final filteredStates =
-        states.where((state) {
+    final filteredStates = states.where((state) {
       final name =
-          state["StateName"]?.toString() ??
-          state["Name"]?.toString() ??
-          "";
+          state["StateName"]?.toString() ?? state["Name"]?.toString() ?? "";
 
-      return name
-          .toLowerCase()
-          .contains(search);
+      return name.toLowerCase().contains(search);
     }).toList();
 
     return Column(
-      crossAxisAlignment:
-          CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 20),
 
@@ -1110,43 +891,27 @@ class _AddUserScreenState extends State<AddUserScreen> {
         const SizedBox(height: 7),
 
         TextField(
-          controller:
-              stateSearchController,
+          controller: stateSearchController,
           onChanged: (_) {
             setState(() {});
           },
-          decoration:
-              InputDecoration(
+          decoration: InputDecoration(
             hintText: "Search state...",
-            prefixIcon:
-                const Icon(
-              Icons.search,
-            ),
-            suffixIcon:
-                stateSearchController
-                        .text
-                        .isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(
-                          Icons.clear,
-                        ),
-                        onPressed: () {
-                          stateSearchController
-                              .clear();
-                          setState(() {});
-                        },
-                      )
-                    : null,
+            prefixIcon: const Icon(Icons.search),
+            suffixIcon: stateSearchController.text.isNotEmpty
+                ? IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () {
+                      stateSearchController.clear();
+                      setState(() {});
+                    },
+                  )
+                : null,
             filled: true,
             fillColor: Colors.white,
-            border:
-                OutlineInputBorder(
-              borderRadius:
-                  BorderRadius.circular(12),
-              borderSide:
-                  const BorderSide(
-                color: Color(0xffdbe3ef),
-              ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xffdbe3ef)),
             ),
           ),
         ),
@@ -1157,149 +922,83 @@ class _AddUserScreenState extends State<AddUserScreen> {
           height: 240,
           decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(
-              color:
-                  const Color(0xffdbe3ef),
-            ),
-            borderRadius:
-                BorderRadius.circular(12),
+            border: Border.all(color: const Color(0xffdbe3ef)),
+            borderRadius: BorderRadius.circular(12),
           ),
           child: isLoadingStates
-              ? const Center(
-                  child:
-                      CircularProgressIndicator(),
-                )
+              ? const Center(child: CircularProgressIndicator())
               : states.isEmpty
-                  ? const Center(
-                      child: Text(
-                        "No states available",
+              ? const Center(child: Text("No states available"))
+              : Column(
+                  children: [
+                    CheckboxListTile(
+                      value:
+                          selectedStateIds.length == states.length &&
+                          states.isNotEmpty,
+                      title: const Text(
+                        "Select All States",
+                        style: TextStyle(fontWeight: FontWeight.w700),
                       ),
-                    )
-                  : Column(
-                      children: [
-                        CheckboxListTile(
-                          value:
-                              selectedStateIds
-                                      .length ==
-                                  states.length &&
-                              states.isNotEmpty,
-                          title:
-                              const Text(
-                            "Select All States",
-                            style:
-                                TextStyle(
-                              fontWeight:
-                                  FontWeight.w700,
-                            ),
-                          ),
-                          activeColor:
-                              const Color(
-                            0xff2161b5,
-                          ),
-                          onChanged:
-                              (value) {
-                            if (value ==
-                                true) {
-                              selectAllStates();
-                            } else {
-                              clearAllStates();
-                            }
-                          },
-                        ),
+                      activeColor: const Color(0xff2161b5),
+                      onChanged: (value) {
+                        if (value == true) {
+                          selectAllStates();
+                        } else {
+                          clearAllStates();
+                        }
+                      },
+                    ),
 
-                        const Divider(
-                          height: 1,
-                        ),
+                    const Divider(height: 1),
 
-                        Expanded(
-                          child:
-                              ListView.builder(
-                            itemCount:
-                                filteredStates
-                                    .length,
-                            itemBuilder:
-                                (context,
-                                    index) {
-                              final state =
-                                  filteredStates[
-                                      index];
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: filteredStates.length,
+                        itemBuilder: (context, index) {
+                          final state = filteredStates[index];
 
-                              final int?
-                                  stateId =
-                                  int.tryParse(
-                                state[
-                                        "StateId"]
-                                    .toString(),
-                              );
+                          final int? stateId = int.tryParse(
+                            state["StateId"].toString(),
+                          );
 
-                              final String
-                                  stateName =
-                                  state[
-                                              "StateName"]
-                                          ?.toString() ??
-                                      state[
-                                              "Name"]
-                                          ?.toString() ??
-                                      "";
+                          final String stateName =
+                              state["StateName"]?.toString() ??
+                              state["Name"]?.toString() ??
+                              "";
 
-                              if (stateId ==
-                                  null) {
-                                return const SizedBox
-                                    .shrink();
-                              }
+                          if (stateId == null) {
+                            return const SizedBox.shrink();
+                          }
 
-                              return CheckboxListTile(
-                                dense: true,
-                                value:
-                                    selectedStateIds
-                                        .contains(
-                                  stateId,
-                                ),
-                                title:
-                                    Text(
-                                  stateName,
-                                ),
-                                secondary:
-                                    const Icon(
-                                  Icons
-                                      .map_outlined,
-                                ),
-                                activeColor:
-                                    const Color(
-                                  0xff2161b5,
-                                ),
-                                onChanged:
-                                    (value) {
-                                  onStateSelected(
-                                    stateId,
-                                    stateName,
-                                    value ??
-                                        false,
-                                  );
-                                },
+                          return CheckboxListTile(
+                            dense: true,
+                            value: selectedStateIds.contains(stateId),
+                            title: Text(stateName),
+                            secondary: const Icon(Icons.map_outlined),
+                            activeColor: const Color(0xff2161b5),
+                            onChanged: (value) {
+                              onStateSelected(
+                                stateId,
+                                stateName,
+                                value ?? false,
                               );
                             },
-                          ),
-                        ),
-                      ],
+                          );
+                        },
+                      ),
                     ),
+                  ],
+                ),
         ),
 
-        if (selectedStateNames
-            .isNotEmpty)
+        if (selectedStateNames.isNotEmpty)
           Padding(
-            padding:
-                const EdgeInsets.only(
-              top: 8,
-            ),
+            padding: const EdgeInsets.only(top: 8),
             child: Text(
               "Selected: ${selectedStateNames.join(", ")}",
-              style:
-                  const TextStyle(
-                color:
-                    Color(0xff2161b5),
-                fontWeight:
-                    FontWeight.w600,
+              style: const TextStyle(
+                color: Color(0xff2161b5),
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
@@ -1316,28 +1015,19 @@ class _AddUserScreenState extends State<AddUserScreen> {
       return const SizedBox.shrink();
     }
 
-    final search =
-        locationSearchController.text
-            .trim()
-            .toLowerCase();
+    final search = locationSearchController.text.trim().toLowerCase();
 
-    final filteredLocations =
-        locations.where((location) {
+    final filteredLocations = locations.where((location) {
       final name =
-          location["CityName"]
-                  ?.toString() ??
-              location["Name"]
-                  ?.toString() ??
-              "";
+          location["CityName"]?.toString() ??
+          location["Name"]?.toString() ??
+          "";
 
-      return name
-          .toLowerCase()
-          .contains(search);
+      return name.toLowerCase().contains(search);
     }).toList();
 
     return Column(
-      crossAxisAlignment:
-          CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 20),
 
@@ -1353,43 +1043,27 @@ class _AddUserScreenState extends State<AddUserScreen> {
         const SizedBox(height: 7),
 
         TextField(
-          controller:
-              locationSearchController,
+          controller: locationSearchController,
           onChanged: (_) {
             setState(() {});
           },
-          decoration:
-              InputDecoration(
+          decoration: InputDecoration(
             hintText: "Search location...",
-            prefixIcon:
-                const Icon(
-              Icons.search,
-            ),
-            suffixIcon:
-                locationSearchController
-                        .text
-                        .isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(
-                          Icons.clear,
-                        ),
-                        onPressed: () {
-                          locationSearchController
-                              .clear();
-                          setState(() {});
-                        },
-                      )
-                    : null,
+            prefixIcon: const Icon(Icons.search),
+            suffixIcon: locationSearchController.text.isNotEmpty
+                ? IconButton(
+                    icon: const Icon(Icons.clear),
+                    onPressed: () {
+                      locationSearchController.clear();
+                      setState(() {});
+                    },
+                  )
+                : null,
             filled: true,
             fillColor: Colors.white,
-            border:
-                OutlineInputBorder(
-              borderRadius:
-                  BorderRadius.circular(12),
-              borderSide:
-                  const BorderSide(
-                color: Color(0xffdbe3ef),
-              ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xffdbe3ef)),
             ),
           ),
         ),
@@ -1400,167 +1074,95 @@ class _AddUserScreenState extends State<AddUserScreen> {
           height: 250,
           decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(
-              color:
-                  const Color(0xffdbe3ef),
-            ),
-            borderRadius:
-                BorderRadius.circular(12),
+            border: Border.all(color: const Color(0xffdbe3ef)),
+            borderRadius: BorderRadius.circular(12),
           ),
           child: selectedStateIds.isEmpty
               ? const Center(
                   child: Text(
                     "First select at least one State",
-                    style: TextStyle(
-                      color:
-                          Color(0xff94a3b8),
-                    ),
+                    style: TextStyle(color: Color(0xff94a3b8)),
                   ),
                 )
               : isLoadingLocations
-                  ? const Center(
-                      child:
-                          CircularProgressIndicator(),
-                    )
-                  : locations.isEmpty
-                      ? const Center(
-                          child: Text(
-                            "No locations available",
-                          ),
-                        )
-                      : Column(
-                          children: [
-                            CheckboxListTile(
-                              value:
-                                  selectedLocationIds
-                                          .length ==
-                                      locations
-                                          .length &&
-                                  locations
-                                      .isNotEmpty,
-                              title:
-                                  const Text(
-                                "Select All Locations",
-                                style:
-                                    TextStyle(
-                                  fontWeight:
-                                      FontWeight.w700,
-                                ),
-                              ),
-                              activeColor:
-                                  const Color(
-                                0xff2161b5,
-                              ),
-                              onChanged:
-                                  (value) {
-                                if (value ==
-                                    true) {
-                                  selectAllLocations();
-                                } else {
-                                  clearAllLocations();
-                                }
-                              },
-                            ),
+              ? const Center(child: CircularProgressIndicator())
+              : locations.isEmpty
+              ? const Center(child: Text("No locations available"))
+              : Column(
+                  children: [
+                    CheckboxListTile(
+                      value:
+                          selectedLocationIds.length == locations.length &&
+                          locations.isNotEmpty,
+                      title: const Text(
+                        "Select All Locations",
+                        style: TextStyle(fontWeight: FontWeight.w700),
+                      ),
+                      activeColor: const Color(0xff2161b5),
+                      onChanged: (value) {
+                        if (value == true) {
+                          selectAllLocations();
+                        } else {
+                          clearAllLocations();
+                        }
+                      },
+                    ),
 
-                            const Divider(
-                              height: 1,
-                            ),
+                    const Divider(height: 1),
 
-                            Expanded(
-                              child:
-                                  ListView.builder(
-                                itemCount:
-                                    filteredLocations
-                                        .length,
-                                itemBuilder:
-                                    (context,
-                                        index) {
-                                  final location =
-                                      filteredLocations[
-                                          index];
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: filteredLocations.length,
+                        itemBuilder: (context, index) {
+                          final location = filteredLocations[index];
 
-                                  final int?
-                                      cityId =
-                                      int.tryParse(
-                                    location[
-                                            "CityId"]
-                                        .toString(),
-                                  );
+                          final int? cityId = int.tryParse(
+                            location["CityId"].toString(),
+                          );
 
-                                  final String
-                                      cityName =
-                                      location[
-                                                  "CityName"]
-                                              ?.toString() ??
-                                          location[
-                                                  "Name"]
-                                              ?.toString() ??
-                                          "";
+                          final String cityName =
+                              location["CityName"]?.toString() ??
+                              location["Name"]?.toString() ??
+                              "";
 
-                                  if (cityId ==
-                                      null) {
-                                    return const SizedBox
-                                        .shrink();
-                                  }
+                          if (cityId == null) {
+                            return const SizedBox.shrink();
+                          }
 
-                                  return CheckboxListTile(
-                                    dense:
-                                        true,
-                                    value:
-                                        selectedLocationIds
-                                            .contains(
-                                      cityId,
-                                    ),
-                                    title:
-                                        Text(
-                                      cityName,
-                                      style:
-                                          const TextStyle(
-                                        fontWeight:
-                                            FontWeight.w600,
-                                      ),
-                                    ),
-                                    secondary:
-                                        const Icon(
-                                      Icons
-                                          .location_on_outlined,
-                                    ),
-                                    activeColor:
-                                        const Color(
-                                      0xff2161b5,
-                                    ),
-                                    onChanged:
-                                        (value) {
-                                      onLocationSelected(
-                                        cityId,
-                                        cityName,
-                                        value ??
-                                            false,
-                                      );
-                                    },
-                                  );
-                                },
+                          return CheckboxListTile(
+                            dense: true,
+                            value: selectedLocationIds.contains(cityId),
+                            title: Text(
+                              cityName,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
-                          ],
-                        ),
+                            secondary: const Icon(Icons.location_on_outlined),
+                            activeColor: const Color(0xff2161b5),
+                            onChanged: (value) {
+                              onLocationSelected(
+                                cityId,
+                                cityName,
+                                value ?? false,
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
         ),
 
-        if (selectedLocationNames
-            .isNotEmpty)
+        if (selectedLocationNames.isNotEmpty)
           Padding(
-            padding:
-                const EdgeInsets.only(
-              top: 8,
-            ),
+            padding: const EdgeInsets.only(top: 8),
             child: Text(
               "Selected: ${selectedLocationNames.join(", ")}",
-              style:
-                  const TextStyle(
-                color:
-                    Color(0xff2161b5),
-                fontWeight:
-                    FontWeight.w600,
+              style: const TextStyle(
+                color: Color(0xff2161b5),
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
@@ -1574,14 +1176,10 @@ class _AddUserScreenState extends State<AddUserScreen> {
 
   Widget buildUserStatusCard() {
     return Container(
-      padding:
-          const EdgeInsets.all(15),
+      padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: isUserLocked
-            ? const Color(0xfffff7ed)
-            : const Color(0xfff0fdf4),
-        borderRadius:
-            BorderRadius.circular(14),
+        color: isUserLocked ? const Color(0xfffff7ed) : const Color(0xfff0fdf4),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: isUserLocked
               ? const Color(0xfffed7aa)
@@ -1593,27 +1191,17 @@ class _AddUserScreenState extends State<AddUserScreen> {
           Container(
             width: 45,
             height: 45,
-            decoration:
-                BoxDecoration(
+            decoration: BoxDecoration(
               color: isUserLocked
-                  ? const Color(
-                      0xffffedd5)
-                  : const Color(
-                      0xffdcfce7),
-              borderRadius:
-                  BorderRadius.circular(
-                12,
-              ),
+                  ? const Color(0xffffedd5)
+                  : const Color(0xffdcfce7),
+              borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
-              isUserLocked
-                  ? Icons.lock_rounded
-                  : Icons.lock_open_rounded,
+              isUserLocked ? Icons.lock_rounded : Icons.lock_open_rounded,
               color: isUserLocked
-                  ? const Color(
-                      0xffea580c)
-                  : const Color(
-                      0xff16a34a),
+                  ? const Color(0xffea580c)
+                  : const Color(0xff16a34a),
             ),
           ),
 
@@ -1621,34 +1209,24 @@ class _AddUserScreenState extends State<AddUserScreen> {
 
           Expanded(
             child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  isUserLocked
-                      ? "User Locked"
-                      : "User Active",
-                  style:
-                      const TextStyle(
+                  isUserLocked ? "User Locked" : "User Active",
+                  style: const TextStyle(
                     fontSize: 15,
-                    fontWeight:
-                        FontWeight.w800,
-                    color:
-                        Color(0xff334155),
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xff334155),
                   ),
                 ),
-                const SizedBox(
-                  height: 3,
-                ),
+                const SizedBox(height: 3),
                 Text(
                   isUserLocked
                       ? "User will not be allowed to login."
                       : "User can login normally.",
-                  style:
-                      const TextStyle(
+                  style: const TextStyle(
                     fontSize: 12,
-                    color:
-                        Color(0xff64748b),
+                    color: Color(0xff64748b),
                   ),
                 ),
               ],
@@ -1657,8 +1235,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
 
           Switch(
             value: isUserLocked,
-            activeColor:
-                const Color(0xffea580c),
+            activeColor: const Color(0xffea580c),
             onChanged: (value) {
               setState(() {
                 isUserLocked = value;
@@ -1676,8 +1253,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
 
   Widget buildMapSection() {
     return Column(
-      crossAxisAlignment:
-          CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
           "Gate Location",
@@ -1692,13 +1268,9 @@ class _AddUserScreenState extends State<AddUserScreen> {
 
         buildTextField(
           label: "",
-          controller:
-              gateLocationController,
+          controller: gateLocationController,
           hint: "Search address / place...",
-          prefixIcon:
-              const Icon(
-            Icons.location_on_outlined,
-          ),
+          prefixIcon: const Icon(Icons.location_on_outlined),
         ),
 
         const SizedBox(height: 10),
@@ -1707,37 +1279,16 @@ class _AddUserScreenState extends State<AddUserScreen> {
           children: [
             Expanded(
               child: ElevatedButton.icon(
-                onPressed:
-                    openGoogleMaps,
-                icon: const Icon(
-                  Icons.map,
-                  size: 18,
-                ),
-                label:
-                    const Text(
-                  "Google Maps",
-                ),
-                style:
-                    ElevatedButton.styleFrom(
-                  backgroundColor:
-                      const Color(
-                    0xff2161b5,
-                  ),
-                  foregroundColor:
-                      Colors.white,
+                onPressed: openGoogleMaps,
+                icon: const Icon(Icons.map, size: 18),
+                label: const Text("Google Maps"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xff2161b5),
+                  foregroundColor: Colors.white,
                   elevation: 0,
-                  padding:
-                      const EdgeInsets
-                          .symmetric(
-                    vertical: 12,
-                  ),
-                  shape:
-                      RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius
-                            .circular(
-                      10,
-                    ),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
               ),
@@ -1746,42 +1297,16 @@ class _AddUserScreenState extends State<AddUserScreen> {
             const SizedBox(width: 10),
 
             Expanded(
-              child:
-                  OutlinedButton.icon(
-                onPressed:
-                    openOpenStreetMap,
-                icon: const Icon(
-                  Icons.public,
-                  size: 18,
-                ),
-                label:
-                    const Text(
-                  "OpenStreetMap",
-                ),
-                style:
-                    OutlinedButton
-                        .styleFrom(
-                  foregroundColor:
-                      const Color(
-                    0xff475569,
-                  ),
-                  padding:
-                      const EdgeInsets
-                          .symmetric(
-                    vertical: 12,
-                  ),
-                  side:
-                      const BorderSide(
-                    color:
-                        Color(0xffdbe3ef),
-                  ),
-                  shape:
-                      RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius
-                            .circular(
-                      10,
-                    ),
+              child: OutlinedButton.icon(
+                onPressed: openOpenStreetMap,
+                icon: const Icon(Icons.public, size: 18),
+                label: const Text("OpenStreetMap"),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: const Color(0xff475569),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  side: const BorderSide(color: Color(0xffdbe3ef)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
               ),
@@ -1794,61 +1319,35 @@ class _AddUserScreenState extends State<AddUserScreen> {
         // --------------------------------------------------------
         // MAP PLACEHOLDER
         // --------------------------------------------------------
-
         Container(
           width: double.infinity,
           height: 220,
-          decoration:
-              BoxDecoration(
-            color:
-                const Color(0xffe2e8f0),
-            borderRadius:
-                BorderRadius.circular(
-              14,
-            ),
-            border: Border.all(
-              color:
-                  const Color(0xffcbd5e1),
-            ),
+          decoration: BoxDecoration(
+            color: const Color(0xffe2e8f0),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: const Color(0xffcbd5e1)),
           ),
           child: Stack(
-            alignment:
-                Alignment.center,
+            alignment: Alignment.center,
             children: [
-              const Icon(
-                Icons.location_on,
-                color:
-                    Color(0xffdc2626),
-                size: 55,
-              ),
+              const Icon(Icons.location_on, color: Color(0xffdc2626), size: 55),
 
               Positioned(
                 bottom: 14,
                 child: Container(
-                  padding:
-                      const EdgeInsets
-                          .symmetric(
+                  padding: const EdgeInsets.symmetric(
                     horizontal: 14,
                     vertical: 8,
                   ),
-                  decoration:
-                      BoxDecoration(
+                  decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius:
-                        BorderRadius
-                            .circular(
-                      8,
-                    ),
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  child:
-                      const Text(
+                  child: const Text(
                     "Enter Latitude & Longitude",
-                    style:
-                        TextStyle(
-                      fontWeight:
-                          FontWeight.w600,
-                      color:
-                          Color(0xff475569),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xff475569),
                     ),
                   ),
                 ),
@@ -1864,12 +1363,9 @@ class _AddUserScreenState extends State<AddUserScreen> {
             Expanded(
               child: buildTextField(
                 label: "Latitude",
-                controller:
-                    latitudeController,
+                controller: latitudeController,
                 hint: "26.9124",
-                keyboardType:
-                    const TextInputType
-                        .numberWithOptions(
+                keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
                   signed: true,
                 ),
@@ -1881,12 +1377,9 @@ class _AddUserScreenState extends State<AddUserScreen> {
             Expanded(
               child: buildTextField(
                 label: "Longitude",
-                controller:
-                    longitudeController,
+                controller: longitudeController,
                 hint: "75.7873",
-                keyboardType:
-                    const TextInputType
-                        .numberWithOptions(
+                keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
                   signed: true,
                 ),
@@ -1898,23 +1391,17 @@ class _AddUserScreenState extends State<AddUserScreen> {
         const SizedBox(height: 16),
 
         buildTextField(
-          label:
-              "Allowed Radius (metres)",
-          controller:
-              radiusController,
+          label: "Allowed Radius (metres)",
+          controller: radiusController,
           hint: "500",
-          keyboardType:
-              TextInputType.number,
+          keyboardType: TextInputType.number,
         ),
 
         const SizedBox(height: 7),
 
         const Text(
           "A Security user can only sign in within this radius of the pin.",
-          style: TextStyle(
-            fontSize: 12,
-            color: Color(0xff94a3b8),
-          ),
+          style: TextStyle(fontSize: 12, color: Color(0xff94a3b8)),
         ),
       ],
     );
@@ -1925,40 +1412,26 @@ class _AddUserScreenState extends State<AddUserScreen> {
   // ============================================================
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          const Color(0xfff8fafc),
+      backgroundColor: const Color(0xfff8fafc),
 
       // ========================================================
       // APP BAR
       // ========================================================
-
       appBar: AppBar(
-        backgroundColor:
-            Colors.white,
-        foregroundColor:
-            const Color(0xff0f172a),
+        backgroundColor: Colors.white,
+        foregroundColor: const Color(0xff0f172a),
         elevation: 0,
 
         title: const Text(
           "Add User",
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight:
-                FontWeight.w800,
-          ),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
         ),
 
         actions: [
           IconButton(
-            icon: const Icon(
-              Icons.close,
-              color:
-                  Color(0xff94a3b8),
-            ),
+            icon: const Icon(Icons.close, color: Color(0xff94a3b8)),
             onPressed: () {
               Navigator.pop(context);
             },
@@ -1969,91 +1442,51 @@ class _AddUserScreenState extends State<AddUserScreen> {
       // ========================================================
       // BODY
       // ========================================================
-
       body: Column(
         children: [
           Expanded(
-            child:
-                SingleChildScrollView(
-              padding:
-                  const EdgeInsets.all(
-                16,
-              ),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment
-                        .start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // ==================================================
                   // FULL NAME
                   // ==================================================
-
                   buildTextField(
                     label: "Full Name",
-                    controller:
-                        nameController,
-                    hint:
-                        "Enter full name",
-                    prefixIcon:
-                        const Icon(
-                      Icons.person_outline,
-                    ),
+                    controller: nameController,
+                    hint: "Enter full name",
+                    prefixIcon: const Icon(Icons.person_outline),
                   ),
 
-                  const SizedBox(
-                    height: 18,
-                  ),
+                  const SizedBox(height: 18),
 
                   // ==================================================
                   // EMAIL + PHONE
                   // ==================================================
-
                   Row(
-                    crossAxisAlignment:
-                        CrossAxisAlignment
-                            .start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                        child:
-                            buildTextField(
-                          label:
-                              "Email",
-                          controller:
-                              emailController,
-                          hint:
-                              "Enter email",
-                          keyboardType:
-                              TextInputType
-                                  .emailAddress,
-                          prefixIcon:
-                              const Icon(
-                            Icons
-                                .email_outlined,
-                          ),
+                        child: buildTextField(
+                          label: "Email",
+                          controller: emailController,
+                          hint: "Enter email",
+                          keyboardType: TextInputType.emailAddress,
+                          prefixIcon: const Icon(Icons.email_outlined),
                         ),
                       ),
 
-                      const SizedBox(
-                        width: 14,
-                      ),
+                      const SizedBox(width: 14),
 
                       Expanded(
-                        child:
-                            buildTextField(
-                          label:
-                              "Phone",
-                          controller:
-                              phoneController,
-                          hint:
-                              "Enter phone",
-                          keyboardType:
-                              TextInputType
-                                  .phone,
-                          prefixIcon:
-                              const Icon(
-                            Icons
-                                .phone_outlined,
-                          ),
+                        child: buildTextField(
+                          label: "Phone",
+                          controller: phoneController,
+                          hint: "Enter phone",
+                          keyboardType: TextInputType.phone,
+                          prefixIcon: const Icon(Icons.phone_outlined),
                         ),
                       ),
                     ],
@@ -2062,59 +1495,40 @@ class _AddUserScreenState extends State<AddUserScreen> {
                   // ==================================================
                   // ROLE
                   // ==================================================
-
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const SizedBox(height: 20),
 
                   buildRoleDropdown(),
 
                   // ==================================================
                   // STATE
                   // ==================================================
-
                   buildStateSelection(),
 
                   // ==================================================
                   // LOCATION
                   // ==================================================
-
                   buildLocationSelection(),
 
                   // ==================================================
                   // PASSWORD
                   // ==================================================
-
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const SizedBox(height: 20),
 
                   buildTextField(
-                    label:
-                        "Temporary Password",
-                    controller:
-                        passwordController,
-                    hint:
-                        "Enter temporary password",
-                    obscureText:
-                        obscurePassword,
-                    prefixIcon:
-                        const Icon(
-                      Icons.lock_outline,
-                    ),
-                    suffixIcon:
-                        IconButton(
+                    label: "Temporary Password",
+                    controller: passwordController,
+                    hint: "Enter temporary password",
+                    obscureText: obscurePassword,
+                    prefixIcon: const Icon(Icons.lock_outline),
+                    suffixIcon: IconButton(
                       icon: Icon(
                         obscurePassword
-                            ? Icons
-                                .visibility
-                            : Icons
-                                .visibility_off,
+                            ? Icons.visibility
+                            : Icons.visibility_off,
                       ),
                       onPressed: () {
                         setState(() {
-                          obscurePassword =
-                              !obscurePassword;
+                          obscurePassword = !obscurePassword;
                         });
                       },
                     ),
@@ -2123,63 +1537,41 @@ class _AddUserScreenState extends State<AddUserScreen> {
                   // ==================================================
                   // ASSIGNED LOCATION
                   // ==================================================
-
-                  const SizedBox(
-                    height: 20,
-                  ),
+                  const SizedBox(height: 20),
 
                   buildTextField(
-                    label:
-                        "Assigned Location (From/To for gate movements)",
-                    controller:
-                        assignedLocationController,
-                    hint:
-                        "Type to search...",
-                    prefixIcon:
-                        const Icon(
-                      Icons
-                          .location_city_outlined,
-                    ),
+                    label: "Assigned Location (From/To for gate movements)",
+                    controller: assignedLocationController,
+                    hint: "Type to search...",
+                    prefixIcon: const Icon(Icons.location_city_outlined),
                   ),
 
                   // ==================================================
                   // MAP
                   // ==================================================
-
-                  const SizedBox(
-                    height: 22,
-                  ),
+                  const SizedBox(height: 22),
 
                   buildMapSection(),
 
                   // ==================================================
                   // STATUS
                   // ==================================================
-
-                  const SizedBox(
-                    height: 24,
-                  ),
+                  const SizedBox(height: 24),
 
                   const Text(
                     "User Status",
                     style: TextStyle(
                       fontSize: 14,
-                      fontWeight:
-                          FontWeight.w700,
-                      color:
-                          Color(0xff475569),
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xff475569),
                     ),
                   ),
 
-                  const SizedBox(
-                    height: 8,
-                  ),
+                  const SizedBox(height: 8),
 
                   buildUserStatusCard(),
 
-                  const SizedBox(
-                    height: 30,
-                  ),
+                  const SizedBox(height: 30),
                 ],
               ),
             ),
@@ -2188,131 +1580,66 @@ class _AddUserScreenState extends State<AddUserScreen> {
           // ========================================================
           // BOTTOM BUTTONS
           // ========================================================
-
           Container(
-            padding:
-                const EdgeInsets.all(
-              14,
-            ),
-            decoration:
-                const BoxDecoration(
+            padding: const EdgeInsets.all(14),
+            decoration: const BoxDecoration(
               color: Colors.white,
-              border: Border(
-                top: BorderSide(
-                  color:
-                      Color(0xffe2e8f0),
-                ),
-              ),
+              border: Border(top: BorderSide(color: Color(0xffe2e8f0))),
             ),
             child: Row(
-              mainAxisAlignment:
-                  MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 OutlinedButton(
                   onPressed: isSaving
                       ? null
                       : () {
-                          Navigator.pop(
-                            context,
-                          );
+                          Navigator.pop(context);
                         },
-                  style:
-                      OutlinedButton
-                          .styleFrom(
-                    foregroundColor:
-                        const Color(
-                      0xff475569,
-                    ),
-                    padding:
-                        const EdgeInsets
-                            .symmetric(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color(0xff475569),
+                    padding: const EdgeInsets.symmetric(
                       horizontal: 22,
                       vertical: 13,
                     ),
-                    side:
-                        const BorderSide(
-                      color:
-                          Color(0xffdbe3ef),
-                    ),
-                    shape:
-                        RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius
-                              .circular(
-                        10,
-                      ),
+                    side: const BorderSide(color: Color(0xffdbe3ef)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child:
-                      const Text(
+                  child: const Text(
                     "Cancel",
-                    style:
-                        TextStyle(
-                      fontWeight:
-                          FontWeight.w700,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.w700),
                   ),
                 ),
 
-                const SizedBox(
-                  width: 12,
-                ),
+                const SizedBox(width: 12),
 
                 ElevatedButton.icon(
-                  onPressed:
-                      isSaving
-                          ? null
-                          : saveUser,
+                  onPressed: isSaving ? null : saveUser,
                   icon: isSaving
                       ? const SizedBox(
                           width: 18,
                           height: 18,
-                          child:
-                              CircularProgressIndicator(
-                            color:
-                                Colors.white,
-                            strokeWidth:
-                                2,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
                           ),
                         )
-                      : const Icon(
-                          Icons
-                              .save_rounded,
-                          size: 18,
-                        ),
+                      : const Icon(Icons.save_rounded, size: 18),
                   label: Text(
-                    isSaving
-                        ? "Saving..."
-                        : "Save",
-                    style:
-                        const TextStyle(
-                      fontWeight:
-                          FontWeight.w700,
-                    ),
+                    isSaving ? "Saving..." : "Save",
+                    style: const TextStyle(fontWeight: FontWeight.w700),
                   ),
-                  style:
-                      ElevatedButton
-                          .styleFrom(
-                    backgroundColor:
-                        const Color(
-                      0xff2161b5,
-                    ),
-                    foregroundColor:
-                        Colors.white,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xff2161b5),
+                    foregroundColor: Colors.white,
                     elevation: 0,
-                    padding:
-                        const EdgeInsets
-                            .symmetric(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: 25,
                       vertical: 13,
                     ),
-                    shape:
-                        RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius
-                              .circular(
-                        10,
-                      ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                 ),

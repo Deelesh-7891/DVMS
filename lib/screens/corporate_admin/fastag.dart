@@ -21,27 +21,21 @@ class _FastagScreenState extends State<FastagScreen> {
   // SEARCH
   // =========================================================
 
-  final TextEditingController searchController =
-      TextEditingController();
+  final TextEditingController searchController = TextEditingController();
 
   // =========================================================
   // ADD FASTAG CONTROLLERS
   // =========================================================
 
-  final TextEditingController providerController =
-      TextEditingController();
+  final TextEditingController providerController = TextEditingController();
 
-  final TextEditingController tagNumberController =
-      TextEditingController();
+  final TextEditingController tagNumberController = TextEditingController();
 
-  final TextEditingController amountController =
-      TextEditingController();
+  final TextEditingController amountController = TextEditingController();
 
-  final TextEditingController balanceController =
-      TextEditingController();
+  final TextEditingController balanceController = TextEditingController();
 
-  final TextEditingController tollPlazaController =
-      TextEditingController();
+  final TextEditingController tollPlazaController = TextEditingController();
 
   // =========================================================
   // FASTAG DATA
@@ -93,13 +87,9 @@ class _FastagScreenState extends State<FastagScreen> {
   // =========================================================
 
   bool get canAddFastag {
-    final role = userRole
-        .trim()
-        .toLowerCase()
-        .replaceAll(" ", "");
+    final role = userRole.trim().toLowerCase().replaceAll(" ", "");
 
-    return role == "corporateadmin" ||
-        role == "stateadmin";
+    return role == "corporateadmin" || role == "stateadmin";
   }
 
   // =========================================================
@@ -123,31 +113,25 @@ class _FastagScreenState extends State<FastagScreen> {
 
   Future<void> loadUserRole() async {
     try {
-      final prefs =
-          await SharedPreferences.getInstance();
+      final prefs = await SharedPreferences.getInstance();
 
-      String role =
-          prefs.getString("rolename") ?? "";
+      String role = prefs.getString("rolename") ?? "";
 
       // Backup keys
       if (role.isEmpty) {
-        role =
-            prefs.getString("RoleName") ?? "";
+        role = prefs.getString("RoleName") ?? "";
       }
 
       if (role.isEmpty) {
-        role =
-            prefs.getString("roleName") ?? "";
+        role = prefs.getString("roleName") ?? "";
       }
 
       if (role.isEmpty) {
-        role =
-            prefs.getString("Role") ?? "";
+        role = prefs.getString("Role") ?? "";
       }
 
       if (role.isEmpty) {
-        role =
-            prefs.getString("role") ?? "";
+        role = prefs.getString("role") ?? "";
       }
 
       if (!mounted) return;
@@ -156,17 +140,11 @@ class _FastagScreenState extends State<FastagScreen> {
         userRole = role;
       });
 
-      debugPrint(
-        "FASTAG USER ROLE: $userRole",
-      );
+      debugPrint("FASTAG USER ROLE: $userRole");
 
-      debugPrint(
-        "CAN ADD FASTAG: $canAddFastag",
-      );
+      debugPrint("CAN ADD FASTAG: $canAddFastag");
     } catch (e) {
-      debugPrint(
-        "Role load error: $e",
-      );
+      debugPrint("Role load error: $e");
     }
   }
 
@@ -183,30 +161,23 @@ class _FastagScreenState extends State<FastagScreen> {
     });
 
     try {
-      final result =
-          await _authService.getfastag();
+      final result = await _authService.getfastag();
 
       if (!mounted) return;
 
       setState(() {
-        allFastag =
-            List<dynamic>.from(result);
+        allFastag = List<dynamic>.from(result);
 
-        filteredFastag =
-            List<dynamic>.from(result);
+        filteredFastag = List<dynamic>.from(result);
 
         isLoading = false;
       });
 
       applyFilters();
 
-      debugPrint(
-        "FASTAG RECORDS: ${result.length}",
-      );
+      debugPrint("FASTAG RECORDS: ${result.length}");
 
-      debugPrint(
-        "FASTAG RESPONSE: $result",
-      );
+      debugPrint("FASTAG RESPONSE: $result");
     } catch (e) {
       if (!mounted) return;
 
@@ -218,9 +189,7 @@ class _FastagScreenState extends State<FastagScreen> {
         filteredFastag = [];
       });
 
-      debugPrint(
-        "Fastag API Error: $e",
-      );
+      debugPrint("Fastag API Error: $e");
     }
   }
 
@@ -248,104 +217,64 @@ class _FastagScreenState extends State<FastagScreen> {
       barrierDismissible: false,
       builder: (dialogContext) {
         return StatefulBuilder(
-          builder: (
-            context,
-            setDialogState,
-          ) {
+          builder: (context, setDialogState) {
             return Dialog(
-              backgroundColor:
-                  Colors.white,
+              backgroundColor: Colors.white,
 
-              insetPadding:
-                  const EdgeInsets.symmetric(
+              insetPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
                 vertical: 24,
               ),
 
-              shape:
-                  RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(0),
               ),
 
               child: ConstrainedBox(
-                constraints:
-                    const BoxConstraints(
-                  maxWidth: 600,
-                ),
+                constraints: const BoxConstraints(maxWidth: 600),
 
-                child:
-                    SingleChildScrollView(
+                child: SingleChildScrollView(
                   child: Column(
-                    mainAxisSize:
-                        MainAxisSize.min,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-
                       // =================================================
                       // HEADER
                       // =================================================
-
                       Container(
                         width: double.infinity,
 
-                        padding:
-                            const EdgeInsets.fromLTRB(
-                          14,
-                          12,
-                          8,
-                          12,
-                        ),
+                        padding: const EdgeInsets.fromLTRB(14, 12, 8, 12),
 
-                        decoration:
-                            const BoxDecoration(
+                        decoration: const BoxDecoration(
                           border: Border(
-                            bottom:
-                                BorderSide(
-                              color:
-                                  Color(
-                                0xffe2e8f0,
-                              ),
-                            ),
+                            bottom: BorderSide(color: Color(0xffe2e8f0)),
                           ),
                         ),
 
                         child: Row(
                           children: [
-
                             const Expanded(
                               child: Text(
                                 "Add FASTag Transaction",
-                                style:
-                                    TextStyle(
+                                style: TextStyle(
                                   fontSize: 20,
-                                  fontWeight:
-                                      FontWeight.w700,
-                                  color:
-                                      Color(
-                                    0xff1e293b,
-                                  ),
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xff1e293b),
                                 ),
                               ),
                             ),
 
                             IconButton(
-                              tooltip:
-                                  "Close",
+                              tooltip: "Close",
 
                               onPressed: () {
-                                Navigator.pop(
-                                  dialogContext,
-                                );
+                                Navigator.pop(dialogContext);
                               },
 
-                              icon:
-                                  const Icon(
+                              icon: const Icon(
                                 Icons.close,
                                 size: 24,
-                                color:
-                                    Color(
-                                  0xff94a3b8,
-                                ),
+                                color: Color(0xff94a3b8),
                               ),
                             ),
                           ],
@@ -355,111 +284,67 @@ class _FastagScreenState extends State<FastagScreen> {
                       // =================================================
                       // FORM
                       // =================================================
-
                       Padding(
-                        padding:
-                            const EdgeInsets.fromLTRB(
-                          8,
-                          22,
-                          8,
-                          22,
-                        ),
+                        padding: const EdgeInsets.fromLTRB(8, 22, 8, 22),
 
-                        child:
-                            Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
 
                           children: [
-
                             // =========================================
                             // VEHICLE
                             // =========================================
+                            buildFieldLabel("Vehicle"),
 
-                            buildFieldLabel(
-                              "Vehicle",
-                            ),
+                            const SizedBox(height: 7),
 
-                            const SizedBox(
-                              height: 7,
-                            ),
+                            buildVehicleDropdown(setDialogState),
 
-                            buildVehicleDropdown(
-                              setDialogState,
-                            ),
-
-                            const SizedBox(
-                              height: 18,
-                            ),
+                            const SizedBox(height: 18),
 
                             // =========================================
                             // PROVIDER + TAG
                             // =========================================
-
                             LayoutBuilder(
-                              builder: (
-                                context,
-                                constraints,
-                              ) {
-                                if (constraints
-                                        .maxWidth <
-                                    500) {
+                              builder: (context, constraints) {
+                                if (constraints.maxWidth < 500) {
                                   return Column(
                                     children: [
-
                                       buildFastagField(
-                                        label:
-                                            "Provider",
-                                        hint:
-                                            "ICICI / Paytm ...",
-                                        controller:
-                                            providerController,
+                                        label: "Provider",
+                                        hint: "ICICI / Paytm ...",
+                                        controller: providerController,
                                       ),
 
-                                      const SizedBox(
-                                        height: 18,
-                                      ),
+                                      const SizedBox(height: 18),
 
                                       buildFastagField(
-                                        label:
-                                            "Tag Number",
+                                        label: "Tag Number",
                                         hint: "",
-                                        controller:
-                                            tagNumberController,
+                                        controller: tagNumberController,
                                       ),
                                     ],
                                   );
                                 }
 
                                 return Row(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-
                                     Expanded(
-                                      child:
-                                          buildFastagField(
-                                        label:
-                                            "Provider",
-                                        hint:
-                                            "ICICI / Paytm ...",
-                                        controller:
-                                            providerController,
+                                      child: buildFastagField(
+                                        label: "Provider",
+                                        hint: "ICICI / Paytm ...",
+                                        controller: providerController,
                                       ),
                                     ),
 
-                                    const SizedBox(
-                                      width: 16,
-                                    ),
+                                    const SizedBox(width: 16),
 
                                     Expanded(
-                                      child:
-                                          buildFastagField(
-                                        label:
-                                            "Tag Number",
+                                      child: buildFastagField(
+                                        label: "Tag Number",
                                         hint: "",
-                                        controller:
-                                            tagNumberController,
+                                        controller: tagNumberController,
                                       ),
                                     ),
                                   ],
@@ -467,78 +352,51 @@ class _FastagScreenState extends State<FastagScreen> {
                               },
                             ),
 
-                            const SizedBox(
-                              height: 18,
-                            ),
+                            const SizedBox(height: 18),
 
                             // =========================================
                             // TYPE + AMOUNT
                             // =========================================
-
                             LayoutBuilder(
-                              builder: (
-                                context,
-                                constraints,
-                              ) {
-                                if (constraints
-                                        .maxWidth <
-                                    500) {
+                              builder: (context, constraints) {
+                                if (constraints.maxWidth < 500) {
                                   return Column(
                                     children: [
+                                      buildTypeDropdown(setDialogState),
 
-                                      buildTypeDropdown(
-                                        setDialogState,
-                                      ),
-
-                                      const SizedBox(
-                                        height: 18,
-                                      ),
+                                      const SizedBox(height: 18),
 
                                       buildFastagField(
-                                        label:
-                                            "Amount (₹)",
+                                        label: "Amount (₹)",
                                         hint: "",
-                                        controller:
-                                            amountController,
+                                        controller: amountController,
                                         keyboardType:
                                             TextInputType.numberWithOptions(
-                                          decimal:
-                                              true,
-                                        ),
+                                              decimal: true,
+                                            ),
                                       ),
                                     ],
                                   );
                                 }
 
                                 return Row(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-
                                     Expanded(
-                                      child:
-                                          buildTypeDropdown(
-                                        setDialogState,
-                                      ),
+                                      child: buildTypeDropdown(setDialogState),
                                     ),
 
-                                    const SizedBox(
-                                      width: 16,
-                                    ),
+                                    const SizedBox(width: 16),
 
                                     Expanded(
-                                      child:
-                                          buildFastagField(
-                                        label:
-                                            "Amount (₹)",
+                                      child: buildFastagField(
+                                        label: "Amount (₹)",
                                         hint: "",
-                                        controller:
-                                            amountController,
+                                        controller: amountController,
                                         keyboardType:
                                             TextInputType.numberWithOptions(
-                                          decimal:
-                                              true,
-                                        ),
+                                              decimal: true,
+                                            ),
                                       ),
                                     ),
                                   ],
@@ -546,86 +404,59 @@ class _FastagScreenState extends State<FastagScreen> {
                               },
                             ),
 
-                            const SizedBox(
-                              height: 18,
-                            ),
+                            const SizedBox(height: 18),
 
                             // =========================================
                             // BALANCE + TOLL PLAZA
                             // =========================================
-
                             LayoutBuilder(
-                              builder: (
-                                context,
-                                constraints,
-                              ) {
-                                if (constraints
-                                        .maxWidth <
-                                    500) {
+                              builder: (context, constraints) {
+                                if (constraints.maxWidth < 500) {
                                   return Column(
                                     children: [
-
                                       buildFastagField(
-                                        label:
-                                            "Balance After (₹)",
+                                        label: "Balance After (₹)",
                                         hint: "",
-                                        controller:
-                                            balanceController,
+                                        controller: balanceController,
                                         keyboardType:
                                             TextInputType.numberWithOptions(
-                                          decimal:
-                                              true,
-                                        ),
+                                              decimal: true,
+                                            ),
                                       ),
 
-                                      const SizedBox(
-                                        height: 18,
-                                      ),
+                                      const SizedBox(height: 18),
 
                                       buildFastagField(
-                                        label:
-                                            "Toll Plaza",
+                                        label: "Toll Plaza",
                                         hint: "",
-                                        controller:
-                                            tollPlazaController,
+                                        controller: tollPlazaController,
                                       ),
                                     ],
                                   );
                                 }
 
                                 return Row(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-
                                     Expanded(
-                                      child:
-                                          buildFastagField(
-                                        label:
-                                            "Balance After (₹)",
+                                      child: buildFastagField(
+                                        label: "Balance After (₹)",
                                         hint: "",
-                                        controller:
-                                            balanceController,
+                                        controller: balanceController,
                                         keyboardType:
                                             TextInputType.numberWithOptions(
-                                          decimal:
-                                              true,
-                                        ),
+                                              decimal: true,
+                                            ),
                                       ),
                                     ),
 
-                                    const SizedBox(
-                                      width: 16,
-                                    ),
+                                    const SizedBox(width: 16),
 
                                     Expanded(
-                                      child:
-                                          buildFastagField(
-                                        label:
-                                            "Toll Plaza",
+                                      child: buildFastagField(
+                                        label: "Toll Plaza",
                                         hint: "",
-                                        controller:
-                                            tollPlazaController,
+                                        controller: tollPlazaController,
                                       ),
                                     ),
                                   ],
@@ -639,139 +470,85 @@ class _FastagScreenState extends State<FastagScreen> {
                       // =================================================
                       // FOOTER
                       // =================================================
-
                       Container(
                         width: double.infinity,
 
-                        padding:
-                            const EdgeInsets.fromLTRB(
-                          8,
-                          18,
-                          8,
-                          12,
-                        ),
+                        padding: const EdgeInsets.fromLTRB(8, 18, 8, 12),
 
-                        decoration:
-                            const BoxDecoration(
+                        decoration: const BoxDecoration(
                           border: Border(
-                            top:
-                                BorderSide(
-                              color:
-                                  Color(
-                                0xffe2e8f0,
-                              ),
-                            ),
+                            top: BorderSide(color: Color(0xffe2e8f0)),
                           ),
                         ),
 
                         child: Row(
-                          mainAxisAlignment:
-                              MainAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.end,
 
                           children: [
-
                             // =========================================
                             // CANCEL
                             // =========================================
-
                             OutlinedButton(
                               onPressed: isSaving
                                   ? null
                                   : () {
-                                      Navigator.pop(
-                                        dialogContext,
-                                      );
+                                      Navigator.pop(dialogContext);
                                     },
 
-                              style:
-                                  OutlinedButton.styleFrom(
-                                foregroundColor:
-                                    const Color(
-                                  0xff475569,
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: const Color(0xff475569),
+
+                                backgroundColor: Colors.white,
+
+                                side: const BorderSide(
+                                  color: Color(0xffdbe2ea),
                                 ),
 
-                                backgroundColor:
-                                    Colors.white,
-
-                                side:
-                                    const BorderSide(
-                                  color:
-                                      Color(
-                                    0xffdbe2ea,
-                                  ),
-                                ),
-
-                                padding:
-                                    const EdgeInsets
-                                        .symmetric(
+                                padding: const EdgeInsets.symmetric(
                                   horizontal: 20,
                                   vertical: 14,
                                 ),
 
-                                shape:
-                                    RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(
-                                    10,
-                                  ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
                               ),
 
-                              child:
-                                  const Text(
+                              child: const Text(
                                 "Cancel",
-                                style:
-                                    TextStyle(
+                                style: TextStyle(
                                   fontSize: 16,
-                                  fontWeight:
-                                      FontWeight.w600,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ),
 
-                            const SizedBox(
-                              width: 10,
-                            ),
+                            const SizedBox(width: 10),
 
                             // =========================================
                             // SAVE
                             // =========================================
-
                             ElevatedButton(
                               onPressed: isSaving
                                   ? null
                                   : () {
-                                      saveFastag(
-                                        dialogContext,
-                                        setDialogState,
-                                      );
+                                      saveFastag(dialogContext, setDialogState);
                                     },
 
-                              style:
-                                  ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    const Color(
-                                  0xff245db5,
-                                ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xff245db5),
 
-                                foregroundColor:
-                                    Colors.white,
+                                foregroundColor: Colors.white,
 
                                 elevation: 0,
 
-                                padding:
-                                    const EdgeInsets
-                                        .symmetric(
+                                padding: const EdgeInsets.symmetric(
                                   horizontal: 22,
                                   vertical: 14,
                                 ),
 
-                                shape:
-                                    RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(
-                                    10,
-                                  ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
                               ),
 
@@ -779,21 +556,16 @@ class _FastagScreenState extends State<FastagScreen> {
                                   ? const SizedBox(
                                       width: 20,
                                       height: 20,
-                                      child:
-                                          CircularProgressIndicator(
-                                        strokeWidth:
-                                            2,
-                                        color:
-                                            Colors.white,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white,
                                       ),
                                     )
                                   : const Text(
                                       "Save",
-                                      style:
-                                          TextStyle(
+                                      style: TextStyle(
                                         fontSize: 16,
-                                        fontWeight:
-                                            FontWeight.w700,
+                                        fontWeight: FontWeight.w700,
                                       ),
                                     ),
                             ),
@@ -815,32 +587,23 @@ class _FastagScreenState extends State<FastagScreen> {
   // VEHICLE DROPDOWN
   // =========================================================
 
-  Widget buildVehicleDropdown(
-    StateSetter setDialogState,
-  ) {
+  Widget buildVehicleDropdown(StateSetter setDialogState) {
     return DropdownButtonFormField<String>(
       value: selectedVehicle,
 
       isExpanded: true,
 
-      decoration:
-          fastagInputDecoration(
-        hint:
-            "Select Vehicle",
-      ),
+      decoration: fastagInputDecoration(hint: "Select Vehicle"),
 
       items: [
-
         // Example vehicle.
         // Replace with your API vehicle list
         // when vehicle API response is available.
-
         const DropdownMenuItem<String>(
           value: "RJ18SS2800",
           child: Text(
             "RJ18SS2800 · HONDA SHINE",
-            overflow:
-                TextOverflow.ellipsis,
+            overflow: TextOverflow.ellipsis,
           ),
         ),
       ],
@@ -857,49 +620,27 @@ class _FastagScreenState extends State<FastagScreen> {
   // TYPE DROPDOWN
   // =========================================================
 
-  Widget buildTypeDropdown(
-    StateSetter setDialogState,
-  ) {
+  Widget buildTypeDropdown(StateSetter setDialogState) {
     return Column(
-      crossAxisAlignment:
-          CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        buildFieldLabel("Type"),
 
-        buildFieldLabel(
-          "Type",
-        ),
-
-        const SizedBox(
-          height: 7,
-        ),
+        const SizedBox(height: 7),
 
         DropdownButtonFormField<String>(
           value: selectedType,
 
           isExpanded: true,
 
-          decoration:
-              fastagInputDecoration(),
+          decoration: fastagInputDecoration(),
 
           items: const [
+            DropdownMenuItem(value: "Recharge", child: Text("Recharge")),
 
-            DropdownMenuItem(
-              value: "Recharge",
-              child:
-                  Text("Recharge"),
-            ),
+            DropdownMenuItem(value: "Toll", child: Text("Toll")),
 
-            DropdownMenuItem(
-              value: "Toll",
-              child:
-                  Text("Toll"),
-            ),
-
-            DropdownMenuItem(
-              value: "Refund",
-              child:
-                  Text("Refund"),
-            ),
+            DropdownMenuItem(value: "Refund", child: Text("Refund")),
           ],
 
           onChanged: (value) {
@@ -920,9 +661,7 @@ class _FastagScreenState extends State<FastagScreen> {
   // FIELD LABEL
   // =========================================================
 
-  Widget buildFieldLabel(
-    String text,
-  ) {
+  Widget buildFieldLabel(String text) {
     return Text(
       text,
       style: const TextStyle(
@@ -944,29 +683,19 @@ class _FastagScreenState extends State<FastagScreen> {
     TextInputType? keyboardType,
   }) {
     return Column(
-      crossAxisAlignment:
-          CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
 
       children: [
+        buildFieldLabel(label),
 
-        buildFieldLabel(
-          label,
-        ),
-
-        const SizedBox(
-          height: 7,
-        ),
+        const SizedBox(height: 7),
 
         TextField(
           controller: controller,
 
-          keyboardType:
-              keyboardType,
+          keyboardType: keyboardType,
 
-          decoration:
-              fastagInputDecoration(
-            hint: hint,
-          ),
+          decoration: fastagInputDecoration(hint: hint),
         ),
       ],
     );
@@ -976,57 +705,31 @@ class _FastagScreenState extends State<FastagScreen> {
   // INPUT DECORATION
   // =========================================================
 
-  InputDecoration fastagInputDecoration({
-    String? hint,
-  }) {
+  InputDecoration fastagInputDecoration({String? hint}) {
     return InputDecoration(
       hintText: hint,
 
-      hintStyle:
-          const TextStyle(
-        color: Color(0xff64748b),
-        fontSize: 16,
-      ),
+      hintStyle: const TextStyle(color: Color(0xff64748b), fontSize: 16),
 
       filled: true,
 
       fillColor: Colors.white,
 
-      contentPadding:
-          const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 14,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(11),
+        borderSide: const BorderSide(color: Color(0xffdbe2ea)),
       ),
 
-      border:
-          OutlineInputBorder(
-        borderRadius:
-            BorderRadius.circular(11),
-        borderSide:
-            const BorderSide(
-          color: Color(0xffdbe2ea),
-        ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(11),
+        borderSide: const BorderSide(color: Color(0xffdbe2ea)),
       ),
 
-      enabledBorder:
-          OutlineInputBorder(
-        borderRadius:
-            BorderRadius.circular(11),
-        borderSide:
-            const BorderSide(
-          color: Color(0xffdbe2ea),
-        ),
-      ),
-
-      focusedBorder:
-          OutlineInputBorder(
-        borderRadius:
-            BorderRadius.circular(11),
-        borderSide:
-            const BorderSide(
-          color: Color(0xff245db5),
-          width: 1.3,
-        ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(11),
+        borderSide: const BorderSide(color: Color(0xff245db5), width: 1.3),
       ),
     );
   }
@@ -1043,11 +746,8 @@ class _FastagScreenState extends State<FastagScreen> {
     // VEHICLE
     // =============================================
 
-    if (selectedVehicle == null ||
-        selectedVehicle!.trim().isEmpty) {
-      showError(
-        "Please select vehicle",
-      );
+    if (selectedVehicle == null || selectedVehicle!.trim().isEmpty) {
+      showError("Please select vehicle");
       return;
     }
 
@@ -1055,12 +755,8 @@ class _FastagScreenState extends State<FastagScreen> {
     // PROVIDER
     // =============================================
 
-    if (providerController.text
-        .trim()
-        .isEmpty) {
-      showError(
-        "Please enter provider",
-      );
+    if (providerController.text.trim().isEmpty) {
+      showError("Please enter provider");
       return;
     }
 
@@ -1068,12 +764,8 @@ class _FastagScreenState extends State<FastagScreen> {
     // TAG NUMBER
     // =============================================
 
-    if (tagNumberController.text
-        .trim()
-        .isEmpty) {
-      showError(
-        "Please enter tag number",
-      );
+    if (tagNumberController.text.trim().isEmpty) {
+      showError("Please enter tag number");
       return;
     }
 
@@ -1081,12 +773,8 @@ class _FastagScreenState extends State<FastagScreen> {
     // AMOUNT
     // =============================================
 
-    if (amountController.text
-        .trim()
-        .isEmpty) {
-      showError(
-        "Please enter amount",
-      );
+    if (amountController.text.trim().isEmpty) {
+      showError("Please enter amount");
       return;
     }
 
@@ -1094,12 +782,8 @@ class _FastagScreenState extends State<FastagScreen> {
     // BALANCE
     // =============================================
 
-    if (balanceController.text
-        .trim()
-        .isEmpty) {
-      showError(
-        "Please enter balance after",
-      );
+    if (balanceController.text.trim().isEmpty) {
+      showError("Please enter balance after");
       return;
     }
 
@@ -1109,34 +793,21 @@ class _FastagScreenState extends State<FastagScreen> {
 
     final fastagData = {
       "vehicle": selectedVehicle,
-      "provider":
-          providerController.text.trim(),
-      "tagNumber":
-          tagNumberController.text.trim(),
+      "provider": providerController.text.trim(),
+      "tagNumber": tagNumberController.text.trim(),
       "type": selectedType,
-      "amount":
-          amountController.text.trim(),
-      "balanceAfter":
-          balanceController.text.trim(),
-      "tollPlaza":
-          tollPlazaController.text.trim(),
+      "amount": amountController.text.trim(),
+      "balanceAfter": balanceController.text.trim(),
+      "tollPlaza": tollPlazaController.text.trim(),
     };
 
-    debugPrint(
-      "====================================",
-    );
+    debugPrint("====================================");
 
-    debugPrint(
-      "FASTAG SAVE DATA",
-    );
+    debugPrint("FASTAG SAVE DATA");
 
-    debugPrint(
-      "$fastagData",
-    );
+    debugPrint("$fastagData");
 
-    debugPrint(
-      "====================================",
-    );
+    debugPrint("====================================");
 
     // =============================================
     // IMPORTANT
@@ -1151,11 +822,7 @@ class _FastagScreenState extends State<FastagScreen> {
       isSaving = true;
     });
 
-    await Future.delayed(
-      const Duration(
-        milliseconds: 300,
-      ),
-    );
+    await Future.delayed(const Duration(milliseconds: 300));
 
     if (!mounted) return;
 
@@ -1163,16 +830,11 @@ class _FastagScreenState extends State<FastagScreen> {
       isSaving = false;
     });
 
-    Navigator.pop(
-      dialogContext,
-    );
+    Navigator.pop(dialogContext);
 
-    ScaffoldMessenger.of(context)
-        .showSnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text(
-          "Fastag data ready. Backend Save API connect karna hai.",
-        ),
+        content: Text("Fastag data ready. Backend Save API connect karna hai."),
       ),
     );
   }
@@ -1181,18 +843,9 @@ class _FastagScreenState extends State<FastagScreen> {
   // ERROR
   // =========================================================
 
-  void showError(
-    String message,
-  ) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-        ),
-        backgroundColor:
-            Colors.red,
-      ),
+  void showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
     );
   }
 
@@ -1200,22 +853,13 @@ class _FastagScreenState extends State<FastagScreen> {
   // GET VALUE
   // =========================================================
 
-  String getValue(
-    Map<String, dynamic> item,
-    List<String> keys,
-  ) {
+  String getValue(Map<String, dynamic> item, List<String> keys) {
     for (final key in keys) {
       final value = item[key];
 
       if (value != null &&
-          value
-              .toString()
-              .trim()
-              .isNotEmpty &&
-          value
-              .toString()
-              .toLowerCase() !=
-              "null") {
+          value.toString().trim().isNotEmpty &&
+          value.toString().toLowerCase() != "null") {
         return value.toString();
       }
     }
@@ -1227,194 +871,150 @@ class _FastagScreenState extends State<FastagScreen> {
   // VEHICLE
   // =========================================================
 
-  String getVehicle(
-    Map<String, dynamic> item,
-  ) {
-    return getValue(
-      item,
-      [
-        "RegistrationNo",
-        "registrationNo",
-        "VehicleNo",
-        "vehicleNo",
-        "VehicleNumber",
-        "vehicleNumber",
-        "RegistrationNumber",
-        "registrationNumber",
-        "Vehicle",
-        "vehicle",
-      ],
-    );
+  String getVehicle(Map<String, dynamic> item) {
+    return getValue(item, [
+      "RegistrationNo",
+      "registrationNo",
+      "VehicleNo",
+      "vehicleNo",
+      "VehicleNumber",
+      "vehicleNumber",
+      "RegistrationNumber",
+      "registrationNumber",
+      "Vehicle",
+      "vehicle",
+    ]);
   }
 
   // =========================================================
   // DATE
   // =========================================================
 
-  String getDateValue(
-    Map<String, dynamic> item,
-  ) {
-    return getValue(
-      item,
-      [
-        "Date",
-        "date",
-        "TransactionDate",
-        "transactionDate",
-        "FastagDate",
-        "fastagDate",
-        "TransactionTime",
-        "transactionTime",
-        "CreatedAt",
-        "createdAt",
-        "CreatedDate",
-        "createdDate",
-      ],
-    );
+  String getDateValue(Map<String, dynamic> item) {
+    return getValue(item, [
+      "Date",
+      "date",
+      "TransactionDate",
+      "transactionDate",
+      "FastagDate",
+      "fastagDate",
+      "TransactionTime",
+      "transactionTime",
+      "CreatedAt",
+      "createdAt",
+      "CreatedDate",
+      "createdDate",
+    ]);
   }
 
   // =========================================================
   // PROVIDER
   // =========================================================
 
-  String getProvider(
-    Map<String, dynamic> item,
-  ) {
-    return getValue(
-      item,
-      [
-        "Provider",
-        "provider",
-        "FastagProvider",
-        "fastagProvider",
-        "Issuer",
-        "issuer",
-        "Bank",
-        "bank",
-      ],
-    );
+  String getProvider(Map<String, dynamic> item) {
+    return getValue(item, [
+      "Provider",
+      "provider",
+      "FastagProvider",
+      "fastagProvider",
+      "Issuer",
+      "issuer",
+      "Bank",
+      "bank",
+    ]);
   }
 
   // =========================================================
   // TYPE
   // =========================================================
 
-  String getType(
-    Map<String, dynamic> item,
-  ) {
-    return getValue(
-      item,
-      [
-        "Type",
-        "type",
-        "TransactionType",
-        "transactionType",
-        "FastagType",
-        "fastagType",
-      ],
-    );
+  String getType(Map<String, dynamic> item) {
+    return getValue(item, [
+      "Type",
+      "type",
+      "TransactionType",
+      "transactionType",
+      "FastagType",
+      "fastagType",
+    ]);
   }
 
   // =========================================================
   // AMOUNT
   // =========================================================
 
-  String getAmount(
-    Map<String, dynamic> item,
-  ) {
-    final value = getValue(
-      item,
-      [
-        "Amount",
-        "amount",
-        "TollAmount",
-        "tollAmount",
-        "TransactionAmount",
-        "transactionAmount",
-      ],
-    );
+  String getAmount(Map<String, dynamic> item) {
+    final value = getValue(item, [
+      "Amount",
+      "amount",
+      "TollAmount",
+      "tollAmount",
+      "TransactionAmount",
+      "transactionAmount",
+    ]);
 
     if (value == "-") {
       return "₹0";
     }
 
-    return value.startsWith("₹")
-        ? value
-        : "₹$value";
+    return value.startsWith("₹") ? value : "₹$value";
   }
 
   // =========================================================
   // BALANCE
   // =========================================================
 
-  String getBalance(
-    Map<String, dynamic> item,
-  ) {
-    return getValue(
-      item,
-      [
-        "Balance",
-        "balance",
-        "FastagBalance",
-        "fastagBalance",
-        "AvailableBalance",
-        "availableBalance",
-      ],
-    );
+  String getBalance(Map<String, dynamic> item) {
+    return getValue(item, [
+      "Balance",
+      "balance",
+      "FastagBalance",
+      "fastagBalance",
+      "AvailableBalance",
+      "availableBalance",
+    ]);
   }
 
   // =========================================================
   // TOLL PLAZA
   // =========================================================
 
-  String getTollPlaza(
-    Map<String, dynamic> item,
-  ) {
-    return getValue(
-      item,
-      [
-        "TollPlaza",
-        "tollPlaza",
-        "TollPlazaName",
-        "tollPlazaName",
-        "PlazaName",
-        "plazaName",
-        "TollName",
-        "tollName",
-      ],
-    );
+  String getTollPlaza(Map<String, dynamic> item) {
+    return getValue(item, [
+      "TollPlaza",
+      "tollPlaza",
+      "TollPlazaName",
+      "tollPlazaName",
+      "PlazaName",
+      "plazaName",
+      "TollName",
+      "tollName",
+    ]);
   }
 
   // =========================================================
   // PARSE DATE
   // =========================================================
 
-  DateTime? parseDate(
-    dynamic value,
-  ) {
+  DateTime? parseDate(dynamic value) {
     if (value == null) {
       return null;
     }
 
-    final text =
-        value.toString().trim();
+    final text = value.toString().trim();
 
-    if (text.isEmpty ||
-        text == "-") {
+    if (text.isEmpty || text == "-") {
       return null;
     }
 
     // ISO DATE
     try {
-      return DateTime
-          .parse(text)
-          .toLocal();
+      return DateTime.parse(text).toLocal();
     } catch (_) {}
 
     // dd/MM/yyyy
     try {
-      final parts =
-          text.split("/");
+      final parts = text.split("/");
 
       if (parts.length == 3) {
         return DateTime(
@@ -1427,8 +1027,7 @@ class _FastagScreenState extends State<FastagScreen> {
 
     // dd-MM-yyyy
     try {
-      final parts =
-          text.split("-");
+      final parts = text.split("-");
 
       if (parts.length == 3) {
         return DateTime(
@@ -1446,11 +1045,8 @@ class _FastagScreenState extends State<FastagScreen> {
   // FORMAT DATE
   // =========================================================
 
-  String formatDate(
-    dynamic value,
-  ) {
-    final date =
-        parseDate(value);
+  String formatDate(dynamic value) {
+    final date = parseDate(value);
 
     if (date == null) {
       if (value == null) {
@@ -1470,39 +1066,24 @@ class _FastagScreenState extends State<FastagScreen> {
   // =========================================================
 
   void applyFilters() {
-    final vehicleSearch =
-        searchController.text
-            .trim()
-            .toLowerCase();
+    final vehicleSearch = searchController.text.trim().toLowerCase();
 
-    List<dynamic> result =
-        List<dynamic>.from(
-      allFastag,
-    );
+    List<dynamic> result = List<dynamic>.from(allFastag);
 
     // =============================================
     // VEHICLE SEARCH
     // =============================================
 
     if (vehicleSearch.isNotEmpty) {
-      result = result
-          .where(
-        (item) {
-          if (item is! Map) {
-            return false;
-          }
+      result = result.where((item) {
+        if (item is! Map) {
+          return false;
+        }
 
-          final data =
-              Map<String, dynamic>
-                  .from(item);
+        final data = Map<String, dynamic>.from(item);
 
-          return getVehicle(data)
-              .toLowerCase()
-              .contains(
-                vehicleSearch,
-              );
-        },
-      ).toList();
+        return getVehicle(data).toLowerCase().contains(vehicleSearch);
+      }).toList();
     }
 
     // =============================================
@@ -1510,46 +1091,29 @@ class _FastagScreenState extends State<FastagScreen> {
     // =============================================
 
     if (fromDate != null) {
-      result = result
-          .where(
-        (item) {
-          if (item is! Map) {
-            return false;
-          }
+      result = result.where((item) {
+        if (item is! Map) {
+          return false;
+        }
 
-          final data =
-              Map<String, dynamic>
-                  .from(item);
+        final data = Map<String, dynamic>.from(item);
 
-          final date =
-              parseDate(
-            getDateValue(data),
-          );
+        final date = parseDate(getDateValue(data));
 
-          if (date == null) {
-            return false;
-          }
+        if (date == null) {
+          return false;
+        }
 
-          final selectedFrom =
-              DateTime(
-            fromDate!.year,
-            fromDate!.month,
-            fromDate!.day,
-          );
+        final selectedFrom = DateTime(
+          fromDate!.year,
+          fromDate!.month,
+          fromDate!.day,
+        );
 
-          final recordDate =
-              DateTime(
-            date.year,
-            date.month,
-            date.day,
-          );
+        final recordDate = DateTime(date.year, date.month, date.day);
 
-          return !recordDate
-              .isBefore(
-            selectedFrom,
-          );
-        },
-      ).toList();
+        return !recordDate.isBefore(selectedFrom);
+      }).toList();
     }
 
     // =============================================
@@ -1557,46 +1121,25 @@ class _FastagScreenState extends State<FastagScreen> {
     // =============================================
 
     if (toDate != null) {
-      result = result
-          .where(
-        (item) {
-          if (item is! Map) {
-            return false;
-          }
+      result = result.where((item) {
+        if (item is! Map) {
+          return false;
+        }
 
-          final data =
-              Map<String, dynamic>
-                  .from(item);
+        final data = Map<String, dynamic>.from(item);
 
-          final date =
-              parseDate(
-            getDateValue(data),
-          );
+        final date = parseDate(getDateValue(data));
 
-          if (date == null) {
-            return false;
-          }
+        if (date == null) {
+          return false;
+        }
 
-          final selectedTo =
-              DateTime(
-            toDate!.year,
-            toDate!.month,
-            toDate!.day,
-          );
+        final selectedTo = DateTime(toDate!.year, toDate!.month, toDate!.day);
 
-          final recordDate =
-              DateTime(
-            date.year,
-            date.month,
-            date.day,
-          );
+        final recordDate = DateTime(date.year, date.month, date.day);
 
-          return !recordDate
-              .isAfter(
-            selectedTo,
-          );
-        },
-      ).toList();
+        return !recordDate.isAfter(selectedTo);
+      }).toList();
     }
 
     if (!mounted) {
@@ -1604,8 +1147,7 @@ class _FastagScreenState extends State<FastagScreen> {
     }
 
     setState(() {
-      filteredFastag =
-          result;
+      filteredFastag = result;
     });
   }
 
@@ -1620,10 +1162,7 @@ class _FastagScreenState extends State<FastagScreen> {
       fromDate = null;
       toDate = null;
 
-      filteredFastag =
-          List<dynamic>.from(
-        allFastag,
-      );
+      filteredFastag = List<dynamic>.from(allFastag);
     });
   }
 
@@ -1631,24 +1170,17 @@ class _FastagScreenState extends State<FastagScreen> {
   // DATE PICKER
   // =========================================================
 
-  Future<void> selectDate({
-    required bool isFromDate,
-  }) async {
-    final picked =
-        await showDatePicker(
+  Future<void> selectDate({required bool isFromDate}) async {
+    final picked = await showDatePicker(
       context: context,
 
       initialDate: isFromDate
-          ? fromDate ??
-              DateTime.now()
-          : toDate ??
-              DateTime.now(),
+          ? fromDate ?? DateTime.now()
+          : toDate ?? DateTime.now(),
 
-      firstDate:
-          DateTime(2020),
+      firstDate: DateTime(2020),
 
-      lastDate:
-          DateTime(2035),
+      lastDate: DateTime(2035),
     );
 
     if (picked == null) {
@@ -1670,64 +1202,40 @@ class _FastagScreenState extends State<FastagScreen> {
   // DATE BOX
   // =========================================================
 
-  Widget buildDateBox({
-    required String title,
-    required VoidCallback onTap,
-  }) {
+  Widget buildDateBox({required String title, required VoidCallback onTap}) {
     return InkWell(
       onTap: onTap,
 
-      borderRadius:
-          BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(10),
 
       child: Container(
         width: 195,
         height: 44,
 
-        padding:
-            const EdgeInsets.symmetric(
-          horizontal: 14,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 14),
 
-        decoration:
-            BoxDecoration(
+        decoration: BoxDecoration(
           color: Colors.white,
 
-          borderRadius:
-              BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(10),
 
-          border:
-              Border.all(
-            color:
-                const Color(
-              0xffdbe2ea,
-            ),
-          ),
+          border: Border.all(color: const Color(0xffdbe2ea)),
         ),
 
         child: Row(
           children: [
-
             Expanded(
               child: Text(
                 title,
 
-                style:
-                    const TextStyle(
-                  fontSize: 14,
-                  color:
-                      Color(
-                    0xff334155,
-                  ),
-                ),
+                style: const TextStyle(fontSize: 14, color: Color(0xff334155)),
               ),
             ),
 
             const Icon(
               Icons.calendar_today_outlined,
               size: 18,
-              color:
-                  Color(0xff111827),
+              color: Color(0xff111827),
             ),
           ],
         ),
@@ -1741,107 +1249,60 @@ class _FastagScreenState extends State<FastagScreen> {
 
   Widget buildFilterSection() {
     return Container(
-      width:
-          double.infinity,
+      width: double.infinity,
 
-      padding:
-          const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(18),
 
-      decoration:
-          BoxDecoration(
-        color:
-            const Color(0xfff1f5f9),
+      decoration: BoxDecoration(
+        color: const Color(0xfff1f5f9),
 
-        borderRadius:
-            BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16),
 
-        border:
-            Border.all(
-          color:
-              const Color(0xffe2e8f0),
-        ),
+        border: Border.all(color: const Color(0xffe2e8f0)),
       ),
 
       child: Wrap(
         spacing: 12,
         runSpacing: 12,
 
-        crossAxisAlignment:
-            WrapCrossAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
 
         children: [
-
           // SEARCH
           SizedBox(
             width: 270,
             height: 44,
 
             child: TextField(
-              controller:
-                  searchController,
+              controller: searchController,
 
-              decoration:
-                  InputDecoration(
-                hintText:
-                    "Type to search...",
+              decoration: InputDecoration(
+                hintText: "Type to search...",
 
-                hintStyle:
-                    const TextStyle(
-                  color:
-                      Color(0xff64748b),
-                ),
+                hintStyle: const TextStyle(color: Color(0xff64748b)),
 
                 filled: true,
 
-                fillColor:
-                    Colors.white,
+                fillColor: Colors.white,
 
-                contentPadding:
-                    const EdgeInsets
-                        .symmetric(
-                  horizontal: 14,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 14),
+
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+
+                  borderSide: const BorderSide(color: Color(0xffdbe2ea)),
                 ),
 
-                border:
-                    OutlineInputBorder(
-                  borderRadius:
-                      BorderRadius.circular(
-                    10,
-                  ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
 
-                  borderSide:
-                      const BorderSide(
-                    color:
-                        Color(0xffdbe2ea),
-                  ),
+                  borderSide: const BorderSide(color: Color(0xffdbe2ea)),
                 ),
 
-                enabledBorder:
-                    OutlineInputBorder(
-                  borderRadius:
-                      BorderRadius.circular(
-                    10,
-                  ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
 
-                  borderSide:
-                      const BorderSide(
-                    color:
-                        Color(0xffdbe2ea),
-                  ),
-                ),
-
-                focusedBorder:
-                    OutlineInputBorder(
-                  borderRadius:
-                      BorderRadius.circular(
-                    10,
-                  ),
-
-                  borderSide:
-                      const BorderSide(
-                    color:
-                        Color(0xff2161b5),
-                  ),
+                  borderSide: const BorderSide(color: Color(0xff2161b5)),
                 ),
               ),
             ),
@@ -1849,33 +1310,19 @@ class _FastagScreenState extends State<FastagScreen> {
 
           // FROM
           buildDateBox(
-            title:
-                fromDate == null
-                    ? "dd-mm-yyyy"
-                    : formatDate(
-                        fromDate,
-                      ),
+            title: fromDate == null ? "dd-mm-yyyy" : formatDate(fromDate),
 
             onTap: () {
-              selectDate(
-                isFromDate: true,
-              );
+              selectDate(isFromDate: true);
             },
           ),
 
           // TO
           buildDateBox(
-            title:
-                toDate == null
-                    ? "dd-mm-yyyy"
-                    : formatDate(
-                        toDate,
-                      ),
+            title: toDate == null ? "dd-mm-yyyy" : formatDate(toDate),
 
             onTap: () {
-              selectDate(
-                isFromDate: false,
-              );
+              selectDate(isFromDate: false);
             },
           ),
 
@@ -1883,46 +1330,24 @@ class _FastagScreenState extends State<FastagScreen> {
           SizedBox(
             height: 44,
 
-            child:
-                OutlinedButton(
-              onPressed:
-                  resetFilters,
+            child: OutlinedButton(
+              onPressed: resetFilters,
 
-              style:
-                  OutlinedButton.styleFrom(
-                foregroundColor:
-                    const Color(
-                  0xff475569,
-                ),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: const Color(0xff475569),
 
-                backgroundColor:
-                    Colors.white,
+                backgroundColor: Colors.white,
 
-                side:
-                    const BorderSide(
-                  color:
-                      Color(
-                    0xffd5dde7,
-                  ),
-                ),
+                side: const BorderSide(color: Color(0xffd5dde7)),
 
-                shape:
-                    RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(
-                    10,
-                  ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
 
-              child:
-                  const Text(
+              child: const Text(
                 "Reset",
-                style:
-                    TextStyle(
-                  fontWeight:
-                      FontWeight.w600,
-                ),
+                style: TextStyle(fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -1935,67 +1360,44 @@ class _FastagScreenState extends State<FastagScreen> {
   // TYPE BADGE
   // =========================================================
 
-  Widget typeBadge(
-    String type,
-  ) {
-    final text =
-        type.trim().isEmpty ||
-                type == "-"
-            ? "Toll"
-            : type;
+  Widget typeBadge(String type) {
+    final text = type.trim().isEmpty || type == "-" ? "Toll" : type;
 
     return Container(
-      padding:
-          const EdgeInsets.symmetric(
-        horizontal: 11,
-        vertical: 6,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
 
-      decoration:
-          BoxDecoration(
-        color:
-            const Color(0xffe0f2fe),
+      decoration: BoxDecoration(
+        color: const Color(0xffe0f2fe),
 
-        borderRadius:
-            BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20),
       ),
 
       child: Row(
-        mainAxisSize:
-            MainAxisSize.min,
+        mainAxisSize: MainAxisSize.min,
 
         children: [
-
           Container(
             width: 8,
             height: 8,
 
-            decoration:
-                const BoxDecoration(
-              color:
-                  Color(0xff0284c7),
+            decoration: const BoxDecoration(
+              color: Color(0xff0284c7),
 
-              shape:
-                  BoxShape.circle,
+              shape: BoxShape.circle,
             ),
           ),
 
-          const SizedBox(
-            width: 6,
-          ),
+          const SizedBox(width: 6),
 
           Text(
             text,
 
-            style:
-                const TextStyle(
+            style: const TextStyle(
               fontSize: 13,
 
-              fontWeight:
-                  FontWeight.w600,
+              fontWeight: FontWeight.w600,
 
-              color:
-                  Color(0xff0369a1),
+              color: Color(0xff0369a1),
             ),
           ),
         ],
@@ -2011,11 +1413,9 @@ class _FastagScreenState extends State<FastagScreen> {
     if (isLoading) {
       return const Center(
         child: Padding(
-          padding:
-              EdgeInsets.all(50),
+          padding: EdgeInsets.all(50),
 
-          child:
-              CircularProgressIndicator(),
+          child: CircularProgressIndicator(),
         ),
       );
     }
@@ -2027,49 +1427,26 @@ class _FastagScreenState extends State<FastagScreen> {
     if (errorMessage != null) {
       return Center(
         child: Padding(
-          padding:
-              const EdgeInsets.all(30),
+          padding: const EdgeInsets.all(30),
 
           child: Column(
-            mainAxisSize:
-                MainAxisSize.min,
+            mainAxisSize: MainAxisSize.min,
 
             children: [
+              const Icon(Icons.error_outline, size: 50, color: Colors.red),
 
-              const Icon(
-                Icons.error_outline,
-                size: 50,
-                color: Colors.red,
-              ),
-
-              const SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 10),
 
               Text(
                 errorMessage!,
-                textAlign:
-                    TextAlign.center,
+                textAlign: TextAlign.center,
 
-                style:
-                    const TextStyle(
-                  color: Colors.red,
-                ),
+                style: const TextStyle(color: Colors.red),
               ),
 
-              const SizedBox(
-                height: 15,
-              ),
+              const SizedBox(height: 15),
 
-              ElevatedButton(
-                onPressed:
-                    loadFastag,
-
-                child:
-                    const Text(
-                  "Retry",
-                ),
-              ),
+              ElevatedButton(onPressed: loadFastag, child: const Text("Retry")),
             ],
           ),
         ),
@@ -2083,19 +1460,12 @@ class _FastagScreenState extends State<FastagScreen> {
     if (filteredFastag.isEmpty) {
       return const Center(
         child: Padding(
-          padding:
-              EdgeInsets.all(50),
+          padding: EdgeInsets.all(50),
 
-          child:
-              Text(
+          child: Text(
             "No Fastag records found",
 
-            style:
-                TextStyle(
-              fontSize: 16,
-              color:
-                  Color(0xff64748b),
-            ),
+            style: TextStyle(fontSize: 16, color: Color(0xff64748b)),
           ),
         ),
       );
@@ -2106,275 +1476,157 @@ class _FastagScreenState extends State<FastagScreen> {
     // =============================================
 
     return Container(
-      width:
-          double.infinity,
+      width: double.infinity,
 
-      decoration:
-          BoxDecoration(
-        color:
-            Colors.white,
+      decoration: BoxDecoration(
+        color: Colors.white,
 
-        borderRadius:
-            BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16),
 
-        border:
-            Border.all(
-          color:
-              const Color(0xffe2e8f0),
-        ),
+        border: Border.all(color: const Color(0xffe2e8f0)),
       ),
 
-      child:
-          ClipRRect(
-        borderRadius:
-            BorderRadius.circular(16),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
 
-        child:
-            SingleChildScrollView(
-          scrollDirection:
-              Axis.horizontal,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
 
-          child:
-              DataTable(
+          child: DataTable(
             columnSpacing: 42,
 
-            horizontalMargin:
-                18,
+            horizontalMargin: 18,
 
-            headingRowHeight:
-                48,
+            headingRowHeight: 48,
 
-            dataRowMinHeight:
-                58,
+            dataRowMinHeight: 58,
 
-            dataRowMaxHeight:
-                70,
+            dataRowMaxHeight: 70,
 
-            dividerThickness:
-                0.7,
+            dividerThickness: 0.7,
 
             columns: const [
+              DataColumn(label: TableHeader("DATE")),
 
-              DataColumn(
-                label:
-                    TableHeader(
-                  "DATE",
-                ),
-              ),
+              DataColumn(label: TableHeader("VEHICLE")),
 
-              DataColumn(
-                label:
-                    TableHeader(
-                  "VEHICLE",
-                ),
-              ),
+              DataColumn(label: TableHeader("PROVIDER")),
 
-              DataColumn(
-                label:
-                    TableHeader(
-                  "PROVIDER",
-                ),
-              ),
+              DataColumn(label: TableHeader("TYPE")),
 
-              DataColumn(
-                label:
-                    TableHeader(
-                  "TYPE",
-                ),
-              ),
+              DataColumn(label: TableHeader("AMOUNT")),
 
-              DataColumn(
-                label:
-                    TableHeader(
-                  "AMOUNT",
-                ),
-              ),
+              DataColumn(label: TableHeader("BALANCE")),
 
-              DataColumn(
-                label:
-                    TableHeader(
-                  "BALANCE",
-                ),
-              ),
-
-              DataColumn(
-                label:
-                    TableHeader(
-                  "TOLL PLAZA",
-                ),
-              ),
+              DataColumn(label: TableHeader("TOLL PLAZA")),
             ],
 
-            rows:
-                filteredFastag
-                    .map<DataRow>(
-              (item) {
+            rows: filteredFastag.map<DataRow>((item) {
+              final data = Map<String, dynamic>.from(item);
 
-                final data =
-                    Map<String, dynamic>
-                        .from(item);
+              final date = getDateValue(data);
 
-                final date =
-                    getDateValue(
-                  data,
-                );
+              final vehicle = getVehicle(data);
 
-                final vehicle =
-                    getVehicle(
-                  data,
-                );
+              final provider = getProvider(data);
 
-                final provider =
-                    getProvider(
-                  data,
-                );
+              final type = getType(data);
 
-                final type =
-                    getType(
-                  data,
-                );
+              final amount = getAmount(data);
 
-                final amount =
-                    getAmount(
-                  data,
-                );
+              final balance = getBalance(data);
 
-                final balance =
-                    getBalance(
-                  data,
-                );
+              final tollPlaza = getTollPlaza(data);
 
-                final tollPlaza =
-                    getTollPlaza(
-                  data,
-                );
+              return DataRow(
+                cells: [
+                  // DATE
+                  DataCell(
+                    Text(
+                      formatDate(date),
 
-                return DataRow(
-                  cells: [
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Color(0xff1e293b),
+                      ),
+                    ),
+                  ),
 
-                    // DATE
-                    DataCell(
-                      Text(
-                        formatDate(
-                          date,
-                        ),
+                  // VEHICLE
+                  DataCell(
+                    Text(
+                      vehicle,
 
-                        style:
-                            const TextStyle(
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xff111827),
+                      ),
+                    ),
+                  ),
+
+                  // PROVIDER
+                  DataCell(
+                    Text(
+                      provider,
+
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Color(0xff111827),
+                      ),
+                    ),
+                  ),
+
+                  // TYPE
+                  DataCell(typeBadge(type)),
+
+                  // AMOUNT
+                  DataCell(
+                    Text(
+                      amount,
+
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xff111827),
+                      ),
+                    ),
+                  ),
+
+                  // BALANCE
+                  DataCell(
+                    Text(
+                      balance,
+
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Color(0xff111827),
+                      ),
+                    ),
+                  ),
+
+                  // TOLL PLAZA
+                  DataCell(
+                    SizedBox(
+                      width: 190,
+
+                      child: Text(
+                        tollPlaza,
+
+                        maxLines: 2,
+
+                        overflow: TextOverflow.ellipsis,
+
+                        style: const TextStyle(
                           fontSize: 14,
-                          color:
-                              Color(
-                            0xff1e293b,
-                          ),
+                          color: Color(0xff94a3b8),
                         ),
                       ),
                     ),
-
-                    // VEHICLE
-                    DataCell(
-                      Text(
-                        vehicle,
-
-                        style:
-                            const TextStyle(
-                          fontSize: 14,
-                          fontWeight:
-                              FontWeight.w800,
-                          color:
-                              Color(
-                            0xff111827,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    // PROVIDER
-                    DataCell(
-                      Text(
-                        provider,
-
-                        style:
-                            const TextStyle(
-                          fontSize: 14,
-                          color:
-                              Color(
-                            0xff111827,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    // TYPE
-                    DataCell(
-                      typeBadge(
-                        type,
-                      ),
-                    ),
-
-                    // AMOUNT
-                    DataCell(
-                      Text(
-                        amount,
-
-                        style:
-                            const TextStyle(
-                          fontSize: 14,
-                          fontWeight:
-                              FontWeight.w600,
-                          color:
-                              Color(
-                            0xff111827,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    // BALANCE
-                    DataCell(
-                      Text(
-                        balance,
-
-                        style:
-                            const TextStyle(
-                          fontSize: 14,
-                          color:
-                              Color(
-                            0xff111827,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    // TOLL PLAZA
-                    DataCell(
-                      SizedBox(
-                        width: 190,
-
-                        child:
-                            Text(
-                          tollPlaza,
-
-                          maxLines: 2,
-
-                          overflow:
-                              TextOverflow
-                                  .ellipsis,
-
-                          style:
-                              const TextStyle(
-                            fontSize: 14,
-                            color:
-                                Color(
-                              0xff94a3b8,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ).toList(),
+                  ),
+                ],
+              );
+            }).toList(),
           ),
         ),
       ),
@@ -2386,88 +1638,55 @@ class _FastagScreenState extends State<FastagScreen> {
   // =========================================================
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          const Color(0xfff4f7fb),
+      backgroundColor: const Color(0xfff4f7fb),
 
-      body:
-          SafeArea(
-        child:
-            Column(
+      body: SafeArea(
+        child: Column(
           children: [
-
             // =================================================
             // HEADER
             // =================================================
-
             Container(
-              width:
-                  double.infinity,
+              width: double.infinity,
 
-              padding:
-                  const EdgeInsets.fromLTRB(
-                20,
-                18,
-                20,
-                15,
-              ),
+              padding: const EdgeInsets.fromLTRB(20, 18, 20, 15),
 
-              child:
-                  Row(
+              child: Row(
                 children: [
-
                   // TITLE
                   const Expanded(
-                    child:
-                        Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment
-                              .start,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
 
                       children: [
-
                         Text(
                           "Fastag",
 
                           maxLines: 1,
 
-                          overflow:
-                              TextOverflow
-                                  .ellipsis,
+                          overflow: TextOverflow.ellipsis,
 
-                          style:
-                              TextStyle(
+                          style: TextStyle(
                             fontSize: 25,
-                            fontWeight:
-                                FontWeight.w800,
-                            color:
-                                Colors.black,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.black,
                           ),
                         ),
 
-                        SizedBox(
-                          height: 4,
-                        ),
+                        SizedBox(height: 4),
 
                         Text(
                           "FASTag transaction records",
 
                           maxLines: 1,
 
-                          overflow:
-                              TextOverflow
-                                  .ellipsis,
+                          overflow: TextOverflow.ellipsis,
 
-                          style:
-                              TextStyle(
+                          style: TextStyle(
                             fontSize: 14,
-                            color:
-                                Color(
-                              0xff64748b,
-                            ),
+                            color: Color(0xff64748b),
                           ),
                         ),
                       ],
@@ -2478,78 +1697,46 @@ class _FastagScreenState extends State<FastagScreen> {
                   // ADD FASTAG
                   // ONLY CORPORATEADMIN / STATEADMIN
                   // =================================================
-
                   if (canAddFastag) ...[
-
-                    const SizedBox(
-                      width: 8,
-                    ),
+                    const SizedBox(width: 8),
 
                     ElevatedButton.icon(
-                      onPressed:
-                          addFastag,
+                      onPressed: addFastag,
 
-                      icon:
-                          const Icon(
-                        Icons.add,
-                        size: 19,
-                      ),
+                      icon: const Icon(Icons.add, size: 19),
 
-                      label:
-                          const Text(
-                        "Add Fastag",
-                      ),
+                      label: const Text("Add Fastag"),
 
-                      style:
-                          ElevatedButton
-                              .styleFrom(
-                        backgroundColor:
-                            const Color(
-                          0xff2458A6,
-                        ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xff2458A6),
 
-                        foregroundColor:
-                            Colors.white,
+                        foregroundColor: Colors.white,
 
                         elevation: 0,
 
-                        padding:
-                            const EdgeInsets
-                                .symmetric(
+                        padding: const EdgeInsets.symmetric(
                           horizontal: 14,
                           vertical: 12,
                         ),
 
-                        shape:
-                            RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(
-                            10,
-                          ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
                       ),
                     ),
                   ],
 
-                  const SizedBox(
-                    width: 5,
-                  ),
+                  const SizedBox(width: 5),
 
                   // =================================================
                   // REFRESH
                   // =================================================
-
                   IconButton(
-                    tooltip:
-                        "Refresh",
+                    tooltip: "Refresh",
 
-                    onPressed:
-                        loadFastag,
+                    onPressed: loadFastag,
 
-                    icon:
-                        const Icon(
-                      Icons.refresh,
-                    ),
+                    icon: const Icon(Icons.refresh),
                   ),
                 ],
               ),
@@ -2558,50 +1745,32 @@ class _FastagScreenState extends State<FastagScreen> {
             // =================================================
             // CONTENT
             // =================================================
-
             Expanded(
-              child:
-                  SingleChildScrollView(
-                padding:
-                    const EdgeInsets.all(
-                  18,
-                ),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(18),
 
-                child:
-                    Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment
-                          .start,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
 
                   children: [
-
                     // FILTER
                     buildFilterSection(),
 
-                    const SizedBox(
-                      height: 18,
-                    ),
+                    const SizedBox(height: 18),
 
                     // RECORD COUNT
                     Text(
                       "Fastag Records: "
                       "${filteredFastag.length}",
 
-                      style:
-                          const TextStyle(
+                      style: const TextStyle(
                         fontSize: 14,
-                        fontWeight:
-                            FontWeight.w600,
-                        color:
-                            Color(
-                          0xff475569,
-                        ),
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xff475569),
                       ),
                     ),
 
-                    const SizedBox(
-                      height: 8,
-                    ),
+                    const SizedBox(height: 8),
 
                     // TABLE
                     buildFastagTable(),
@@ -2641,32 +1810,22 @@ class _FastagScreenState extends State<FastagScreen> {
 // TABLE HEADER
 // =============================================================
 
-class TableHeader
-    extends StatelessWidget {
-
+class TableHeader extends StatelessWidget {
   final String title;
 
-  const TableHeader(
-    this.title, {
-    super.key,
-  });
+  const TableHeader(this.title, {super.key});
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return Text(
       title,
 
       maxLines: 1,
 
-      style:
-          const TextStyle(
+      style: const TextStyle(
         fontSize: 12,
-        fontWeight:
-            FontWeight.w700,
-        color:
-            Color(0xff94a3b8),
+        fontWeight: FontWeight.w700,
+        color: Color(0xff94a3b8),
         letterSpacing: 0.4,
       ),
     );

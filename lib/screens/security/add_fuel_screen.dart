@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -8,7 +7,6 @@ import '../../services/auth_service.dart';
 import '../driver/driver_home_screen.dart';
 import '../corporate_admin/fuel_bill_list_screen.dart';
 import '../../core/services/odometer_ocr_service.dart';
-
 
 class AddFuelScreen extends StatefulWidget {
   final int vehicleId;
@@ -51,22 +49,10 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
   int gradientIndex = 0;
 
   final List<List<Color>> gradients = [
-    [
-      const Color(0xff4F9AFF),
-      const Color(0xff7DB9FF),
-    ],
-    [
-      const Color(0xff9D50FF),
-      const Color(0xffC77DFF),
-    ],
-    [
-      const Color(0xffFF9966),
-      const Color(0xffFF5E62),
-    ],
-    [
-      const Color(0xff00C6FF),
-      const Color(0xff0072FF),
-    ],
+    [const Color(0xff4F9AFF), const Color(0xff7DB9FF)],
+    [const Color(0xff9D50FF), const Color(0xffC77DFF)],
+    [const Color(0xffFF9966), const Color(0xffFF5E62)],
+    [const Color(0xff00C6FF), const Color(0xff0072FF)],
   ];
 
   @override
@@ -92,10 +78,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
     super.dispose();
   }
 
-  void showSnack(
-    String message, {
-    bool error = true,
-  }) {
+  void showSnack(String message, {bool error = true}) {
     if (!mounted) return;
 
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -114,8 +97,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
       if (!mounted) return;
 
       setState(() {
-        gradientIndex =
-            (gradientIndex + 1) % gradients.length;
+        gradientIndex = (gradientIndex + 1) % gradients.length;
       });
 
       animateGradient();
@@ -127,11 +109,9 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
   // =========================================================
 
   void updateTotal() {
-    final liters =
-        double.tryParse(litersController.text.trim()) ?? 0;
+    final liters = double.tryParse(litersController.text.trim()) ?? 0;
 
-    final rate =
-        double.tryParse(rateController.text.trim()) ?? 0;
+    final rate = double.tryParse(rateController.text.trim()) ?? 0;
 
     setState(() {
       total = liters * rate;
@@ -144,10 +124,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
 
   Future<void> pickReceipt(ImageSource source) async {
     try {
-      final picked = await picker.pickImage(
-        source: source,
-        imageQuality: 80,
-      );
+      final picked = await picker.pickImage(source: source, imageQuality: 80);
 
       if (picked == null) return;
 
@@ -155,14 +132,9 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
         selectedReceipt = File(picked.path);
       });
 
-      showSnack(
-        "Receipt selected successfully",
-        error: false,
-      );
+      showSnack("Receipt selected successfully", error: false);
     } catch (e) {
-      showSnack(
-        "Receipt image error: $e",
-      );
+      showSnack("Receipt image error: $e");
     }
   }
 
@@ -170,9 +142,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(20),
-        ),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (_) {
         return _pickerSheet(
@@ -195,10 +165,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
 
   Future<void> pickOdoImage(ImageSource source) async {
     try {
-      final picked = await picker.pickImage(
-        source: source,
-        imageQuality: 80,
-      );
+      final picked = await picker.pickImage(source: source, imageQuality: 80);
 
       if (picked == null) return;
 
@@ -207,10 +174,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
         isReadingOdometer = true;
       });
 
-      final reading =
-          await OdometerOcrService.recognizeFromPath(
-        picked.path,
-      );
+      final reading = await OdometerOcrService.recognizeFromPath(picked.path);
 
       if (!mounted) return;
 
@@ -223,14 +187,9 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
       });
 
       if (reading != null) {
-        showSnack(
-          "Detected $reading km. Please verify.",
-          error: false,
-        );
+        showSnack("Detected $reading km. Please verify.", error: false);
       } else {
-        showSnack(
-          "Could not read odometer. Please enter manually.",
-        );
+        showSnack("Could not read odometer. Please enter manually.");
       }
     } catch (e) {
       if (!mounted) return;
@@ -239,9 +198,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
         isReadingOdometer = false;
       });
 
-      showSnack(
-        "Odometer image error: $e",
-      );
+      showSnack("Odometer image error: $e");
     }
   }
 
@@ -249,9 +206,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(20),
-        ),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (_) {
         return _pickerSheet(
@@ -280,28 +235,19 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
 
           const Text(
             "Select Image",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 10),
 
           ListTile(
-            leading: const Icon(
-              Icons.camera_alt,
-              color: Colors.blue,
-            ),
+            leading: const Icon(Icons.camera_alt, color: Colors.blue),
             title: const Text("Take Photo"),
             onTap: onCamera,
           ),
 
           ListTile(
-            leading: const Icon(
-              Icons.photo_library,
-              color: Colors.blue,
-            ),
+            leading: const Icon(Icons.photo_library, color: Colors.blue),
             title: const Text("Choose from Gallery"),
             onTap: onGallery,
           ),
@@ -324,9 +270,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
     // -------------------------
 
     if (widget.vehicleId <= 0) {
-      showSnack(
-        "Invalid Vehicle ID",
-      );
+      showSnack("Invalid Vehicle ID");
       return;
     }
 
@@ -334,13 +278,10 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
     // FUEL STATION
     // -------------------------
 
-    final fuelStation =
-        stationController.text.trim();
+    final fuelStation = stationController.text.trim();
 
     if (fuelStation.isEmpty) {
-      showSnack(
-        "Please enter Fuel Station",
-      );
+      showSnack("Please enter Fuel Station");
       return;
     }
 
@@ -348,15 +289,10 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
     // LITERS
     // -------------------------
 
-    final liters =
-        double.tryParse(
-      litersController.text.trim(),
-    );
+    final liters = double.tryParse(litersController.text.trim());
 
     if (liters == null || liters <= 0) {
-      showSnack(
-        "Please enter valid Liters",
-      );
+      showSnack("Please enter valid Liters");
       return;
     }
 
@@ -364,15 +300,10 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
     // RATE
     // -------------------------
 
-    final rate =
-        double.tryParse(
-      rateController.text.trim(),
-    );
+    final rate = double.tryParse(rateController.text.trim());
 
     if (rate == null || rate <= 0) {
-      showSnack(
-        "Please enter valid Rate",
-      );
+      showSnack("Please enter valid Rate");
       return;
     }
 
@@ -386,15 +317,10 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
     // ODOMETER
     // -------------------------
 
-    final odometer =
-        int.tryParse(
-      odoController.text.trim(),
-    );
+    final odometer = int.tryParse(odoController.text.trim());
 
     if (odometer == null || odometer < 0) {
-      showSnack(
-        "Please enter valid Odometer",
-      );
+      showSnack("Please enter valid Odometer");
       return;
     }
 
@@ -410,38 +336,24 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
       // =====================================================
 
       if (selectedReceipt != null) {
-        debugPrint(
-          "========== FUEL RECEIPT UPLOAD ==========",
-        );
+        debugPrint("========== FUEL RECEIPT UPLOAD ==========");
 
-        debugPrint(
-          "File: ${selectedReceipt!.path}",
-        );
+        debugPrint("File: ${selectedReceipt!.path}");
 
         try {
-          final uploadResult =
-              await _authService.uploadAttachment(
+          final uploadResult = await _authService.uploadAttachment(
             bytes: await selectedReceipt!.readAsBytes(),
-            fileName: selectedReceipt!.path
-                .split(Platform.pathSeparator)
-                .last,
+            fileName: selectedReceipt!.path.split(Platform.pathSeparator).last,
             entityType: 'Fuel',
           );
 
-          attachmentId =
-              uploadResult.attachmentId;
+          attachmentId = uploadResult.attachmentId;
 
-          debugPrint(
-            "Attachment ID: $attachmentId",
-          );
+          debugPrint("Attachment ID: $attachmentId");
         } catch (e) {
-          debugPrint(
-            "ATTACHMENT UPLOAD ERROR: $e",
-          );
+          debugPrint("ATTACHMENT UPLOAD ERROR: $e");
 
-          throw Exception(
-            "Receipt upload failed: $e",
-          );
+          throw Exception("Receipt upload failed: $e");
         }
       }
 
@@ -449,55 +361,36 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
       // STEP 2: SAVE FUEL
       // =====================================================
 
-      debugPrint(
-        "========== SAVE FUEL ==========",
-      );
+      debugPrint("========== SAVE FUEL ==========");
 
-      debugPrint(
-        "VehicleId: ${widget.vehicleId}",
-      );
+      debugPrint("VehicleId: ${widget.vehicleId}");
 
       debugPrint(
         "TxnDate: ${DateTime.now().toIso8601String().substring(0, 10)}",
       );
 
-      debugPrint(
-        "FuelStation: $fuelStation",
-      );
+      debugPrint("FuelStation: $fuelStation");
 
-      debugPrint(
-        "Liters: $liters",
-      );
+      debugPrint("Liters: $liters");
 
-      debugPrint(
-        "Rate: $rate",
-      );
+      debugPrint("Rate: $rate");
 
-      debugPrint(
-        "Amount: $amount",
-      );
+      debugPrint("Amount: $amount");
 
-      debugPrint(
-        "Odometer: $odometer",
-      );
+      debugPrint("Odometer: $odometer");
 
-      debugPrint(
-        "AttachmentId: $attachmentId",
-      );
+      debugPrint("AttachmentId: $attachmentId");
 
-      Future<void> save({bool confirm = false}) =>
-          _authService.saveFuel(
-            vehicleId: widget.vehicleId,
-            txnDate: DateTime.now()
-                .toIso8601String()
-                .substring(0, 10),
-            fuelStation: fuelStation,
-            amount: amount,
-            odometer: odometer,
-            quantity: liters,
-            attachmentId: attachmentId,
-            confirmDuplicate: confirm,
-          );
+      Future<void> save({bool confirm = false}) => _authService.saveFuel(
+        vehicleId: widget.vehicleId,
+        txnDate: DateTime.now().toIso8601String().substring(0, 10),
+        fuelStation: fuelStation,
+        amount: amount,
+        odometer: odometer,
+        quantity: liters,
+        attachmentId: attachmentId,
+        confirmDuplicate: confirm,
+      );
 
       try {
         await save();
@@ -514,31 +407,20 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
 
       if (!mounted) return;
 
-      showSnack(
-        "Fuel Entry Saved Successfully",
-        error: false,
-      );
+      showSnack("Fuel Entry Saved Successfully", error: false);
 
-      await Future.delayed(
-        const Duration(milliseconds: 500),
-      );
+      await Future.delayed(const Duration(milliseconds: 500));
 
       if (!mounted) return;
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (_) => const FuelBillListScreen(),
-        ),
+        MaterialPageRoute(builder: (_) => const FuelBillListScreen()),
       );
     } catch (e) {
-      debugPrint(
-        "========== FUEL SAVE ERROR ==========",
-      );
+      debugPrint("========== FUEL SAVE ERROR ==========");
 
-      debugPrint(
-        e.toString(),
-      );
+      debugPrint(e.toString());
 
       if (!mounted) return;
 
@@ -546,14 +428,10 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
 
       // Remove Exception: prefix
       if (message.startsWith("Exception: ")) {
-        message = message.substring(
-          "Exception: ".length,
-        );
+        message = message.substring("Exception: ".length);
       }
 
-      showSnack(
-        message,
-      );
+      showSnack(message);
     } finally {
       if (mounted) {
         setState(() {
@@ -575,10 +453,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
       appBar: AppBar(
         title: const Text(
           "Create Fuel Request",
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -597,17 +472,13 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
 
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.only(
-            top: 15,
-            bottom: 30,
-          ),
+          padding: const EdgeInsets.only(top: 15, bottom: 30),
           child: _buildCard(
             child: Column(
               children: [
                 // =================================================
                 // VEHICLE
                 // =================================================
-
                 buildInput(
                   vehicleNameController,
                   "Vehicle Name",
@@ -625,49 +496,35 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
                 // =================================================
                 // ODOMETER
                 // =================================================
-
                 TextField(
                   controller: odoController,
-                  keyboardType:
-                      TextInputType.number,
+                  keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     labelText: "Odometer (ODO)",
-                    prefixIcon: const Icon(
-                      Icons.speed,
-                      color: Colors.blue,
-                    ),
+                    prefixIcon: const Icon(Icons.speed, color: Colors.blue),
 
-                    suffixIcon:
-                        isReadingOdometer
-                            ? const Padding(
-                                padding:
-                                    EdgeInsets.all(14),
-                                child: SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child:
-                                      CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                ),
-                              )
-                            : IconButton(
-                                icon: const Icon(
-                                  Icons.camera_alt,
-                                  color: Colors.blue,
-                                ),
-                                onPressed:
-                                    showOdoPicker,
-                              ),
+                    suffixIcon: isReadingOdometer
+                        ? const Padding(
+                            padding: EdgeInsets.all(14),
+                            child: SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          )
+                        : IconButton(
+                            icon: const Icon(
+                              Icons.camera_alt,
+                              color: Colors.blue,
+                            ),
+                            onPressed: showOdoPicker,
+                          ),
 
                     filled: true,
-                    fillColor:
-                        Colors.grey.shade100,
+                    fillColor: Colors.grey.shade100,
 
-                    border:
-                        OutlineInputBorder(
-                      borderRadius:
-                          BorderRadius.circular(12),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                 ),
@@ -676,8 +533,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
                   const SizedBox(height: 10),
 
                   ClipRRect(
-                    borderRadius:
-                        BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12),
                     child: Image.file(
                       odoImage!,
                       height: 120,
@@ -688,14 +544,10 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
 
                   if (!isReadingOdometer)
                     const Padding(
-                      padding:
-                          EdgeInsets.only(top: 4),
+                      padding: EdgeInsets.only(top: 4),
                       child: Text(
                         "Reading auto-filled from photo — please verify.",
-                        style: TextStyle(
-                          fontSize: 11.5,
-                          color: Colors.grey,
-                        ),
+                        style: TextStyle(fontSize: 11.5, color: Colors.grey),
                       ),
                     ),
                 ],
@@ -705,13 +557,11 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
                 // =================================================
                 // LITERS
                 // =================================================
-
                 buildInput(
                   litersController,
                   "Liters",
                   Icons.local_gas_station,
-                  keyboardType:
-                      const TextInputType.numberWithOptions(
+                  keyboardType: const TextInputType.numberWithOptions(
                     decimal: true,
                   ),
                   onChange: updateTotal,
@@ -720,13 +570,11 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
                 // =================================================
                 // RATE
                 // =================================================
-
                 buildInput(
                   rateController,
                   "Rate / Liter",
                   Icons.currency_rupee,
-                  keyboardType:
-                      const TextInputType.numberWithOptions(
+                  keyboardType: const TextInputType.numberWithOptions(
                     decimal: true,
                   ),
                   onChange: updateTotal,
@@ -735,39 +583,29 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
                 // =================================================
                 // TOTAL
                 // =================================================
-
                 Container(
                   width: double.infinity,
-                  padding:
-                      const EdgeInsets.all(14),
-                  margin:
-                      const EdgeInsets.only(
-                    bottom: 14,
-                  ),
+                  padding: const EdgeInsets.all(14),
+                  margin: const EdgeInsets.only(bottom: 14),
                   decoration: BoxDecoration(
                     color: Colors.blue.shade50,
-                    borderRadius:
-                        BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
-                    mainAxisAlignment:
-                        MainAxisAlignment
-                            .spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text(
                         "Total Amount",
                         style: TextStyle(
                           fontSize: 17,
-                          fontWeight:
-                              FontWeight.bold,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
                         "₹ ${total.toStringAsFixed(2)}",
                         style: const TextStyle(
                           fontSize: 18,
-                          fontWeight:
-                              FontWeight.bold,
+                          fontWeight: FontWeight.bold,
                           color: Colors.green,
                         ),
                       ),
@@ -778,17 +616,11 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
                 // =================================================
                 // FUEL STATION
                 // =================================================
-
-                buildInput(
-                  stationController,
-                  "Fuel Station",
-                  Icons.store,
-                ),
+                buildInput(stationController, "Fuel Station", Icons.store),
 
                 // =================================================
                 // NOTES
                 // =================================================
-
                 buildInput(
                   notesController,
                   "Notes",
@@ -801,38 +633,25 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
                 // =================================================
                 // RECEIPT
                 // =================================================
-
                 GestureDetector(
-                  onTap: _saving
-                      ? null
-                      : showReceiptPicker,
+                  onTap: _saving ? null : showReceiptPicker,
                   child: Container(
                     width: double.infinity,
-                    padding:
-                        const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.blue,
-                      ),
-                      borderRadius:
-                          BorderRadius.circular(12),
+                      border: Border.all(color: Colors.blue),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Row(
-                      mainAxisAlignment:
-                          MainAxisAlignment
-                              .center,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.upload_file,
-                          color: Colors.blue,
-                        ),
+                        Icon(Icons.upload_file, color: Colors.blue),
                         SizedBox(width: 10),
                         Text(
                           "Upload Receipt",
                           style: TextStyle(
                             color: Colors.blue,
-                            fontWeight:
-                                FontWeight.w600,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
@@ -842,13 +661,9 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
 
                 if (selectedReceipt != null)
                   Padding(
-                    padding:
-                        const EdgeInsets.only(
-                      top: 12,
-                    ),
+                    padding: const EdgeInsets.only(top: 12),
                     child: ClipRRect(
-                      borderRadius:
-                          BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(12),
                       child: Image.file(
                         selectedReceipt!,
                         height: 150,
@@ -863,26 +678,17 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
                 // =================================================
                 // SUBMIT
                 // =================================================
-
                 SizedBox(
                   width: double.infinity,
                   height: 55,
                   child: ElevatedButton(
-                    onPressed:
-                        _saving ? null : saveFuel,
+                    onPressed: _saving ? null : saveFuel,
 
-                    style:
-                        ElevatedButton.styleFrom(
-                      backgroundColor:
-                          Colors.green.shade600,
-                      disabledBackgroundColor:
-                          Colors.grey,
-                      shape:
-                          RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(
-                          12,
-                        ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green.shade600,
+                      disabledBackgroundColor: Colors.grey,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
 
@@ -890,8 +696,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
                         ? const SizedBox(
                             width: 24,
                             height: 24,
-                            child:
-                                CircularProgressIndicator(
+                            child: CircularProgressIndicator(
                               strokeWidth: 2.5,
                               color: Colors.white,
                             ),
@@ -900,8 +705,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
                             "Submit Request",
                             style: TextStyle(
                               fontSize: 18,
-                              fontWeight:
-                                  FontWeight.bold,
+                              fontWeight: FontWeight.bold,
                               color: Colors.white,
                             ),
                           ),
@@ -919,20 +723,13 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
   // CARD
   // =========================================================
 
-  Widget _buildCard({
-    required Widget child,
-  }) {
+  Widget _buildCard({required Widget child}) {
     return Container(
-      margin:
-          const EdgeInsets.symmetric(
-        horizontal: 16,
-      ),
-      padding:
-          const EdgeInsets.all(18),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius:
-            BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: const [
           BoxShadow(
             color: Colors.black12,
@@ -959,10 +756,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
     int maxLines = 1,
   }) {
     return Container(
-      margin:
-          const EdgeInsets.only(
-        bottom: 14,
-      ),
+      margin: const EdgeInsets.only(bottom: 14),
       child: TextField(
         controller: controller,
         readOnly: readOnly,
@@ -975,26 +769,15 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
           }
         },
 
-        decoration:
-            InputDecoration(
+        decoration: InputDecoration(
           labelText: label,
 
-          prefixIcon: Icon(
-            icon,
-            color: Colors.blue,
-          ),
+          prefixIcon: Icon(icon, color: Colors.blue),
 
           filled: true,
-          fillColor:
-              Colors.grey.shade100,
+          fillColor: Colors.grey.shade100,
 
-          border:
-              OutlineInputBorder(
-            borderRadius:
-                BorderRadius.circular(
-              12,
-            ),
-          ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         ),
       ),
     );

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -14,10 +15,7 @@ class AttachmentUploadResult {
   final int attachmentId;
   final String url;
 
-  const AttachmentUploadResult({
-    required this.attachmentId,
-    required this.url,
-  });
+  const AttachmentUploadResult({required this.attachmentId, required this.url});
 }
 
 /// POST /fuel found the same vehicle + litres within two hours.
@@ -37,13 +35,21 @@ Future<bool> confirmDuplicateFuel(BuildContext context, String message) async {
       title: const Text("Possible duplicate"),
       content: Text(message),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text("Cancel")),
-        ElevatedButton(onPressed: () => Navigator.pop(ctx, true), child: const Text("Save anyway")),
+        TextButton(
+          onPressed: () => Navigator.pop(ctx, false),
+          child: const Text("Cancel"),
+        ),
+        ElevatedButton(
+          onPressed: () => Navigator.pop(ctx, true),
+          child: const Text("Save anyway"),
+        ),
       ],
     ),
   );
   return ok == true;
 }
+
+
 
 class AuthService {
   // static const String baseUrl = "https://premerp.in/dvms/api";
@@ -80,6 +86,11 @@ Future<Map<String, dynamic>> login(
       "cityIds": cityIds,
       "lat": lat,
       "lng": lng,
+      // Backend can log these against UserLoginLog (osName/osVersion/appVersion)
+      // for the "who logged in, from what device" audit trail.
+      "osName": Platform.operatingSystem,
+      "osVersion": Platform.operatingSystemVersion,
+      "appVersion": "1.0.0+37",
     }),
   );
 
@@ -102,9 +113,6 @@ Future<Map<String, dynamic>> login(
     // await prefs.setInt("stateId", data["user"]["stateId"]);
     // await prefs.setInt("cityId", data["user"]["cityId"]); 
     // await prefs.setInt("roleId", data["user"]["RoleId"]);
-
-
-
     // Login Status
     await prefs.setBool("isLoggedIn", true);
 
@@ -117,6 +125,11 @@ Future<Map<String, dynamic>> login(
         "Login failed",
   );
 }
+
+
+
+
+
 // Future<Map<String, dynamic>> login(
 //   String email,
 //   String password,
@@ -300,7 +313,7 @@ Future<Map<String, dynamic>> getRoles() async {
 //     },
 //   );
 
- 
+
 //   final response = await http.get(
 //     uri,
 //     headers: {
@@ -309,7 +322,7 @@ Future<Map<String, dynamic>> getRoles() async {
 //     },
 //   );
 
- 
+
 
 //   if (response.statusCode == 200) {
 
@@ -349,7 +362,7 @@ Future<Map<String, dynamic>> getRoles() async {
 //   final response =
 //       await http.get(uri);
 
- 
+
 //   if (response.statusCode == 200) {
 
 //     final decoded =
@@ -422,7 +435,7 @@ Future<Map<String, dynamic>> getLocations(
 /*================= DashboardCompliance =============*/
 
 
- Future<Map<String, dynamic>> dashboardCompliance() async 
+Future<Map<String, dynamic>> dashboardCompliance() async 
  {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
@@ -444,8 +457,8 @@ Future<Map<String, dynamic>> getLocations(
 
 /*================= Expenses =============*/
 
- Future<Map<String, dynamic>> expenses() async
- {
+Future<Map<String, dynamic>> expenses() async
+{
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
@@ -592,7 +605,7 @@ Future<Uint8List> getVehicleQr(int vehicleId) async {
 /*================= GetVehicles =============*/
 
 Future<List<dynamic>> getVehicles() async
- {
+{
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
@@ -617,7 +630,7 @@ Future<List<dynamic>> getVehicles() async
 Future<List<dynamic>> getExpenseTypes() async {
   final prefs = await SharedPreferences.getInstance();
   final token = prefs.getString("token");
-  
+
   final response = await http.get(
     Uri.parse("$baseUrl/expense-types"),
     headers: {
@@ -701,12 +714,9 @@ Future<void> saveExpense({
   // after uploading the receipt/odometer photo, so it actually gets linked
   // to this FuelTransaction (dvms.js's POST /fuel already reads and stores
   // AttachmentId; the caller just wasn't sending one before this).
-  // quantity (litres) was never sent before, so every app entry was saved
-  // with no litres and the mileage report had nothing to work with.
-  // Throws DuplicateFuelException on a 409; call again with
-  // confirmDuplicate: true once the user confirms it is a real second fill.
-  Future<void> saveFuel(
-  {
+  
+  
+    Future<void> saveFuel({
     required int vehicleId,
     required String txnDate,
     required String fuelStation,
@@ -745,7 +755,8 @@ Future<void> saveExpense({
     print("Response: ${response.body}");
 
     if (response.statusCode == 409) {
-      String msg = "A matching fuel entry already exists. Save this one anyway?";
+      String msg =
+          "A matching fuel entry already exists. Save this one anyway?";
       try {
         final j = jsonDecode(response.body);
         if (j is Map && j["duplicate"] == true) {
@@ -757,8 +768,7 @@ Future<void> saveExpense({
       } catch (_) {}
     }
 
-    if (response.statusCode != 200 &&
-        response.statusCode != 201) {
+    if (response.statusCode != 200 && response.statusCode != 201) {
       // Show the server's own error text, not the raw JSON body.
       String msg = response.body;
       try {
@@ -768,6 +778,46 @@ Future<void> saveExpense({
       throw Exception(msg);
     }
   }
+  // Future<void> saveFuel(
+  // {
+  //   required int vehicleId,
+  //   required String txnDate,
+  //   required String fuelStation,
+  //   required double amount,
+  //   required int odometer,
+  //   int? attachmentId,
+  // }) async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final token = prefs.getString("token");
+
+  //   final body = {
+  //     "VehicleId": vehicleId,
+  //     "TxnDate": txnDate,
+  //     "FuelStation": fuelStation,
+  //     "Amount": amount,
+  //     "Odometer": odometer,
+  //     "AttachmentId": attachmentId,
+  //   };
+
+  //   final response = await http.post(
+  //     Uri.parse("$baseUrl/fuel"),
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       "Authorization": "Bearer $token",
+  //     },
+  //     body: jsonEncode(body),
+  //   );
+
+  //   print("Request Body:");
+  //   print(jsonEncode(body));
+
+  //   print("Response: ${response.body}");
+
+  //   if (response.statusCode != 200 &&
+  //       response.statusCode != 201) {
+  //     throw Exception(response.body);
+  //   }
+  // }
 
 /*================= UploadAttachment =============*/
 // Uploads a photo (e.g. the odometer photo captured before saving a
@@ -853,172 +903,425 @@ Future<AttachmentUploadResult> uploadAttachment({
 // qrToken when both are present (POST /movement/scan checks `if (b.vehicleId)`
 // first) and would silently record against whatever vehicle that id
 // happens to belong to instead of the one the token actually names.
-Future<Map<String, dynamic>> movementSave({
-  required int branchId,
-  int? vehicleId,
-//  String qrToken,
-  String? direction,
-  required String txnDate,
-  // Location optional
-  String? fromLocation,
-  int? fromCityId,
-  String? toLocation,
-  int? toCityId,
-  int? otherCityIdOverride,
 
-  required int odometer,
-  required String driverName,
-  // Set when the guard picked the driver from the list (DriverMaster). On an
-  // Exit the server then opens a tracked trip for that driver; a typed name
-  // with no id is recorded but not tracked.
-  int? driverId,
-  required String movementType,
-  required String salesExecutive,
-  required String customerName,
-  required String purpose,
-  // Path returned by uploadAttachment() — persisted as VehicleMovement.ImagePath.
-  String? imagePath,
-}) async {
-  // ==========================================================
-  // GET SHARED PREFERENCES
-  // ==========================================================
+ Future<Map<String, dynamic>> movementSave({
+    required int branchId,
+    int? vehicleId,
+    //  String qrToken,
+    String? direction,
+    required String txnDate,
+    // Location optional
+    String? fromLocation,
+    int? fromCityId,
+    String? toLocation,
+    int? toCityId,
+    int? otherCityIdOverride,
 
-  final prefs = await SharedPreferences.getInstance();
+    required int odometer,
+    required String driverName,
+    // Set when the guard picked the driver from the list (DriverMaster). On an
+    // Exit the server then opens a tracked trip for that driver; a typed name
+    // with no id is recorded but not tracked.
+    int? driverId,
+    required String movementType,
+    required String salesExecutive,
+    required String customerName,
+    required String purpose,
+    // Path returned by uploadAttachment() — persisted as VehicleMovement.ImagePath.
+    String? imagePath,
+  }) async {
+    // ==========================================================
+    // GET SHARED PREFERENCES
+    // ==========================================================
 
-  // ==========================================================
-  // GET AUTH TOKEN
-  // ==========================================================
+    final prefs = await SharedPreferences.getInstance();
 
-  final authToken = prefs.getString('token');
+    // ==========================================================
+    // GET AUTH TOKEN
+    // ==========================================================
 
-  if (authToken == null || authToken.isEmpty) {
+    final authToken = prefs.getString('token');
+
+    if (authToken == null || authToken.isEmpty) {
+      throw Exception('Authorization token not found. Please login again.');
+    }
+
+    // ==========================================================
+    // GET LOGIN LOCATION
+    // ==========================================================
+
+    final lat = prefs.getString('GeoLat');
+    final lng = prefs.getString('GeoLng');
+
+    // ==========================================================
+    // "OTHER" LOCATION (for Security logins)
+    // ==========================================================
+    // The backend pins ONE side of a Security user's movement to their own
+    // gate location (from their profile) and only reads the other side —
+    // as a numeric CityId, in a field called exactly "otherCityId" — from
+    // the request. On Exit the vehicle is heading TO the picked location;
+    // on Entry it's coming FROM the picked location.
+    final int? otherCityId =
+        otherCityIdOverride ?? (direction == 'Entry' ? fromCityId : toCityId);
+
+    // ==========================================================
+    // REQUEST BODY
+    // ==========================================================
+
+    final Map<String, dynamic> body = {
+      'branchId': branchId,
+      'vehicleId': vehicleId,
+      // 'qrToken': qrToken,
+      if (direction != null) 'direction': direction,
+      'txnDate': txnDate,
+
+      // Optional location — fromCityId/toCityId are read directly for
+      // non-Security (admin) logins; otherCityId is what a Security login
+      // actually needs (see comment above). Sending both is harmless.
+      'fromLocation': fromLocation,
+      'fromCityId': fromCityId,
+      'toLocation': toLocation,
+      'toCityId': toCityId,
+      'otherCityId': otherCityId,
+      'odometer': odometer,
+      'driverName': driverName,
+      if (driverId != null) 'driverId': driverId,
+      'movementType': movementType,
+
+      'salesExecutive': salesExecutive,
+      'customerName': customerName,
+      'purpose': purpose,
+      'imagePath': imagePath,
+
+      // Login GPS location
+      'latitude': lat,
+      'longitude': lng,
+    };
+
+    // ==========================================================
+    // PRINT REQUEST
+    // ==========================================================
+
+    print('');
+    print('======================================');
+    print('MOVEMENT REQUEST BODY');
+    print('======================================');
+    print(jsonEncode(body));
+    print('======================================');
+
+    // ==========================================================
+    // API CALL
+    // ==========================================================
+
+    final response = await http.post(
+      Uri.parse('$baseUrl/movement/scan'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $authToken',
+      },
+      body: jsonEncode(body),
+    );
+
+    // ==========================================================
+    // PRINT RESPONSE
+    // ==========================================================
+
+    print('');
+    print('======================================');
+    print('MOVEMENT API RESPONSE');
+    print('======================================');
+    print('STATUS CODE: ${response.statusCode}');
+    print('RESPONSE: ${response.body}');
+    print('======================================');
+
+    // ==========================================================
+    // SUCCESS
+    // ==========================================================
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      print('MOVEMENT SAVE SUCCESS');
+      final decoded = jsonDecode(response.body);
+      return decoded is Map<String, dynamic> ? decoded : <String, dynamic>{};
+    }
+
+    // ==========================================================
+    // ERROR
+    // ==========================================================
+
+    print('======================================');
+    print('MOVEMENT SAVE ERROR');
+    print('======================================');
+
     throw Exception(
-      'Authorization token not found. Please login again.',
+      'Movement API failed: '
+      '${response.statusCode} '
+      '${response.body}',
     );
   }
+// Future<Map<String, dynamic>> movementSave({
+//   required int branchId,
+//   int? vehicleId,
+//   required String qrToken,
+//   String? direction,
+//   required String txnDate,
+//   // Location optional
+//   String? fromLocation,
+//   int? fromCityId,
+//   String? toLocation,
+//   int? toCityId,
+//   int? otherCityIdOverride,
 
-  // ==========================================================
-  // GET LOGIN LOCATION
-  // ==========================================================
+//   required int odometer,
+//   required String driverName,
+//   required String movementType,
+//   required String salesExecutive,
+//   required String customerName,
+//   required String purpose,
+//   // Path returned by uploadAttachment() — persisted as VehicleMovement.ImagePath.
+//   String? imagePath,
+// }) async {
+//   // ==========================================================
+//   // GET SHARED PREFERENCES
+//   // ==========================================================
 
-  final lat = prefs.getString('GeoLat');
-  final lng = prefs.getString('GeoLng');
+//   final prefs = await SharedPreferences.getInstance();
 
-  // ==========================================================
-  // "OTHER" LOCATION (for Security logins)
-  // ==========================================================
-  // The backend pins ONE side of a Security user's movement to their own
-  // gate location (from their profile) and only reads the other side —
-  // as a numeric CityId, in a field called exactly "otherCityId" — from
-  // the request. On Exit the vehicle is heading TO the picked location;
-  // on Entry it's coming FROM the picked location.
-  final int? otherCityId = otherCityIdOverride ??
-      (direction == 'Entry' ? fromCityId : toCityId);
+//   // ==========================================================
+//   // GET AUTH TOKEN
+//   // ==========================================================
 
-  // ==========================================================
-  // REQUEST BODY
-  // ==========================================================
+//   final authToken = prefs.getString('token');
 
-  final Map<String, dynamic> body = {
-    'branchId': branchId,
-    'vehicleId': vehicleId,
-    // 'qrToken': qrToken,
-    if (direction != null) 'direction': direction,
-    'txnDate': txnDate,
+//   if (authToken == null || authToken.isEmpty) {
+//     throw Exception(
+//       'Authorization token not found. Please login again.',
+//     );
+//   }
 
-    // Optional location — fromCityId/toCityId are read directly for
-    // non-Security (admin) logins; otherCityId is what a Security login
-    // actually needs (see comment above). Sending both is harmless.
-    'fromLocation': fromLocation,
-    'fromCityId': fromCityId,
-    'toLocation': toLocation,
-    'toCityId': toCityId,
-    'otherCityId': otherCityId,
-    'odometer': odometer,
-    'driverName': driverName,
-    if (driverId != null) 'driverId': driverId,
-    'movementType': movementType,
+//   // ==========================================================
+//   // GET LOGIN LOCATION
+//   // ==========================================================
+
+//   final lat = prefs.getString('GeoLat');
+//   final lng = prefs.getString('GeoLng');
+
+//   // ==========================================================
+//   // "OTHER" LOCATION (for Security logins)
+//   // ==========================================================
+//   // The backend pins ONE side of a Security user's movement to their own
+//   // gate location (from their profile) and only reads the other side —
+//   // as a numeric CityId, in a field called exactly "otherCityId" — from
+//   // the request. On Exit the vehicle is heading TO the picked location;
+//   // on Entry it's coming FROM the picked location.
+//   final int? otherCityId = otherCityIdOverride ??
+//       (direction == 'Entry' ? fromCityId : toCityId);
+
+//   // ==========================================================
+//   // REQUEST BODY
+//   // ==========================================================
+
+//   final Map<String, dynamic> body = {
+//     'branchId': branchId,
+//     'vehicleId': vehicleId,
+//     'qrToken': qrToken,
+//     if (direction != null) 'direction': direction,
+//     'txnDate': txnDate,
+
+//     // Optional location — fromCityId/toCityId are read directly for
+//     // non-Security (admin) logins; otherCityId is what a Security login
+//     // actually needs (see comment above). Sending both is harmless.
+//     'fromLocation': fromLocation,
+//     'fromCityId': fromCityId,
+//     'toLocation': toLocation,
+//     'toCityId': toCityId,
+//     'otherCityId': otherCityId,
+//     'odometer': odometer,
+//     'driverName': driverName,
+//     'movementType': movementType,
     
-    'salesExecutive': salesExecutive,
-    'customerName': customerName,
-    'purpose': purpose,
-    'imagePath': imagePath,
+//     'salesExecutive': salesExecutive,
+//     'customerName': customerName,
+//     'purpose': purpose,
+//     'imagePath': imagePath,
 
-    // Login GPS location
-    'latitude': lat,
-    'longitude': lng,
-  };
+//     // Login GPS location
+//     'latitude': lat,
+//     'longitude': lng,
+//   };
 
-  // ==========================================================
-  // PRINT REQUEST
-  // ==========================================================
+//   // ==========================================================
+//   // PRINT REQUEST
+//   // ==========================================================
 
-  print('');
-  print('======================================');
-  print('MOVEMENT REQUEST BODY');
-  print('======================================');
-  print(jsonEncode(body));
-  print('======================================');
+//   print('');
+//   print('======================================');
+//   print('MOVEMENT REQUEST BODY');
+//   print('======================================');
+//   print(jsonEncode(body));
+//   print('======================================');
 
-  // ==========================================================
-  // API CALL
-  // ==========================================================
+//   // ==========================================================
+//   // API CALL
+//   // ==========================================================
 
-  final response = await http.post(
-    Uri.parse('$baseUrl/movement/scan'),
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $authToken',
-    },
-    body: jsonEncode(body),
-  );
+//   final response = await http.post(
+//     Uri.parse('$baseUrl/movement/scan'),
+//     headers: {
+//       'Content-Type': 'application/json',
+//       'Authorization': 'Bearer $authToken',
+//     },
+//     body: jsonEncode(body),
+//   );
 
-  // ==========================================================
-  // PRINT RESPONSE
-  // ==========================================================
+//   // ==========================================================
+//   // PRINT RESPONSE
+//   // ==========================================================
 
-  print('');
-  print('======================================');
-  print('MOVEMENT API RESPONSE');
-  print('======================================');
-  print('STATUS CODE: ${response.statusCode}');
-  print('RESPONSE: ${response.body}');
-  print('======================================');
+//   print('');
+//   print('======================================');
+//   print('MOVEMENT API RESPONSE');
+//   print('======================================');
+//   print('STATUS CODE: ${response.statusCode}');
+//   print('RESPONSE: ${response.body}');
+//   print('======================================');
 
-  // ==========================================================
-  // SUCCESS
-  // ==========================================================
+//   // ==========================================================
+//   // SUCCESS
+//   // ==========================================================
 
-  if (response.statusCode >= 200 &&
-      response.statusCode < 300) {
-    print('MOVEMENT SAVE SUCCESS');
-    final decoded = jsonDecode(response.body);
-    return decoded is Map<String, dynamic> ? decoded : <String, dynamic>{};
+//   if (response.statusCode >= 200 &&
+//       response.statusCode < 300) {
+//     print('MOVEMENT SAVE SUCCESS');
+//     final decoded = jsonDecode(response.body);
+//     return decoded is Map<String, dynamic> ? decoded : <String, dynamic>{};
+//   }
+
+//   // ==========================================================
+//   // ERROR
+//   // ==========================================================
+
+//   print('======================================');
+//   print('MOVEMENT SAVE ERROR');
+//   print('======================================');
+
+//   throw Exception(
+//     'Movement API failed: '
+//     '${response.statusCode} '
+//     '${response.body}',
+//   );
+// }
+
+
+
+
+
+Future<List<dynamic>> getfastag() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    final response = await http.get(
+      Uri.parse("$baseUrl/fastag"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    );
+    print("Response: ${response.body}");
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      if (json is List) return json;
+      return json["data"] as List<dynamic>;
+    } else {
+      throw Exception(response.body);
+    }
   }
 
-  // ==========================================================
-  // ERROR
-  // ==========================================================
+    Future<List<dynamic>> getfitness() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
 
-  print('======================================');
-  print('MOVEMENT SAVE ERROR');
-  print('======================================');
+    final response = await http.get(
+      Uri.parse("$baseUrl/fitness"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    );
+    print("Response: ${response.body}");
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      if (json is List) return json;
+      return json["data"] as List<dynamic>;
+    } else {
+      throw Exception(response.body);
+    }
+  }
 
-  throw Exception(
-    'Movement API failed: '
-    '${response.statusCode} '
-    '${response.body}',
-  );
-}
+
+  Future<List<dynamic>> getmileagevariance() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    final response = await http.get(
+      Uri.parse("$baseUrl/reports/mileage-variance"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    );
+    print("Response: ${response.body}");
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      if (json is List) return json;
+      return json["data"] as List<dynamic>;
+    } else {
+      throw Exception(response.body);
+    }
+  }
 
 
+   Future<List<dynamic>> getpuc() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    final response = await http.get(
+      Uri.parse("$baseUrl/puc"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    );
+    print("Response: ${response.body}");
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      if (json is List) return json;
+      return json["data"] as List<dynamic>;
+    } else {
+      throw Exception(response.body);
+    }
+  }
 
 
+    Future<List<dynamic>> getusers() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
 
-
-
-
-
+    final response = await http.get(
+      Uri.parse("$baseUrl/users"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    );
+    print("Response: ${response.body}");
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      if (json is List) return json;
+      return json["data"] as List<dynamic>;
+    } else {
+      throw Exception(response.body);
+    }
+  }
 // Future<void> movementSave({
 //   required int branchId,
 //   required int vehicleId,
@@ -1189,224 +1492,13 @@ Future<Map<String, dynamic>> movementSave({
 
 
 
- Future<List<dynamic>> getmovement() async
- {
+Future<List<dynamic>> getmovement() async
+{
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 
     final response = await http.get(
       Uri.parse("$baseUrl/movement"),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
-      },
-    );
-    print("Response: ${response.body}");
-    if (response.statusCode == 200) {
-      final json = jsonDecode(response.body);
-      if (json is List) return json;
-      return json["data"] as List<dynamic>;
-    } else {
-      throw Exception(response.body);
-    }
-  }
- Future<List<dynamic>> getusers() async
- {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString("token");
-
-    final response = await http.get(
-      Uri.parse("$baseUrl/users"),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
-      },
-    );
-    print("Response: ${response.body}");
-    if (response.statusCode == 200) {
-      final json = jsonDecode(response.body);
-      if (json is List) return json;
-      return json["data"] as List<dynamic>;
-    } else {
-      throw Exception(response.body);
-    }
-  }
- Future<List<dynamic>> getchallan() async
- {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString("token");
-
-    final response = await http.get(
-      Uri.parse("$baseUrl/challan"),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
-      },
-    );
-    print("Response: ${response.body}");
-    if (response.statusCode == 200) {
-      final json = jsonDecode(response.body);
-      if (json is List) return json;
-      return json["data"] as List<dynamic>;
-    } else {
-      throw Exception(response.body);
-    }
-  }
- Future<List<dynamic>> getpuc() async
- {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString("token");
-
-    final response = await http.get(
-      Uri.parse("$baseUrl/puc"),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
-      },
-    );
-    print("Response: ${response.body}");
-    if (response.statusCode == 200) {
-      final json = jsonDecode(response.body);
-      if (json is List) return json;
-      return json["data"] as List<dynamic>;
-    } else {
-      throw Exception(response.body);
-    }
-  }
- Future<List<dynamic>> getfastag() async
- {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString("token");
-
-    final response = await http.get(
-      Uri.parse("$baseUrl/fastag"),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
-      },
-    );
-    print("Response: ${response.body}");
-    if (response.statusCode == 200) {
-      final json = jsonDecode(response.body);
-      if (json is List) return json;
-      return json["data"] as List<dynamic>;
-    } else {
-      throw Exception(response.body);
-    }
-  }
- Future<List<dynamic>> getmileagevariance() async
- {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString("token");
-
-    final response = await http.get(
-      Uri.parse("$baseUrl/reports/mileage-variance"),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
-      },
-    );
-    print("Response: ${response.body}");
-    if (response.statusCode == 200) {
-      final json = jsonDecode(response.body);
-      if (json is List) return json;
-      return json["data"] as List<dynamic>;
-    } else {
-      throw Exception(response.body);
-    }
-  }
- Future<List<dynamic>> getfitness() async
- {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString("token");
-
-    final response = await http.get(
-      Uri.parse("$baseUrl/fitness"),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
-      },
-    );
-    print("Response: ${response.body}");
-    if (response.statusCode == 200) {
-      final json = jsonDecode(response.body);
-      if (json is List) return json;
-      return json["data"] as List<dynamic>;
-    } else {
-      throw Exception(response.body);
-    }
-  }
-
- Future<List<dynamic>> getaccidents() async
- {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString("token");
-
-    final response = await http.get(
-      Uri.parse("$baseUrl/accidents"),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
-      },
-    );
-    print("Response: ${response.body}");
-    if (response.statusCode == 200) {
-      final json = jsonDecode(response.body);
-      if (json is List) return json;
-      return json["data"] as List<dynamic>;
-    } else {
-      throw Exception(response.body);
-    }
-  }
- Future<List<dynamic>> getexpenses() async
- {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString("token");
-
-    final response = await http.get(
-      Uri.parse("$baseUrl/expenses"),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
-      },
-    );
-    print("Response: ${response.body}");
-    if (response.statusCode == 200) {
-      final json = jsonDecode(response.body);
-      if (json is List) return json;
-      return json["data"] as List<dynamic>;
-    } else {
-      throw Exception(response.body);
-    }
-  }
- Future<List<dynamic>> getemployees() async
- {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString("token");
-
-    final response = await http.get(
-      Uri.parse("$baseUrl/employees"),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
-      },
-    );
-    print("Response: ${response.body}");
-    if (response.statusCode == 200) {
-      final json = jsonDecode(response.body);
-      if (json is List) return json;
-      return json["data"] as List<dynamic>;
-    } else {
-      throw Exception(response.body);
-    }
-  }
- Future<List<dynamic>> getallocations() async
- {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString("token");
-
-    final response = await http.get(
-      Uri.parse("$baseUrl/allocations"),
       headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
@@ -1436,7 +1528,7 @@ Future<Map<String, dynamic>> movementSave({
   // uploaded to /attachments first (same flow as the odometer photo in
   // movementSave) and the AttachmentId it returns is what actually gets
   // linked to the accident report.
- Future<void> reportDamageSave({
+Future<void> reportDamageSave({
   required int vehicleId,
   required String txnDate,
   required String damageType,
@@ -1610,7 +1702,49 @@ Future<Position> getCurrentLocation() async {
 }
 
 
- Future<List<dynamic>> getAccidents() async {
+
+  Future<List<dynamic>> getchallan() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    final response = await http.get(
+      Uri.parse("$baseUrl/challan"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    );
+    print("Response: ${response.body}");
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      if (json is List) return json;
+      return json["data"] as List<dynamic>;
+    } else {
+      throw Exception(response.body);
+    }
+  }
+
+  Future<List<dynamic>> getemployees() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    final response = await http.get(
+      Uri.parse("$baseUrl/employees"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    );
+    print("Response: ${response.body}");
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      if (json is List) return json;
+      return json["data"] as List<dynamic>;
+    } else {
+      throw Exception(response.body);
+    }
+  }
+Future<List<dynamic>> getAccidents() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString("token");
 

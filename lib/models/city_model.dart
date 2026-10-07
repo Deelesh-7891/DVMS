@@ -15,31 +15,19 @@ class CityModel {
     required this.pinCode,
   });
 
-  factory CityModel.fromJson(
-    Map<String, dynamic> json,
-  ) {
+  factory CityModel.fromJson(Map<String, dynamic> json) {
     return CityModel(
-      cityId: int.tryParse(
-            json['CityId']?.toString() ?? '',
-          ) ??
-          0,
+      cityId: int.tryParse(json['CityId']?.toString() ?? '') ?? 0,
 
-      stateId: int.tryParse(
-            json['StateId']?.toString() ?? '',
-          ) ??
-          0,
+      stateId: int.tryParse(json['StateId']?.toString() ?? '') ?? 0,
 
-      cityName:
-          json['CityName']?.toString() ?? '',
+      cityName: json['CityName']?.toString() ?? '',
 
-      locationName:
-          json['LocationName']?.toString() ?? '',
+      locationName: json['LocationName']?.toString() ?? '',
 
-      locationType:
-          json['LocationType']?.toString() ?? '',
+      locationType: json['LocationType']?.toString() ?? '',
 
-      pinCode:
-          json['PinCode']?.toString() ?? '',
+      pinCode: json['PinCode']?.toString() ?? '',
     );
   }
 }

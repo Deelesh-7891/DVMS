@@ -22,42 +22,36 @@ class _AlertsPageState extends State<AlertsPage> {
     loadCompliance();
   }
 
-Future<void> loadCompliance() async {
-  try {
-    final data = await _authService.dashboardCompliance();
+  Future<void> loadCompliance() async {
+    try {
+      final data = await _authService.dashboardCompliance();
 
-    setState(() {
-      complianceData = data;
-      isLoading = false;
-    });
+      setState(() {
+        complianceData = data;
+        isLoading = false;
+      });
 
-    final insurance = complianceData?["insurance"] ?? [];
-    final puc = complianceData?["puc"] ?? [];
-    final fitness = complianceData?["fitness"] ?? [];
+      final insurance = complianceData?["insurance"] ?? [];
+      final puc = complianceData?["puc"] ?? [];
+      final fitness = complianceData?["fitness"] ?? [];
 
-    debugPrint("Compliance Data: $complianceData");
-    debugPrint("Insurance Count: ${insurance.length}");
-    debugPrint("PUC Count: ${puc.length}");
-    debugPrint("Fitness Count: ${fitness.length}");
+      debugPrint("Compliance Data: $complianceData");
+      debugPrint("Insurance Count: ${insurance.length}");
+      debugPrint("PUC Count: ${puc.length}");
+      debugPrint("Fitness Count: ${fitness.length}");
+    } catch (e) {
+      debugPrint(e.toString());
 
-  } catch (e) {
-    debugPrint(e.toString());
-
-    setState(() {
-      isLoading = false;
-    });
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
-
     if (isLoading) {
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     return Scaffold(
@@ -66,7 +60,6 @@ Future<void> loadCompliance() async {
       body: SafeArea(
         child: Column(
           children: [
-
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
@@ -75,7 +68,6 @@ Future<void> loadCompliance() async {
               child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   Text(
                     "🔔 Compliance Alerts",
                     style: TextStyle(
@@ -89,11 +81,8 @@ Future<void> loadCompliance() async {
 
                   Text(
                     "Insurance, PUC & Fitness Alerts",
-                    style: TextStyle(
-                      color: Colors.white70,
-                    ),
+                    style: TextStyle(color: Colors.white70),
                   ),
-
                 ],
               ),
             ),
@@ -102,35 +91,35 @@ Future<void> loadCompliance() async {
                 padding: const EdgeInsets.all(16),
                 children: [
                   ...(complianceData?["insurance"] ?? []).map<Widget>((item) {
-                  return alertTile(
-                    Icons.shield_outlined,
-                    item["RegistrationNo"],
-                    "Insurance",
-                    "Expires in ${item["DaysToExpiry"]} days",
-                    item["InsuranceState"] == "Expired",
-                  );
-                }).toList(),
+                    return alertTile(
+                      Icons.shield_outlined,
+                      item["RegistrationNo"],
+                      "Insurance",
+                      "Expires in ${item["DaysToExpiry"]} days",
+                      item["InsuranceState"] == "Expired",
+                    );
+                  }).toList(),
 
+                  ...(complianceData?["puc"] ?? []).map<Widget>((item) {
+                    return alertTile(
+                      Icons.shield_outlined,
+                      item["RegistrationNo"],
+                      "PUC",
+                      "Expires in ${item["DaysToExpiry"]} days",
+                      item["PUCState"] == "Expired",
+                    );
+                  }).toList(),
 
-  ...(complianceData?["puc"] ?? []).map<Widget>((item) {
-  return alertTile(
-    Icons.shield_outlined,
-    item["RegistrationNo"],
-    "PUC",
-    "Expires in ${item["DaysToExpiry"]} days",
-    item["PUCState"] == "Expired",
-  );
-}).toList(),
+                  ...(complianceData?["fitness"] ?? []).map<Widget>((item) {
+                    return alertTile(
+                      Icons.shield_outlined,
+                      item["RegistrationNo"],
+                      "Fitness",
+                      "Expires in ${item["DaysToExpiry"]} days",
+                      item["FitnessState"] == "Expired",
+                    );
+                  }).toList(),
 
-...(complianceData?["fitness"] ?? []).map<Widget>((item) {
-  return alertTile(
-    Icons.shield_outlined,
-    item["RegistrationNo"],
-    "Fitness",
-    "Expires in ${item["DaysToExpiry"]} days",
-    item["FitnessState"] == "Expired",
-  );
-}).toList(),
                   // alertTile(
                   //   Icons.shield_outlined,
                   //   "RJ14 DM 0007",
@@ -154,11 +143,9 @@ Future<void> loadCompliance() async {
                   //   "Expires in 11 days",
                   //   false,
                   // ),
-
                 ],
               ),
             ),
-
           ],
         ),
       ),
@@ -166,12 +153,12 @@ Future<void> loadCompliance() async {
   }
 
   Widget alertTile(
-      IconData icon,
-      String vehicle,
-      String type,
-      String date,
-      bool expired,
-      ) {
+    IconData icon,
+    String vehicle,
+    String type,
+    String date,
+    bool expired,
+  ) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(

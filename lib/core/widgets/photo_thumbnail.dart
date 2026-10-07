@@ -11,11 +11,7 @@ class PhotoThumbnail extends StatelessWidget {
   final String? photoPath;
   final double size;
 
-  const PhotoThumbnail({
-    super.key,
-    required this.photoPath,
-    this.size = 44,
-  });
+  const PhotoThumbnail({super.key, required this.photoPath, this.size = 44});
 
   String? get _url {
     if (photoPath == null || photoPath!.trim().isEmpty) return null;

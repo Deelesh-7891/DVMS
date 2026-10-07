@@ -17,7 +17,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   @override
   void initState() {
     super.initState();
@@ -25,7 +24,6 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> startApp() async {
-
     // Splash Screen 3 Seconds
     await Future.delayed(const Duration(seconds: 5));
 
@@ -39,143 +37,118 @@ class _SplashScreenState extends State<SplashScreen> {
     if (!isLoggedIn) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (_) => const LoginScreen(),
-        ),
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
       );
       return;
     }
 
     switch (role) {
-
       case "Driver":
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (_) => const DriverHomeScreen(),
-          ),
+          MaterialPageRoute(builder: (_) => const DriverHomeScreen()),
         );
         break;
 
       case "Security":
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (_) => const SecurityHomeScreen(),
-          ),
+          MaterialPageRoute(builder: (_) => const SecurityHomeScreen()),
         );
         break;
 
       case "CorporateAdmin":
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (_) => const CorporateAdminHomeScreen(),
-          ),
+          MaterialPageRoute(builder: (_) => const CorporateAdminHomeScreen()),
         );
         break;
 
       case "Branch Admin":
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (_) => const CorporateAdminHomeScreen(),
-          ),
+          MaterialPageRoute(builder: (_) => const CorporateAdminHomeScreen()),
         );
         break;
 
       case "Accounts":
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (_) => const AccountsHomeScreen(),
-          ),
+          MaterialPageRoute(builder: (_) => const AccountsHomeScreen()),
         );
         break;
 
       default:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (_) => const LoginScreen(),
-          ),
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
         );
     }
   }
 
- 
   @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    backgroundColor: Colors.white,
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
 
-    body: Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-
-          Container(
-            width: 148,
-            height: 148,
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xff2458A6).withOpacity(0.15),
-                  blurRadius: 20,
-                  offset: const Offset(0, 8),
-                ),
-              ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 148,
+              height: 148,
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xff2458A6).withOpacity(0.15),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Image.asset("assets/images/logo.png", fit: BoxFit.contain),
             ),
-            child: Image.asset(
-              "assets/images/logo.png",
-              fit: BoxFit.contain,
+
+            const SizedBox(height: 30),
+
+            const Text(
+              "Welcome",
+              style: TextStyle(
+                fontSize: 34,
+                fontWeight: FontWeight.bold,
+                color: Color(0xff2458A6),
+              ),
             ),
-          ),
 
-          const SizedBox(height: 30),
+            const SizedBox(height: 12),
 
-          const Text(
-            "Welcome",
-            style: TextStyle(
-              fontSize: 34,
-              fontWeight: FontWeight.bold,
-              color: Color(0xff2458A6),
+            const Text(
+              "Demo Vehicle Management",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
             ),
-          ),
 
-          const SizedBox(height: 12),
+            const SizedBox(height: 10),
 
-          const Text(
-            "Demo Vehicle Management",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 26,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
+            const Text(
+              "Prem Motors Group",
+              style: TextStyle(fontSize: 18, color: Colors.grey),
             ),
-          ),
 
-          const SizedBox(height: 10),
+            const SizedBox(height: 40),
 
-          const Text(
-            "Prem Motors Group",
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.grey,
-            ),
-          ),
-
-          const SizedBox(height: 40),
-
-          const CircularProgressIndicator(
-            color: Color(0xff2458A6),
-          ),
-        ],
+            const CircularProgressIndicator(color: Color(0xff2458A6)),
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 }

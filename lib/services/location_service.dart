@@ -17,28 +17,21 @@ class LocationService {
 
   static Future<Position> getCurrentLocation() async {
     // Check GPS service
-    bool serviceEnabled =
-        await Geolocator.isLocationServiceEnabled();
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
 
     if (!serviceEnabled) {
-      throw Exception(
-        "Please turn ON your GPS/location service.",
-      );
+      throw Exception("Please turn ON your GPS/location service.");
     }
 
     // Check permission
-    LocationPermission permission =
-        await Geolocator.checkPermission();
+    LocationPermission permission = await Geolocator.checkPermission();
 
     if (permission == LocationPermission.denied) {
-      permission =
-          await Geolocator.requestPermission();
+      permission = await Geolocator.requestPermission();
     }
 
     if (permission == LocationPermission.denied) {
-      throw Exception(
-        "Location permission denied.",
-      );
+      throw Exception("Location permission denied.");
     }
 
     if (permission == LocationPermission.deniedForever) {
@@ -50,9 +43,7 @@ class LocationService {
 
     // Get current GPS location
     return await Geolocator.getCurrentPosition(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high,
-      ),
+      locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
     );
   }
 
@@ -62,19 +53,15 @@ class LocationService {
 
   static Future<bool> isWithinAllowedLocation() async {
     try {
-      final Position currentPosition =
-          await getCurrentLocation();
+      final Position currentPosition = await getCurrentLocation();
 
       // Current mobile location
-      final double currentLatitude =
-          currentPosition.latitude;
+      final double currentLatitude = currentPosition.latitude;
 
-      final double currentLongitude =
-          currentPosition.longitude;
+      final double currentLongitude = currentPosition.longitude;
 
       // Calculate distance in meters
-      final double distance =
-          Geolocator.distanceBetween(
+      final double distance = Geolocator.distanceBetween(
         currentLatitude,
         currentLongitude,
         registeredLatitude,
@@ -110,20 +97,16 @@ class LocationService {
 
   static Future<double?> getCurrentDistance() async {
     try {
-      final Position position =
-          await getCurrentLocation();
+      final Position position = await getCurrentLocation();
 
-      final double distance =
-          Geolocator.distanceBetween(
+      final double distance = Geolocator.distanceBetween(
         position.latitude,
         position.longitude,
         registeredLatitude,
         registeredLongitude,
       );
 
-      print(
-        "Current distance: $distance meters",
-      );
+      print("Current distance: $distance meters");
 
       return distance;
     } catch (e) {

@@ -15,14 +15,11 @@ class _ChallansScreenState extends State<ChallansScreen> {
   // CONTROLLERS
   // =========================================================
 
-  final TextEditingController vehicleController =
-      TextEditingController();
+  final TextEditingController vehicleController = TextEditingController();
 
-  final TextEditingController offenceController =
-      TextEditingController();
+  final TextEditingController offenceController = TextEditingController();
 
-  final TextEditingController challanController =
-      TextEditingController();
+  final TextEditingController challanController = TextEditingController();
 
   // =========================================================
   // DATA
@@ -89,10 +86,7 @@ class _ChallansScreenState extends State<ChallansScreen> {
   // SAFE VALUE
   // =========================================================
 
-  String getValue(
-    Map<String, dynamic> item,
-    List<String> keys,
-  ) {
+  String getValue(Map<String, dynamic> item, List<String> keys) {
     for (final key in keys) {
       final value = item[key];
 
@@ -111,17 +105,13 @@ class _ChallansScreenState extends State<ChallansScreen> {
   // =========================================================
 
   void applyFilters() {
-    final vehicleSearch =
-        vehicleController.text.trim().toLowerCase();
+    final vehicleSearch = vehicleController.text.trim().toLowerCase();
 
-    final offenceSearch =
-        offenceController.text.trim().toLowerCase();
+    final offenceSearch = offenceController.text.trim().toLowerCase();
 
-    final challanSearch =
-        challanController.text.trim().toLowerCase();
+    final challanSearch = challanController.text.trim().toLowerCase();
 
-    List<dynamic> result =
-        List<dynamic>.from(allChallans);
+    List<dynamic> result = List<dynamic>.from(allChallans);
 
     if (vehicleSearch.isNotEmpty) {
       result = result.where((item) {
@@ -193,8 +183,7 @@ class _ChallansScreenState extends State<ChallansScreen> {
     challanController.clear();
 
     setState(() {
-      filteredChallans =
-          List<dynamic>.from(allChallans);
+      filteredChallans = List<dynamic>.from(allChallans);
     });
   }
 
@@ -238,40 +227,24 @@ class _ChallansScreenState extends State<ChallansScreen> {
         controller: controller,
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: const TextStyle(
-            color: Color(0xff7c7c7c),
-            fontSize: 16,
-          ),
+          hintStyle: const TextStyle(color: Color(0xff7c7c7c), fontSize: 16),
           filled: true,
           fillColor: Colors.white,
-          contentPadding:
-              const EdgeInsets.symmetric(
+          contentPadding: const EdgeInsets.symmetric(
             horizontal: 15,
             vertical: 10,
           ),
           border: OutlineInputBorder(
-            borderRadius:
-                BorderRadius.circular(10),
-            borderSide: const BorderSide(
-              color: Color(0xffdbe2ea),
-            ),
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: Color(0xffdbe2ea)),
           ),
-          enabledBorder:
-              OutlineInputBorder(
-            borderRadius:
-                BorderRadius.circular(10),
-            borderSide: const BorderSide(
-              color: Color(0xffdbe2ea),
-            ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: Color(0xffdbe2ea)),
           ),
-          focusedBorder:
-              OutlineInputBorder(
-            borderRadius:
-                BorderRadius.circular(10),
-            borderSide: const BorderSide(
-              color: Color(0xff2161b5),
-              width: 1.5,
-            ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: Color(0xff2161b5), width: 1.5),
           ),
         ),
       ),
@@ -299,28 +272,19 @@ class _ChallansScreenState extends State<ChallansScreen> {
     final paid = isPaid(status);
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 6,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: paid
-            ? const Color(0xffdcfce7)
-            : const Color(0xffffdddd),
-        borderRadius:
-            BorderRadius.circular(20),
+        color: paid ? const Color(0xffdcfce7) : const Color(0xffffdddd),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
-        mainAxisSize:
-            MainAxisSize.min,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
             width: 8,
             height: 8,
             decoration: BoxDecoration(
-              color: paid
-                  ? const Color(0xff16a34a)
-                  : const Color(0xffef233c),
+              color: paid ? const Color(0xff16a34a) : const Color(0xffef233c),
               shape: BoxShape.circle,
             ),
           ),
@@ -329,11 +293,8 @@ class _ChallansScreenState extends State<ChallansScreen> {
             paid ? "Paid" : "Pending",
             style: TextStyle(
               fontSize: 13,
-              fontWeight:
-                  FontWeight.w700,
-              color: paid
-                  ? const Color(0xff16a34a)
-                  : const Color(0xffef233c),
+              fontWeight: FontWeight.w700,
+              color: paid ? const Color(0xff16a34a) : const Color(0xffef233c),
             ),
           ),
         ],
@@ -346,33 +307,22 @@ class _ChallansScreenState extends State<ChallansScreen> {
   // =========================================================
 
   void markPaid(int index) {
-    final data =
-        Map<String, dynamic>.from(
-      filteredChallans[index],
-    );
+    final data = Map<String, dynamic>.from(filteredChallans[index]);
 
     setState(() {
       data["Status"] = "Paid";
       filteredChallans[index] = data;
 
-      final originalIndex =
-          allChallans.indexOf(
-        filteredChallans[index],
-      );
+      final originalIndex = allChallans.indexOf(filteredChallans[index]);
 
       if (originalIndex >= 0) {
-        allChallans[originalIndex] =
-            data;
+        allChallans[originalIndex] = data;
       }
     });
 
-    ScaffoldMessenger.of(context)
-        .showSnackBar(
-      const SnackBar(
-        content:
-            Text("Challan marked as Paid"),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text("Challan marked as Paid")));
   }
 
   // =========================================================
@@ -385,17 +335,13 @@ class _ChallansScreenState extends State<ChallansScreen> {
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: const Color(0xfff1f4f8),
-        borderRadius:
-            BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xffe0e5eb),
-        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xffe0e5eb)),
       ),
       child: Wrap(
         spacing: 14,
         runSpacing: 12,
-        crossAxisAlignment:
-            WrapCrossAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
         children: [
           searchBox(
             controller: vehicleController,
@@ -419,19 +365,12 @@ class _ChallansScreenState extends State<ChallansScreen> {
             height: 40,
             child: ElevatedButton(
               onPressed: applyFilters,
-              style:
-                  ElevatedButton.styleFrom(
+              style: ElevatedButton.styleFrom(
                 elevation: 0,
-                backgroundColor:
-                    const Color(0xff2161b5),
-                padding:
-                    const EdgeInsets.symmetric(
-                  horizontal: 18,
-                ),
-                shape:
-                    RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(10),
+                backgroundColor: const Color(0xff2161b5),
+                padding: const EdgeInsets.symmetric(horizontal: 18),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
               child: const Text(
@@ -439,8 +378,7 @@ class _ChallansScreenState extends State<ChallansScreen> {
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 15,
-                  fontWeight:
-                      FontWeight.w700,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ),
@@ -450,32 +388,18 @@ class _ChallansScreenState extends State<ChallansScreen> {
             height: 40,
             child: OutlinedButton(
               onPressed: resetFilters,
-              style:
-                  OutlinedButton.styleFrom(
-                backgroundColor:
-                    Colors.white,
-                foregroundColor:
-                    const Color(0xff475569),
-                padding:
-                    const EdgeInsets.symmetric(
-                  horizontal: 18,
-                ),
-                side:
-                    const BorderSide(
-                  color: Color(0xffd5dde7),
-                ),
-                shape:
-                    RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(10),
+              style: OutlinedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color(0xff475569),
+                padding: const EdgeInsets.symmetric(horizontal: 18),
+                side: const BorderSide(color: Color(0xffd5dde7)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
               child: const Text(
                 "Reset",
-                style: TextStyle(
-                  fontWeight:
-                      FontWeight.w600,
-                ),
+                style: TextStyle(fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -494,8 +418,7 @@ class _ChallansScreenState extends State<ChallansScreen> {
       maxLines: 1,
       style: const TextStyle(
         fontSize: 12,
-        fontWeight:
-            FontWeight.w700,
+        fontWeight: FontWeight.w700,
         color: Color(0xff94a3b8),
         letterSpacing: 0.4,
       ),
@@ -511,8 +434,7 @@ class _ChallansScreenState extends State<ChallansScreen> {
       return const Center(
         child: Padding(
           padding: EdgeInsets.all(50),
-          child:
-              CircularProgressIndicator(),
+          child: CircularProgressIndicator(),
         ),
       );
     }
@@ -520,32 +442,21 @@ class _ChallansScreenState extends State<ChallansScreen> {
     if (errorMessage != null) {
       return Center(
         child: Padding(
-          padding:
-              const EdgeInsets.all(30),
+          padding: const EdgeInsets.all(30),
           child: Column(
-            mainAxisSize:
-                MainAxisSize.min,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
-                Icons.error_outline,
-                size: 50,
-                color: Colors.red,
-              ),
+              const Icon(Icons.error_outline, size: 50, color: Colors.red),
               const SizedBox(height: 10),
               Text(
                 errorMessage!,
-                textAlign:
-                    TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.red,
-                ),
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.red),
               ),
               const SizedBox(height: 15),
               ElevatedButton(
-                onPressed:
-                    loadChallans,
-                child:
-                    const Text("Retry"),
+                onPressed: loadChallans,
+                child: const Text("Retry"),
               ),
             ],
           ),
@@ -559,10 +470,7 @@ class _ChallansScreenState extends State<ChallansScreen> {
           padding: EdgeInsets.all(50),
           child: Text(
             "No challan records found",
-            style: TextStyle(
-              fontSize: 16,
-              color: Color(0xff64748b),
-            ),
+            style: TextStyle(fontSize: 16, color: Color(0xff64748b)),
           ),
         ),
       );
@@ -572,19 +480,13 @@ class _ChallansScreenState extends State<ChallansScreen> {
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius:
-            BorderRadius.circular(4),
-        border: Border.all(
-          color: const Color(0xffe0e5eb),
-        ),
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: const Color(0xffe0e5eb)),
       ),
       child: ClipRRect(
-        borderRadius:
-            BorderRadius.circular(4),
-        child:
-            SingleChildScrollView(
-          scrollDirection:
-              Axis.horizontal,
+        borderRadius: BorderRadius.circular(4),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
           child: DataTable(
             columnSpacing: 28,
             horizontalMargin: 18,
@@ -593,247 +495,173 @@ class _ChallansScreenState extends State<ChallansScreen> {
             dataRowMaxHeight: 110,
 
             columns: [
-              DataColumn(
-                label: tableHeader("DATE"),
-              ),
-              DataColumn(
-                label:
-                    tableHeader("VEHICLE"),
-              ),
-              DataColumn(
-                label: tableHeader(
-                  "CHALLAN NO.",
-                ),
-              ),
-              DataColumn(
-                label:
-                    tableHeader("OFFENCE"),
-              ),
-              DataColumn(
-                label:
-                    tableHeader("FINE"),
-              ),
-              DataColumn(
-                label:
-                    tableHeader("STATUS"),
-              ),
-              const DataColumn(
-                label: Text(""),
-              ),
+              DataColumn(label: tableHeader("DATE")),
+              DataColumn(label: tableHeader("VEHICLE")),
+              DataColumn(label: tableHeader("CHALLAN NO.")),
+              DataColumn(label: tableHeader("OFFENCE")),
+              DataColumn(label: tableHeader("FINE")),
+              DataColumn(label: tableHeader("STATUS")),
+              const DataColumn(label: Text("")),
             ],
 
-            rows: filteredChallans
-                .asMap()
-                .entries
-                .map<DataRow>(
-              (entry) {
-                final index =
-                    entry.key;
+            rows: filteredChallans.asMap().entries.map<DataRow>((entry) {
+              final index = entry.key;
 
-                final data =
-                    Map<String,
-                            dynamic>.from(
-                  entry.value,
-                );
+              final data = Map<String, dynamic>.from(entry.value);
 
-                final date =
-                    getValue(data, [
-                  "Date",
-                  "date",
-                  "ChallanDate",
-                  "challanDate",
-                  "ChallanDateTime",
-                  "challanDateTime",
-                ]);
+              final date = getValue(data, [
+                "Date",
+                "date",
+                "ChallanDate",
+                "challanDate",
+                "ChallanDateTime",
+                "challanDateTime",
+              ]);
 
-                final vehicle =
-                    getValue(data, [
-                  "RegistrationNo",
-                  "registrationNo",
-                  "VehicleNo",
-                  "vehicleNo",
-                  "VehicleNumber",
-                  "vehicleNumber",
-                  "Vehicle",
-                  "vehicle",
-                ]);
+              final vehicle = getValue(data, [
+                "RegistrationNo",
+                "registrationNo",
+                "VehicleNo",
+                "vehicleNo",
+                "VehicleNumber",
+                "vehicleNumber",
+                "Vehicle",
+                "vehicle",
+              ]);
 
-                final challanNo =
-                    getValue(data, [
-                  "ChallanNo",
-                  "challanNo",
-                  "ChallanNumber",
-                  "challanNumber",
-                  "Challan_No",
-                  "challan_no",
-                ]);
+              final challanNo = getValue(data, [
+                "ChallanNo",
+                "challanNo",
+                "ChallanNumber",
+                "challanNumber",
+                "Challan_No",
+                "challan_no",
+              ]);
 
-                final offence =
-                    getValue(data, [
-                  "Offence",
-                  "offence",
-                  "OffenceDetails",
-                  "offenceDetails",
-                  "Description",
-                  "description",
-                ]);
+              final offence = getValue(data, [
+                "Offence",
+                "offence",
+                "OffenceDetails",
+                "offenceDetails",
+                "Description",
+                "description",
+              ]);
 
-                final fine =
-                    getValue(data, [
-                  "Fine",
-                  "fine",
-                  "FineAmount",
-                  "fineAmount",
-                  "Amount",
-                  "amount",
-                ]);
+              final fine = getValue(data, [
+                "Fine",
+                "fine",
+                "FineAmount",
+                "fineAmount",
+                "Amount",
+                "amount",
+              ]);
 
-                final status =
-                    getStatus(data);
+              final status = getStatus(data);
 
-                return DataRow(
-                  cells: [
-                    // DATE
-                    DataCell(
-                      Text(
-                        formatDate(date),
-                        style:
-                            const TextStyle(
+              return DataRow(
+                cells: [
+                  // DATE
+                  DataCell(
+                    Text(
+                      formatDate(date),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Color(0xff1e293b),
+                      ),
+                    ),
+                  ),
+
+                  // VEHICLE
+                  DataCell(
+                    Text(
+                      vehicle,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xff1e293b),
+                      ),
+                    ),
+                  ),
+
+                  // CHALLAN NO
+                  DataCell(
+                    SizedBox(
+                      width: 230,
+                      child: Text(
+                        challanNo,
+                        style: const TextStyle(
                           fontSize: 14,
-                          color:
-                              Color(0xff1e293b),
+                          color: Color(0xff334155),
                         ),
                       ),
                     ),
+                  ),
 
-                    // VEHICLE
-                    DataCell(
-                      Text(
-                        vehicle,
-                        style:
-                            const TextStyle(
+                  // OFFENCE
+                  DataCell(
+                    SizedBox(
+                      width: 620,
+                      child: Text(
+                        offence,
+                        maxLines: 4,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
                           fontSize: 14,
-                          fontWeight:
-                              FontWeight.w800,
-                          color:
-                              Color(0xff1e293b),
+                          height: 1.3,
+                          color: Color(0xff94a8c0),
                         ),
                       ),
                     ),
+                  ),
 
-                    // CHALLAN NO
-                    DataCell(
-                      SizedBox(
-                        width: 230,
-                        child: Text(
-                          challanNo,
-                          style:
-                              const TextStyle(
-                            fontSize: 14,
-                            color:
-                                Color(0xff334155),
-                          ),
-                        ),
+                  // FINE
+                  DataCell(
+                    Text(
+                      "₹${fine == "-" ? "0" : fine}",
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0xff1e293b),
                       ),
                     ),
+                  ),
 
-                    // OFFENCE
-                    DataCell(
-                      SizedBox(
-                        width: 620,
-                        child: Text(
-                          offence,
-                          maxLines: 4,
-                          overflow:
-                              TextOverflow
-                                  .ellipsis,
-                          style:
-                              const TextStyle(
-                            fontSize: 14,
-                            height: 1.3,
-                            color:
-                                Color(0xff94a8c0),
-                          ),
-                        ),
-                      ),
-                    ),
+                  // STATUS
+                  DataCell(statusBadge(status)),
 
-                    // FINE
-                    DataCell(
-                      Text(
-                        "₹${fine == "-" ? "0" : fine}",
-                        style:
-                            const TextStyle(
-                          fontSize: 14,
-                          fontWeight:
-                              FontWeight.w500,
-                          color:
-                              Color(0xff1e293b),
-                        ),
-                      ),
-                    ),
-
-                    // STATUS
-                    DataCell(
-                      statusBadge(status),
-                    ),
-
-                    // ACTION
-                    DataCell(
-                      isPaid(status)
-                          ? const SizedBox()
-                          : SizedBox(
-                              width: 80,
-                              height: 56,
-                              child:
-                                  ElevatedButton(
-                                onPressed:
-                                    () {
-                                  markPaid(
-                                    index,
-                                  );
-                                },
-                                style:
-                                    ElevatedButton
-                                        .styleFrom(
-                                  elevation: 0,
-                                  backgroundColor:
-                                      const Color(
-                                    0xff2161b5,
-                                  ),
-                                  shape:
-                                      RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius
-                                            .circular(
-                                      12,
-                                    ),
-                                  ),
+                  // ACTION
+                  DataCell(
+                    isPaid(status)
+                        ? const SizedBox()
+                        : SizedBox(
+                            width: 80,
+                            height: 56,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                markPaid(index);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                elevation: 0,
+                                backgroundColor: const Color(0xff2161b5),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
-                                child:
-                                    const Text(
-                                  "Mark\nPaid",
-                                  textAlign:
-                                      TextAlign
-                                          .center,
-                                  style:
-                                      TextStyle(
-                                    color:
-                                        Colors.white,
-                                    fontSize:
-                                        14,
-                                    fontWeight:
-                                        FontWeight
-                                            .w700,
-                                  ),
+                              ),
+                              child: const Text(
+                                "Mark\nPaid",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
                             ),
-                    ),
-                  ],
-                );
-              },
-            ).toList(),
+                          ),
+                  ),
+                ],
+              );
+            }).toList(),
           ),
         ),
       ),
@@ -847,54 +675,36 @@ class _ChallansScreenState extends State<ChallansScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          const Color(0xfff4f7fb),
+      backgroundColor: const Color(0xfff4f7fb),
       body: SafeArea(
         child: Column(
           children: [
             // =============================================
             // HEADER
             // =============================================
-
             Container(
               width: double.infinity,
-              padding:
-                  const EdgeInsets.fromLTRB(
-                20,
-                18,
-                20,
-                15,
-              ),
+              padding: const EdgeInsets.fromLTRB(20, 18, 20, 15),
               child: Row(
                 children: [
                   const Expanded(
                     child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment
-                              .start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           "Challans",
-                          style:
-                              TextStyle(
+                          style: TextStyle(
                             fontSize: 25,
-                            fontWeight:
-                                FontWeight
-                                    .w800,
-                            color:
-                                Colors.black,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.black,
                           ),
                         ),
                         SizedBox(height: 4),
                         Text(
                           "Vehicle challan management",
-                          style:
-                              TextStyle(
+                          style: TextStyle(
                             fontSize: 14,
-                            color:
-                                Color(
-                              0xff64748b,
-                            ),
+                            color: Color(0xff64748b),
                           ),
                         ),
                       ],
@@ -903,12 +713,8 @@ class _ChallansScreenState extends State<ChallansScreen> {
 
                   IconButton(
                     tooltip: "Refresh",
-                    onPressed:
-                        loadChallans,
-                    icon:
-                        const Icon(
-                      Icons.refresh,
-                    ),
+                    onPressed: loadChallans,
+                    icon: const Icon(Icons.refresh),
                   ),
                 ],
               ),
@@ -917,25 +723,16 @@ class _ChallansScreenState extends State<ChallansScreen> {
             // =============================================
             // CONTENT
             // =============================================
-
             Expanded(
-              child:
-                  SingleChildScrollView(
-                padding:
-                    const EdgeInsets.all(
-                  18,
-                ),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(18),
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment
-                          .start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // FILTER
                     buildFilterSection(),
 
-                    const SizedBox(
-                      height: 18,
-                    ),
+                    const SizedBox(height: 18),
 
                     // COUNT
                     Row(
@@ -943,25 +740,17 @@ class _ChallansScreenState extends State<ChallansScreen> {
                         Expanded(
                           child: Text(
                             "Challan Records: ${filteredChallans.length}",
-                            style:
-                                const TextStyle(
+                            style: const TextStyle(
                               fontSize: 14,
-                              fontWeight:
-                                  FontWeight
-                                      .w600,
-                              color:
-                                  Color(
-                                0xff475569,
-                              ),
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xff475569),
                             ),
                           ),
                         ),
                       ],
                     ),
 
-                    const SizedBox(
-                      height: 8,
-                    ),
+                    const SizedBox(height: 8),
 
                     // TABLE
                     buildChallanTable(),

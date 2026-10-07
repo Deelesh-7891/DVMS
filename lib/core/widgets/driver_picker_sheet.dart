@@ -64,25 +64,38 @@ class _DriverPickerSheetState extends State<_DriverPickerSheet> {
     final list = q.isEmpty
         ? _all
         : _all.where((d) {
-            final hay = '${d['DriverName'] ?? ''} ${d['Phone'] ?? ''} ${d['EmployeeCode'] ?? ''} ${d['LocationName'] ?? ''}'
-                .toUpperCase();
+            final hay =
+                '${d['DriverName'] ?? ''} ${d['Phone'] ?? ''} ${d['EmployeeCode'] ?? ''} ${d['LocationName'] ?? ''}'
+                    .toUpperCase();
             return hay.contains(q);
           }).toList();
 
     return SafeArea(
       child: Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
         child: SizedBox(
           height: MediaQuery.of(context).size.height * 0.75,
           child: Column(
             children: [
               const SizedBox(height: 10),
-              Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(2))),
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
               const Padding(
                 padding: EdgeInsets.fromLTRB(16, 14, 16, 4),
                 child: Align(
                   alignment: Alignment.centerLeft,
-                  child: Text('Select Driver', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  child: Text(
+                    'Select Driver',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
               Padding(
@@ -94,7 +107,9 @@ class _DriverPickerSheetState extends State<_DriverPickerSheet> {
                     hintText: 'Search name / phone',
                     prefixIcon: const Icon(Icons.search),
                     isDense: true,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 ),
               ),
@@ -102,35 +117,63 @@ class _DriverPickerSheetState extends State<_DriverPickerSheet> {
                 child: _loading
                     ? const Center(child: CircularProgressIndicator())
                     : _error != null
-                        ? Center(child: Text(_error!))
-                        : list.isEmpty
-                            ? const Center(child: Text('No drivers found'))
-                            : ListView.separated(
-                                itemCount: list.length,
-                                separatorBuilder: (_, __) => const Divider(height: 1),
-                                itemBuilder: (_, i) {
-                                  final d = list[i];
-                                  final hasApp = d['UserId'] != null;
-                                  final outWith = d['ActiveVehicle'];
-                                  final sub = [
+                    ? Center(child: Text(_error!))
+                    : list.isEmpty
+                    ? const Center(child: Text('No drivers found'))
+                    : ListView.separated(
+                        itemCount: list.length,
+                        separatorBuilder: (_, __) => const Divider(height: 1),
+                        itemBuilder: (_, i) {
+                          final d = list[i];
+                          final hasApp = d['UserId'] != null;
+                          final outWith = d['ActiveVehicle'];
+                          final sub =
+                              [
                                     d['LocationName'],
                                     d['Phone'],
                                     if (outWith != null) 'Out with $outWith',
-                                  ].where((s) => s != null && s.toString().isNotEmpty).join(' · ');
-                                  return ListTile(
-                                    leading: CircleAvatar(
-                                      backgroundColor: hasApp ? Colors.green.shade50 : Colors.orange.shade50,
-                                      child: Icon(Icons.person, color: hasApp ? Colors.green : Colors.orange),
-                                    ),
-                                    title: Text(d['DriverName']?.toString() ?? '', style: const TextStyle(fontWeight: FontWeight.w600)),
-                                    subtitle: Text(sub),
-                                    trailing: hasApp
-                                        ? const Tooltip(message: 'Live tracking', child: Icon(Icons.gps_fixed, color: Colors.green, size: 20))
-                                        : const Text('No app', style: TextStyle(color: Colors.orange, fontSize: 12)),
-                                    onTap: () => Navigator.pop(context, d),
-                                  );
-                                },
+                                  ]
+                                  .where(
+                                    (s) => s != null && s.toString().isNotEmpty,
+                                  )
+                                  .join(' · ');
+                          return ListTile(
+                            leading: CircleAvatar(
+                              backgroundColor: hasApp
+                                  ? Colors.green.shade50
+                                  : Colors.orange.shade50,
+                              child: Icon(
+                                Icons.person,
+                                color: hasApp ? Colors.green : Colors.orange,
                               ),
+                            ),
+                            title: Text(
+                              d['DriverName']?.toString() ?? '',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            subtitle: Text(sub),
+                            trailing: hasApp
+                                ? const Tooltip(
+                                    message: 'Live tracking',
+                                    child: Icon(
+                                      Icons.gps_fixed,
+                                      color: Colors.green,
+                                      size: 20,
+                                    ),
+                                  )
+                                : const Text(
+                                    'No app',
+                                    style: TextStyle(
+                                      color: Colors.orange,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                            onTap: () => Navigator.pop(context, d),
+                          );
+                        },
+                      ),
               ),
             ],
           ),

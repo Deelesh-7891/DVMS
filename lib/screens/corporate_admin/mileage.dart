@@ -11,8 +11,7 @@ class MileageScreen extends StatefulWidget {
 class _MileageScreenState extends State<MileageScreen> {
   final AuthService _authService = AuthService();
 
-  final TextEditingController searchController =
-      TextEditingController();
+  final TextEditingController searchController = TextEditingController();
 
   List<dynamic> allMileage = [];
   List<dynamic> filteredMileage = [];
@@ -26,9 +25,7 @@ class _MileageScreenState extends State<MileageScreen> {
 
     loadMileage();
 
-    searchController.addListener(
-      applySearch,
-    );
+    searchController.addListener(applySearch);
   }
 
   // =========================================================
@@ -44,24 +41,19 @@ class _MileageScreenState extends State<MileageScreen> {
     });
 
     try {
-      final result =
-          await _authService.getmileagevariance();
+      final result = await _authService.getmileagevariance();
 
       if (!mounted) return;
 
       setState(() {
-        allMileage =
-            List<dynamic>.from(result);
+        allMileage = List<dynamic>.from(result);
 
-        filteredMileage =
-            List<dynamic>.from(result);
+        filteredMileage = List<dynamic>.from(result);
 
         isLoading = false;
       });
 
-      debugPrint(
-        "MILEAGE RESPONSE: $result",
-      );
+      debugPrint("MILEAGE RESPONSE: $result");
     } catch (e) {
       if (!mounted) return;
 
@@ -73,9 +65,7 @@ class _MileageScreenState extends State<MileageScreen> {
         filteredMileage = [];
       });
 
-      debugPrint(
-        "Mileage API Error: $e",
-      );
+      debugPrint("Mileage API Error: $e");
     }
   }
 
@@ -83,17 +73,13 @@ class _MileageScreenState extends State<MileageScreen> {
   // GET VALUE
   // =========================================================
 
-  String getValue(
-    Map<String, dynamic> item,
-    List<String> keys,
-  ) {
+  String getValue(Map<String, dynamic> item, List<String> keys) {
     for (final key in keys) {
       final value = item[key];
 
       if (value != null &&
           value.toString().trim().isNotEmpty &&
-          value.toString().toLowerCase() !=
-              "null") {
+          value.toString().toLowerCase() != "null") {
         return value.toString();
       }
     }
@@ -105,88 +91,68 @@ class _MileageScreenState extends State<MileageScreen> {
   // MODEL
   // =========================================================
 
-  String getModel(
-    Map<String, dynamic> item,
-  ) {
-    return getValue(
-      item,
-      [
-        "Model",
-        "model",
-        "ModelName",
-        "modelName",
-        "VehicleModel",
-        "vehicleModel",
-        "VehicleModelName",
-        "vehicleModelName",
-      ],
-    );
+  String getModel(Map<String, dynamic> item) {
+    return getValue(item, [
+      "Model",
+      "model",
+      "ModelName",
+      "modelName",
+      "VehicleModel",
+      "vehicleModel",
+      "VehicleModelName",
+      "vehicleModelName",
+    ]);
   }
 
   // =========================================================
   // FUEL
   // =========================================================
 
-  String getFuel(
-    Map<String, dynamic> item,
-  ) {
-    return getValue(
-      item,
-      [
-        "Fuel",
-        "fuel",
-        "FuelType",
-        "fuelType",
-        "FuelName",
-        "fuelName",
-      ],
-    );
+  String getFuel(Map<String, dynamic> item) {
+    return getValue(item, [
+      "Fuel",
+      "fuel",
+      "FuelType",
+      "fuelType",
+      "FuelName",
+      "fuelName",
+    ]);
   }
 
   // =========================================================
   // BENCHMARK
   // =========================================================
 
-  String getBenchmark(
-    Map<String, dynamic> item,
-  ) {
-    return getValue(
-      item,
-      [
-        "Benchmark",
-        "benchmark",
-        "BenchmarkKmL",
-        "benchmarkKmL",
-        "BenchmarkKmpl",
-        "benchmarkKmpl",
-        "ExpectedMileage",
-        "expectedMileage",
-        "ExpectedKmL",
-        "expectedKmL",
-        "MileageBenchmark",
-        "mileageBenchmark",
-      ],
-    );
+  String getBenchmark(Map<String, dynamic> item) {
+    return getValue(item, [
+      "Benchmark",
+      "benchmark",
+      "BenchmarkKmL",
+      "benchmarkKmL",
+      "BenchmarkKmpl",
+      "benchmarkKmpl",
+      "ExpectedMileage",
+      "expectedMileage",
+      "ExpectedKmL",
+      "expectedKmL",
+      "MileageBenchmark",
+      "mileageBenchmark",
+    ]);
   }
 
   // =========================================================
   // TOLERANCE
   // =========================================================
 
-  String getTolerance(
-    Map<String, dynamic> item,
-  ) {
-    return getValue(
-      item,
-      [
-        "Tolerance",
-        "tolerance",
-        "TolerancePercent",
-        "tolerancePercent",
-        "TolerancePercentage",
-        "tolerancePercentage",
-      ],
-    );
+  String getTolerance(Map<String, dynamic> item) {
+    return getValue(item, [
+      "Tolerance",
+      "tolerance",
+      "TolerancePercent",
+      "tolerancePercent",
+      "TolerancePercentage",
+      "tolerancePercentage",
+    ]);
   }
 
   // =========================================================
@@ -194,41 +160,28 @@ class _MileageScreenState extends State<MileageScreen> {
   // =========================================================
 
   void applySearch() {
-    final search =
-        searchController.text
-            .trim()
-            .toLowerCase();
+    final search = searchController.text.trim().toLowerCase();
 
     if (search.isEmpty) {
       setState(() {
-        filteredMileage =
-            List<dynamic>.from(
-          allMileage,
-        );
+        filteredMileage = List<dynamic>.from(allMileage);
       });
 
       return;
     }
 
-    final result =
-        allMileage.where((item) {
+    final result = allMileage.where((item) {
       if (item is! Map) {
         return false;
       }
 
-      final data =
-          Map<String, dynamic>.from(
-        item,
-      );
+      final data = Map<String, dynamic>.from(item);
 
-      final model =
-          getModel(data).toLowerCase();
+      final model = getModel(data).toLowerCase();
 
-      final fuel =
-          getFuel(data).toLowerCase();
+      final fuel = getFuel(data).toLowerCase();
 
-      return model.contains(search) ||
-          fuel.contains(search);
+      return model.contains(search) || fuel.contains(search);
     }).toList();
 
     if (!mounted) return;
@@ -246,10 +199,7 @@ class _MileageScreenState extends State<MileageScreen> {
     searchController.clear();
 
     setState(() {
-      filteredMileage =
-          List<dynamic>.from(
-        allMileage,
-      );
+      filteredMileage = List<dynamic>.from(allMileage);
     });
   }
 
@@ -257,29 +207,17 @@ class _MileageScreenState extends State<MileageScreen> {
   // SET BENCHMARK DIALOG
   // =========================================================
 
-  void showBenchmarkDialog(
-    Map<String, dynamic> item,
-  ) {
-    final model =
-        getModel(item);
+  void showBenchmarkDialog(Map<String, dynamic> item) {
+    final model = getModel(item);
 
-    final fuel =
-        getFuel(item);
+    final fuel = getFuel(item);
 
-    final benchmarkController =
-        TextEditingController(
-      text:
-          getBenchmark(item) == "-"
-              ? ""
-              : getBenchmark(item),
+    final benchmarkController = TextEditingController(
+      text: getBenchmark(item) == "-" ? "" : getBenchmark(item),
     );
 
-    final toleranceController =
-        TextEditingController(
-      text:
-          getTolerance(item) == "-"
-              ? ""
-              : getTolerance(item),
+    final toleranceController = TextEditingController(
+      text: getTolerance(item) == "-" ? "" : getTolerance(item),
     );
 
     showDialog(
@@ -287,101 +225,58 @@ class _MileageScreenState extends State<MileageScreen> {
       builder: (dialogContext) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(16),
           ),
           title: const Text(
             "Set Mileage Benchmark",
-            style: TextStyle(
-              fontWeight:
-                  FontWeight.w800,
-            ),
+            style: TextStyle(fontWeight: FontWeight.w800),
           ),
           content: SizedBox(
             width: 400,
             child: Column(
-              mainAxisSize:
-                  MainAxisSize.min,
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   model,
-                  style:
-                      const TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
-                    fontWeight:
-                        FontWeight.w700,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
 
-                const SizedBox(
-                  height: 4,
-                ),
+                const SizedBox(height: 4),
 
-                Text(
-                  fuel,
-                  style:
-                      const TextStyle(
-                    color:
-                        Color(0xff64748b),
-                  ),
-                ),
+                Text(fuel, style: const TextStyle(color: Color(0xff64748b))),
 
-                const SizedBox(
-                  height: 20,
-                ),
+                const SizedBox(height: 20),
 
                 TextField(
-                  controller:
-                      benchmarkController,
-                  keyboardType:
-                      const TextInputType
-                          .numberWithOptions(
+                  controller: benchmarkController,
+                  keyboardType: const TextInputType.numberWithOptions(
                     decimal: true,
                   ),
-                  decoration:
-                      InputDecoration(
-                    labelText:
-                        "Benchmark (KM/L)",
-                    hintText:
-                        "e.g. 22.3",
-                    border:
-                        OutlineInputBorder(
-                      borderRadius:
-                          BorderRadius
-                              .circular(
-                        10,
-                      ),
+                  decoration: InputDecoration(
+                    labelText: "Benchmark (KM/L)",
+                    hintText: "e.g. 22.3",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                 ),
 
-                const SizedBox(
-                  height: 14,
-                ),
+                const SizedBox(height: 14),
 
                 TextField(
-                  controller:
-                      toleranceController,
-                  keyboardType:
-                      const TextInputType
-                          .numberWithOptions(
+                  controller: toleranceController,
+                  keyboardType: const TextInputType.numberWithOptions(
                     decimal: true,
                   ),
-                  decoration:
-                      InputDecoration(
-                    labelText:
-                        "Tolerance %",
-                    hintText:
-                        "e.g. 10",
-                    border:
-                        OutlineInputBorder(
-                      borderRadius:
-                          BorderRadius
-                              .circular(
-                        10,
-                      ),
+                  decoration: InputDecoration(
+                    labelText: "Tolerance %",
+                    hintText: "e.g. 10",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                 ),
@@ -391,35 +286,21 @@ class _MileageScreenState extends State<MileageScreen> {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(
-                  dialogContext,
-                );
+                Navigator.pop(dialogContext);
               },
-              child:
-                  const Text("Cancel"),
+              child: const Text("Cancel"),
             ),
 
             ElevatedButton(
               onPressed: () {
-                final benchmark =
-                    benchmarkController
-                        .text
-                        .trim();
+                final benchmark = benchmarkController.text.trim();
 
-                final tolerance =
-                    toleranceController
-                        .text
-                        .trim();
+                final tolerance = toleranceController.text.trim();
 
-                if (benchmark.isEmpty ||
-                    tolerance.isEmpty) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(
+                if (benchmark.isEmpty || tolerance.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text(
-                        "Please enter benchmark and tolerance",
-                      ),
+                      content: Text("Please enter benchmark and tolerance"),
                     ),
                   );
 
@@ -433,63 +314,38 @@ class _MileageScreenState extends State<MileageScreen> {
                 // ------------------------------------------------
 
                 setState(() {
-                  final index =
-                      allMileage.indexOf(
-                    item,
-                  );
+                  final index = allMileage.indexOf(item);
 
                   if (index >= 0) {
-                    final updated =
-                        Map<String, dynamic>.from(
+                    final updated = Map<String, dynamic>.from(
                       allMileage[index],
                     );
 
-                    updated["Benchmark"] =
-                        benchmark;
+                    updated["Benchmark"] = benchmark;
 
-                    updated["Tolerance"] =
-                        tolerance;
+                    updated["Tolerance"] = tolerance;
 
-                    allMileage[index] =
-                        updated;
+                    allMileage[index] = updated;
 
                     applySearch();
                   }
                 });
 
-                Navigator.pop(
-                  dialogContext,
-                );
+                Navigator.pop(dialogContext);
 
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(
-                  const SnackBar(
-                    content: Text(
-                      "Benchmark updated",
-                    ),
-                  ),
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Benchmark updated")),
                 );
               },
-              style:
-                  ElevatedButton.styleFrom(
-                backgroundColor:
-                    const Color(
-                  0xff2161b5,
-                ),
-                foregroundColor:
-                    Colors.white,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xff2161b5),
+                foregroundColor: Colors.white,
                 elevation: 0,
-                shape:
-                    RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(
-                    9,
-                  ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(9),
                 ),
               ),
-              child:
-                  const Text("Save"),
+              child: const Text("Save"),
             ),
           ],
         );
@@ -503,54 +359,32 @@ class _MileageScreenState extends State<MileageScreen> {
 
   Widget buildHeader() {
     return Padding(
-      padding:
-          const EdgeInsets.fromLTRB(
-        18,
-        20,
-        18,
-        12,
-      ),
+      padding: const EdgeInsets.fromLTRB(18, 20, 18, 12),
       child: LayoutBuilder(
-        builder:
-            (
-          context,
-          constraints,
-        ) {
-          final isMobile =
-              constraints.maxWidth < 700;
+        builder: (context, constraints) {
+          final isMobile = constraints.maxWidth < 700;
 
           if (isMobile) {
             return Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
                   "Mileage",
                   style: TextStyle(
                     fontSize: 28,
-                    fontWeight:
-                        FontWeight.w800,
-                    color:
-                        Color(0xff111827),
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xff111827),
                   ),
                 ),
 
-                const SizedBox(
-                  height: 4,
-                ),
+                const SizedBox(height: 4),
 
                 const Text(
                   "Model benchmarks & fuel-efficiency variance",
-                  style: TextStyle(
-                    fontSize: 15,
-                    color:
-                        Color(0xff64748b),
-                  ),
+                  style: TextStyle(fontSize: 15, color: Color(0xff64748b)),
                 ),
 
-                const SizedBox(
-                  height: 14,
-                ),
+                const SizedBox(height: 14),
 
                 buildHeaderButtons(),
               ],
@@ -558,32 +392,24 @@ class _MileageScreenState extends State<MileageScreen> {
           }
 
           return Row(
-            crossAxisAlignment:
-                CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Expanded(
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       "Mileage",
                       style: TextStyle(
                         fontSize: 30,
-                        fontWeight:
-                            FontWeight.w800,
-                        color:
-                            Color(0xff111827),
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xff111827),
                       ),
                     ),
                     SizedBox(height: 2),
                     Text(
                       "Model benchmarks & fuel-efficiency variance",
-                      style: TextStyle(
-                        fontSize: 15,
-                        color:
-                            Color(0xff64748b),
-                      ),
+                      style: TextStyle(fontSize: 15, color: Color(0xff64748b)),
                     ),
                   ],
                 ),
@@ -605,95 +431,44 @@ class _MileageScreenState extends State<MileageScreen> {
     return Wrap(
       spacing: 10,
       runSpacing: 8,
-      crossAxisAlignment:
-          WrapCrossAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         OutlinedButton.icon(
           onPressed: () {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(
+            ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text(
-                  "Excel export can be connected here",
-                ),
+                content: Text("Excel export can be connected here"),
               ),
             );
           },
-          icon: const Icon(
-            Icons.download_outlined,
-            size: 18,
-          ),
-          label:
-              const Text("Excel"),
-          style:
-              OutlinedButton.styleFrom(
-            foregroundColor:
-                const Color(
-              0xff475569,
-            ),
-            backgroundColor:
-                Colors.white,
-            side: const BorderSide(
-              color:
-                  Color(0xffdbe2ea),
-            ),
-            padding:
-                const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 13,
-            ),
-            shape:
-                RoundedRectangleBorder(
-              borderRadius:
-                  BorderRadius.circular(
-                11,
-              ),
+          icon: const Icon(Icons.download_outlined, size: 18),
+          label: const Text("Excel"),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: const Color(0xff475569),
+            backgroundColor: Colors.white,
+            side: const BorderSide(color: Color(0xffdbe2ea)),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(11),
             ),
           ),
         ),
 
         OutlinedButton.icon(
           onPressed: () {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(
-              const SnackBar(
-                content: Text(
-                  "PDF export can be connected here",
-                ),
-              ),
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("PDF export can be connected here")),
             );
           },
-          icon: const Icon(
-            Icons.download_outlined,
-            size: 18,
-          ),
-          label:
-              const Text("PDF"),
-          style:
-              OutlinedButton.styleFrom(
-            foregroundColor:
-                const Color(
-              0xff475569,
-            ),
-            backgroundColor:
-                Colors.white,
-            side: const BorderSide(
-              color:
-                  Color(0xffdbe2ea),
-            ),
-            padding:
-                const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 13,
-            ),
-            shape:
-                RoundedRectangleBorder(
-              borderRadius:
-                  BorderRadius.circular(
-                11,
-              ),
+          icon: const Icon(Icons.download_outlined, size: 18),
+          label: const Text("PDF"),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: const Color(0xff475569),
+            backgroundColor: Colors.white,
+            side: const BorderSide(color: Color(0xffdbe2ea)),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(11),
             ),
           ),
         ),
@@ -702,32 +477,22 @@ class _MileageScreenState extends State<MileageScreen> {
           _todayText(),
           style: const TextStyle(
             fontSize: 14,
-            fontWeight:
-                FontWeight.w700,
-            color:
-                Color(0xff1e293b),
+            fontWeight: FontWeight.w700,
+            color: Color(0xff1e293b),
           ),
         ),
 
         Container(
           width: 46,
           height: 46,
-          alignment:
-              Alignment.center,
-          decoration:
-              const BoxDecoration(
-            color:
-                Color(0xff2161b5),
-            shape:
-                BoxShape.circle,
+          alignment: Alignment.center,
+          decoration: const BoxDecoration(
+            color: Color(0xff2161b5),
+            shape: BoxShape.circle,
           ),
           child: const Text(
             "SY",
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight:
-                  FontWeight.w800,
-            ),
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800),
           ),
         ),
       ],
@@ -779,18 +544,11 @@ class _MileageScreenState extends State<MileageScreen> {
   Widget buildSearchSection() {
     return Container(
       width: double.infinity,
-      padding:
-          const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(
-          0xfff8fafc,
-        ),
-        borderRadius:
-            BorderRadius.circular(14),
-        border: Border.all(
-          color:
-              const Color(0xffe2e8f0),
-        ),
+        color: const Color(0xfff8fafc),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xffe2e8f0)),
       ),
       child: Wrap(
         spacing: 12,
@@ -800,59 +558,24 @@ class _MileageScreenState extends State<MileageScreen> {
             width: 280,
             height: 42,
             child: TextField(
-              controller:
-                  searchController,
-              decoration:
-                  InputDecoration(
-                hintText:
-                    "Search model or fuel...",
-                prefixIcon:
-                    const Icon(
-                  Icons.search,
-                  size: 19,
-                ),
+              controller: searchController,
+              decoration: InputDecoration(
+                hintText: "Search model or fuel...",
+                prefixIcon: const Icon(Icons.search, size: 19),
                 filled: true,
-                fillColor:
-                    Colors.white,
-                contentPadding:
-                    const EdgeInsets.symmetric(
-                  horizontal: 12,
+                fillColor: Colors.white,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Color(0xffdbe2ea)),
                 ),
-                border:
-                    OutlineInputBorder(
-                  borderRadius:
-                      BorderRadius.circular(
-                    10,
-                  ),
-                  borderSide:
-                      const BorderSide(
-                    color:
-                        Color(0xffdbe2ea),
-                  ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Color(0xffdbe2ea)),
                 ),
-                enabledBorder:
-                    OutlineInputBorder(
-                  borderRadius:
-                      BorderRadius.circular(
-                    10,
-                  ),
-                  borderSide:
-                      const BorderSide(
-                    color:
-                        Color(0xffdbe2ea),
-                  ),
-                ),
-                focusedBorder:
-                    OutlineInputBorder(
-                  borderRadius:
-                      BorderRadius.circular(
-                    10,
-                  ),
-                  borderSide:
-                      const BorderSide(
-                    color:
-                        Color(0xff2161b5),
-                  ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Color(0xff2161b5)),
                 ),
               ),
             ),
@@ -860,33 +583,16 @@ class _MileageScreenState extends State<MileageScreen> {
 
           OutlinedButton(
             onPressed: resetSearch,
-            style:
-                OutlinedButton.styleFrom(
-              foregroundColor:
-                  const Color(
-                0xff475569,
-              ),
-              backgroundColor:
-                  Colors.white,
-              side: const BorderSide(
-                color:
-                    Color(0xffdbe2ea),
-              ),
-              padding:
-                  const EdgeInsets.symmetric(
-                horizontal: 18,
-                vertical: 12,
-              ),
-              shape:
-                  RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(
-                  10,
-                ),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: const Color(0xff475569),
+              backgroundColor: Colors.white,
+              side: const BorderSide(color: Color(0xffdbe2ea)),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
               ),
             ),
-            child:
-                const Text("Reset"),
+            child: const Text("Reset"),
           ),
         ],
       ),
@@ -901,10 +607,8 @@ class _MileageScreenState extends State<MileageScreen> {
     if (isLoading) {
       return const Center(
         child: Padding(
-          padding:
-              EdgeInsets.all(50),
-          child:
-              CircularProgressIndicator(),
+          padding: EdgeInsets.all(50),
+          child: CircularProgressIndicator(),
         ),
       );
     }
@@ -912,41 +616,25 @@ class _MileageScreenState extends State<MileageScreen> {
     if (errorMessage != null) {
       return Center(
         child: Padding(
-          padding:
-              const EdgeInsets.all(30),
+          padding: const EdgeInsets.all(30),
           child: Column(
-            mainAxisSize:
-                MainAxisSize.min,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
-                Icons.error_outline,
-                size: 50,
-                color: Colors.red,
-              ),
+              const Icon(Icons.error_outline, size: 50, color: Colors.red),
 
-              const SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 10),
 
               Text(
                 errorMessage!,
-                textAlign:
-                    TextAlign.center,
-                style:
-                    const TextStyle(
-                  color: Colors.red,
-                ),
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.red),
               ),
 
-              const SizedBox(
-                height: 15,
-              ),
+              const SizedBox(height: 15),
 
               ElevatedButton(
-                onPressed:
-                    loadMileage,
-                child:
-                    const Text("Retry"),
+                onPressed: loadMileage,
+                child: const Text("Retry"),
               ),
             ],
           ),
@@ -957,15 +645,10 @@ class _MileageScreenState extends State<MileageScreen> {
     if (filteredMileage.isEmpty) {
       return const Center(
         child: Padding(
-          padding:
-              EdgeInsets.all(50),
+          padding: EdgeInsets.all(50),
           child: Text(
             "No mileage records found",
-            style: TextStyle(
-              fontSize: 16,
-              color:
-                  Color(0xff64748b),
-            ),
+            style: TextStyle(fontSize: 16, color: Color(0xff64748b)),
           ),
         ),
       );
@@ -975,56 +658,34 @@ class _MileageScreenState extends State<MileageScreen> {
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius:
-            BorderRadius.circular(16),
-        border: Border.all(
-          color:
-              const Color(0xffe2e8f0),
-        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xffe2e8f0)),
       ),
       child: Padding(
-        padding:
-            const EdgeInsets.fromLTRB(
-          20,
-          20,
-          20,
-          8,
-        ),
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
         child: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
               "Model Benchmarks",
               style: TextStyle(
                 fontSize: 20,
-                fontWeight:
-                    FontWeight.w800,
-                color:
-                    Color(0xff111827),
+                fontWeight: FontWeight.w800,
+                color: Color(0xff111827),
               ),
             ),
 
-            const SizedBox(
-              height: 3,
-            ),
+            const SizedBox(height: 3),
 
             const Text(
               "Expected km/L per model with tolerance — vehicles below benchmark − tolerance are flagged in the variance report",
-              style: TextStyle(
-                fontSize: 14,
-                color:
-                    Color(0xff94a3b8),
-              ),
+              style: TextStyle(fontSize: 14, color: Color(0xff94a3b8)),
             ),
 
-            const SizedBox(
-              height: 18,
-            ),
+            const SizedBox(height: 18),
 
             SingleChildScrollView(
-              scrollDirection:
-                  Axis.horizontal,
+              scrollDirection: Axis.horizontal,
               child: DataTable(
                 columnSpacing: 55,
                 horizontalMargin: 0,
@@ -1034,201 +695,124 @@ class _MileageScreenState extends State<MileageScreen> {
                 dividerThickness: 0.7,
 
                 columns: const [
-                  DataColumn(
-                    label: MileageHeader(
-                      "MODEL",
-                    ),
-                  ),
-                  DataColumn(
-                    label: MileageHeader(
-                      "FUEL",
-                    ),
-                  ),
-                  DataColumn(
-                    label: MileageHeader(
-                      "BENCHMARK (KM/L)",
-                    ),
-                  ),
-                  DataColumn(
-                    label: MileageHeader(
-                      "TOLERANCE %",
-                    ),
-                  ),
-                  DataColumn(
-                    label: MileageHeader(
-                      "ACTION",
-                    ),
-                  ),
+                  DataColumn(label: MileageHeader("MODEL")),
+                  DataColumn(label: MileageHeader("FUEL")),
+                  DataColumn(label: MileageHeader("BENCHMARK (KM/L)")),
+                  DataColumn(label: MileageHeader("TOLERANCE %")),
+                  DataColumn(label: MileageHeader("ACTION")),
                 ],
 
-                rows:
-                    filteredMileage
-                        .map<DataRow>(
-                  (item) {
-                    final data =
-                        Map<String,
-                            dynamic>.from(
-                      item,
-                    );
+                rows: filteredMileage.map<DataRow>((item) {
+                  final data = Map<String, dynamic>.from(item);
 
-                    final model =
-                        getModel(data);
+                  final model = getModel(data);
 
-                    final fuel =
-                        getFuel(data);
+                  final fuel = getFuel(data);
 
-                    final benchmark =
-                        getBenchmark(data);
+                  final benchmark = getBenchmark(data);
 
-                    final tolerance =
-                        getTolerance(data);
+                  final tolerance = getTolerance(data);
 
-                    final benchmarkSet =
-                        benchmark != "-" &&
-                            benchmark
-                                .trim()
-                                .isNotEmpty;
+                  final benchmarkSet =
+                      benchmark != "-" && benchmark.trim().isNotEmpty;
 
-                    return DataRow(
-                      cells: [
-                        // MODEL
-                        DataCell(
-                          SizedBox(
-                            width: 300,
+                  return DataRow(
+                    cells: [
+                      // MODEL
+                      DataCell(
+                        SizedBox(
+                          width: 300,
+                          child: Text(
+                            model,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xff111827),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      // FUEL
+                      DataCell(
+                        SizedBox(
+                          width: 190,
+                          child: Text(
+                            fuel,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Color(0xff111827),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      // BENCHMARK
+                      DataCell(
+                        SizedBox(
+                          width: 180,
+                          child: Align(
+                            alignment: Alignment.centerRight,
                             child: Text(
-                              model,
-                              style:
-                                  const TextStyle(
+                              benchmarkSet ? benchmark : "not set",
+                              style: TextStyle(
                                 fontSize: 14,
-                                fontWeight:
-                                    FontWeight.w700,
-                                color:
-                                    Color(0xff111827),
+                                color: benchmarkSet
+                                    ? const Color(0xff111827)
+                                    : const Color(0xff94a3b8),
+                                fontWeight: benchmarkSet
+                                    ? FontWeight.w500
+                                    : FontWeight.w400,
                               ),
                             ),
                           ),
                         ),
+                      ),
 
-                        // FUEL
-                        DataCell(
-                          SizedBox(
-                            width: 190,
+                      // TOLERANCE
+                      DataCell(
+                        SizedBox(
+                          width: 150,
+                          child: Align(
+                            alignment: Alignment.centerRight,
                             child: Text(
-                              fuel,
-                              style:
-                                  const TextStyle(
+                              tolerance == "-" ? "—" : "$tolerance%",
+                              style: const TextStyle(
                                 fontSize: 14,
-                                color:
-                                    Color(0xff111827),
+                                color: Color(0xff111827),
                               ),
                             ),
                           ),
                         ),
+                      ),
 
-                        // BENCHMARK
-                        DataCell(
-                          SizedBox(
-                            width: 180,
-                            child: Align(
-                              alignment:
-                                  Alignment.centerRight,
-                              child: Text(
-                                benchmarkSet
-                                    ? benchmark
-                                    : "not set",
-                                style:
-                                    TextStyle(
-                                  fontSize: 14,
-                                  color: benchmarkSet
-                                      ? const Color(
-                                          0xff111827,
-                                        )
-                                      : const Color(
-                                          0xff94a3b8,
-                                        ),
-                                  fontWeight:
-                                      benchmarkSet
-                                          ? FontWeight.w500
-                                          : FontWeight.w400,
-                                ),
-                              ),
+                      // ACTION
+                      DataCell(
+                        OutlinedButton(
+                          onPressed: () {
+                            showBenchmarkDialog(data);
+                          },
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: const Color(0xff334155),
+                            backgroundColor: Colors.white,
+                            side: const BorderSide(color: Color(0xffdbe2ea)),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 17,
+                              vertical: 10,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                        ),
-
-                        // TOLERANCE
-                        DataCell(
-                          SizedBox(
-                            width: 150,
-                            child: Align(
-                              alignment:
-                                  Alignment.centerRight,
-                              child: Text(
-                                tolerance == "-"
-                                    ? "—"
-                                    : "$tolerance%",
-                                style:
-                                    const TextStyle(
-                                  fontSize: 14,
-                                  color:
-                                      Color(0xff111827),
-                                ),
-                              ),
-                            ),
+                          child: const Text(
+                            "Set",
+                            style: TextStyle(fontWeight: FontWeight.w600),
                           ),
                         ),
-
-                        // ACTION
-                        DataCell(
-                          OutlinedButton(
-                            onPressed: () {
-                              showBenchmarkDialog(
-                                data,
-                              );
-                            },
-                            style:
-                                OutlinedButton
-                                    .styleFrom(
-                              foregroundColor:
-                                  const Color(
-                                0xff334155,
-                              ),
-                              backgroundColor:
-                                  Colors.white,
-                              side:
-                                  const BorderSide(
-                                color:
-                                    Color(0xffdbe2ea),
-                              ),
-                              padding:
-                                  const EdgeInsets
-                                      .symmetric(
-                                horizontal: 17,
-                                vertical: 10,
-                              ),
-                              shape:
-                                  RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(
-                                  10,
-                                ),
-                              ),
-                            ),
-                            child:
-                                const Text(
-                              "Set",
-                              style:
-                                  TextStyle(
-                                fontWeight:
-                                    FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                ).toList(),
+                      ),
+                    ],
+                  );
+                }).toList(),
               ),
             ),
           ],
@@ -1242,12 +826,9 @@ class _MileageScreenState extends State<MileageScreen> {
   // =========================================================
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          const Color(0xfff1f5f9),
+      backgroundColor: const Color(0xfff1f5f9),
 
       body: SafeArea(
         child: Column(
@@ -1255,22 +836,13 @@ class _MileageScreenState extends State<MileageScreen> {
             buildHeader(),
 
             Expanded(
-              child:
-                  SingleChildScrollView(
-                padding:
-                    const EdgeInsets.fromLTRB(
-                  18,
-                  10,
-                  18,
-                  25,
-                ),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(18, 10, 18, 25),
                 child: Column(
                   children: [
                     buildSearchSection(),
 
-                    const SizedBox(
-                      height: 18,
-                    ),
+                    const SizedBox(height: 18),
 
                     Row(
                       children: [
@@ -1278,26 +850,18 @@ class _MileageScreenState extends State<MileageScreen> {
                           child: Text(
                             "Mileage Records: "
                             "${filteredMileage.length}",
-                            style:
-                                const TextStyle(
+                            style: const TextStyle(
                               fontSize: 14,
-                              fontWeight:
-                                  FontWeight.w600,
-                              color:
-                                  Color(0xff64748b),
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xff64748b),
                             ),
                           ),
                         ),
 
                         IconButton(
-                          tooltip:
-                              "Refresh",
-                          onPressed:
-                              loadMileage,
-                          icon:
-                              const Icon(
-                            Icons.refresh,
-                          ),
+                          tooltip: "Refresh",
+                          onPressed: loadMileage,
+                          icon: const Icon(Icons.refresh),
                         ),
                       ],
                     ),
@@ -1328,28 +892,19 @@ class _MileageScreenState extends State<MileageScreen> {
 // TABLE HEADER
 // =============================================================
 
-class MileageHeader
-    extends StatelessWidget {
+class MileageHeader extends StatelessWidget {
   final String title;
 
-  const MileageHeader(
-    this.title, {
-    super.key,
-  });
+  const MileageHeader(this.title, {super.key});
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return Text(
       title,
-      style:
-          const TextStyle(
+      style: const TextStyle(
         fontSize: 12,
-        fontWeight:
-            FontWeight.w700,
-        color:
-            Color(0xff94a3b8),
+        fontWeight: FontWeight.w700,
+        color: Color(0xff94a3b8),
         letterSpacing: 0.4,
       ),
     );

@@ -11,8 +11,9 @@ import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart
 /// strings, everything else on the dashboard (warning icons, fuel gauge
 /// text, etc.) is noise this filters out.
 class OdometerOcrService {
-  static final TextRecognizer _recognizer =
-      TextRecognizer(script: TextRecognitionScript.latin);
+  static final TextRecognizer _recognizer = TextRecognizer(
+    script: TextRecognitionScript.latin,
+  );
 
   /// Returns the best-guess odometer reading as a digit string, or null
   /// if nothing digit-like was found. Never throws — OCR failures should
@@ -20,31 +21,27 @@ class OdometerOcrService {
   static Future<String?> recognizeFromPath(String imagePath) async {
     try {
       final inputImage = InputImage.fromFilePath(imagePath);
-      final RecognizedText result =
-          await _recognizer.processImage(inputImage);
+      final RecognizedText result = await _recognizer.processImage(inputImage);
 
-      final cleaned = result.text.replaceAllMapped(
-        RegExp(r'[OoIl|]'),
-        (m) {
-          switch (m.group(0)) {
-            case 'O':
-            case 'o':
-              return '0';
-            case 'I':
-            case 'l':
-            case '|':
-              return '1';
-            default:
-              return m.group(0)!;
-          }
-        },
-      );
+      final cleaned = result.text.replaceAllMapped(RegExp(r'[OoIl|]'), (m) {
+        switch (m.group(0)) {
+          case 'O':
+          case 'o':
+            return '0';
+          case 'I':
+          case 'l':
+          case '|':
+            return '1';
+          default:
+            return m.group(0)!;
+        }
+      });
 
-      final candidates = RegExp(r'\d{3,7}')
-          .allMatches(cleaned)
-          .map((m) => m.group(0)!)
-          .toList()
-        ..sort((a, b) => b.length.compareTo(a.length));
+      final candidates =
+          RegExp(
+              r'\d{3,7}',
+            ).allMatches(cleaned).map((m) => m.group(0)!).toList()
+            ..sort((a, b) => b.length.compareTo(a.length));
 
       return candidates.isNotEmpty ? candidates.first : null;
     } catch (_) {

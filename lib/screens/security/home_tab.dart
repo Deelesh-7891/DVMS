@@ -23,8 +23,7 @@ class _HomeTabState extends State<HomeTab> {
   // SEARCH
   // ============================================================
 
-  final TextEditingController _searchController =
-      TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   String searchText = "";
 
@@ -91,13 +90,9 @@ class _HomeTabState extends State<HomeTab> {
         tz.getLocation("Asia/Kolkata"),
       );
 
-      return DateFormat(
-        "dd MMM yyyy, hh:mm a",
-      ).format(indiaTime);
+      return DateFormat("dd MMM yyyy, hh:mm a").format(indiaTime);
     } catch (e) {
-      debugPrint(
-        "MovementTime Format Error: $e",
-      );
+      debugPrint("MovementTime Format Error: $e");
 
       return value.toString();
     }
@@ -135,9 +130,7 @@ class _HomeTabState extends State<HomeTab> {
         indiaTime.second,
       );
     } catch (e) {
-      debugPrint(
-        "DateTime Parse Error: $e",
-      );
+      debugPrint("DateTime Parse Error: $e");
 
       return null;
     }
@@ -176,8 +169,7 @@ class _HomeTabState extends State<HomeTab> {
   Future<void> selectTime() async {
     final pickedTime = await showTimePicker(
       context: context,
-      initialTime:
-          selectedTime ?? TimeOfDay.now(),
+      initialTime: selectedTime ?? TimeOfDay.now(),
       helpText: "Select Movement Time",
       cancelText: "CANCEL",
       confirmText: "SELECT",
@@ -230,75 +222,55 @@ class _HomeTabState extends State<HomeTab> {
   // DATE MATCH
   // ============================================================
 
-  bool matchesSelectedDate(
-    dynamic movementValue,
-  ) {
+  bool matchesSelectedDate(dynamic movementValue) {
     if (selectedDate == null) {
       return true;
     }
 
-    final movementDate =
-        getIndiaMovementDateTime(
-      movementValue,
-    );
+    final movementDate = getIndiaMovementDateTime(movementValue);
 
     if (movementDate == null) {
       return false;
     }
 
-    return movementDate.year ==
-            selectedDate!.year &&
-        movementDate.month ==
-            selectedDate!.month &&
-        movementDate.day ==
-            selectedDate!.day;
+    return movementDate.year == selectedDate!.year &&
+        movementDate.month == selectedDate!.month &&
+        movementDate.day == selectedDate!.day;
   }
 
   // ============================================================
   // TIME MATCH
   // ============================================================
 
-  bool matchesSelectedTime(
-    dynamic movementValue,
-  ) {
+  bool matchesSelectedTime(dynamic movementValue) {
     if (selectedTime == null) {
       return true;
     }
 
-    final movementDate =
-        getIndiaMovementDateTime(
-      movementValue,
-    );
+    final movementDate = getIndiaMovementDateTime(movementValue);
 
     if (movementDate == null) {
       return false;
     }
 
     // Exact hour + minute match
-    return movementDate.hour ==
-            selectedTime!.hour &&
-        movementDate.minute ==
-            selectedTime!.minute;
+    return movementDate.hour == selectedTime!.hour &&
+        movementDate.minute == selectedTime!.minute;
   }
 
   // ============================================================
   // FILTER MOVEMENTS
   // ============================================================
 
-  List<dynamic> filterMovements(
-    List<dynamic> movements,
-  ) {
-    final query =
-        searchText.trim().toLowerCase();
+  List<dynamic> filterMovements(List<dynamic> movements) {
+    final query = searchText.trim().toLowerCase();
 
     return movements.where((item) {
       // ========================================================
       // DATE FILTER
       // ========================================================
 
-      if (!matchesSelectedDate(
-        item["MovementTime"],
-      )) {
+      if (!matchesSelectedDate(item["MovementTime"])) {
         return false;
       }
 
@@ -306,9 +278,7 @@ class _HomeTabState extends State<HomeTab> {
       // TIME FILTER
       // ========================================================
 
-      if (!matchesSelectedTime(
-        item["MovementTime"],
-      )) {
+      if (!matchesSelectedTime(item["MovementTime"])) {
         return false;
       }
 
@@ -324,40 +294,29 @@ class _HomeTabState extends State<HomeTab> {
       // VEHICLE
       // ========================================================
 
-      final vehicle =
-          (item["RegistrationNo"] ?? "")
-              .toString()
-              .toLowerCase();
+      final vehicle = (item["RegistrationNo"] ?? "").toString().toLowerCase();
 
       // ========================================================
       // DRIVER
       // ========================================================
 
-      final driver =
-          (item["DriverName"] ?? "")
-              .toString()
-              .toLowerCase();
+      final driver = (item["DriverName"] ?? "").toString().toLowerCase();
 
       // ========================================================
       // ODOMETER
       // ========================================================
 
-      final odometer =
-          (item["Odometer"] ?? "")
-              .toString()
-              .toLowerCase();
+      final odometer = (item["Odometer"] ?? "").toString().toLowerCase();
 
       // ========================================================
       // MOVEMENT TIME
       // ========================================================
 
-      final rawMovementTime =
-          (item["MovementTime"] ?? "")
-              .toString()
-              .toLowerCase();
+      final rawMovementTime = (item["MovementTime"] ?? "")
+          .toString()
+          .toLowerCase();
 
-      final formattedMovementTime =
-          formatMovementTime(
+      final formattedMovementTime = formatMovementTime(
         item["MovementTime"],
       ).toLowerCase();
 
@@ -365,64 +324,51 @@ class _HomeTabState extends State<HomeTab> {
       // MOVEMENT TYPE
       // ========================================================
 
-      final movementType =
-          (item["MovementType"] ?? "")
-              .toString()
-              .toLowerCase();
+      final movementType = (item["MovementType"] ?? "")
+          .toString()
+          .toLowerCase();
 
       // ========================================================
       // DIRECTION
       // ========================================================
 
-      final direction =
-          (item["Direction"] ?? "")
-              .toString()
-              .toLowerCase();
+      final direction = (item["Direction"] ?? "").toString().toLowerCase();
 
       // ========================================================
       // CUSTOMER
       // ========================================================
 
-      final customer =
-          (item["CustomerName"] ?? "")
-              .toString()
-              .toLowerCase();
+      final customer = (item["CustomerName"] ?? "").toString().toLowerCase();
 
       // ========================================================
       // SALES EXECUTIVE
       // ========================================================
 
-      final salesExecutive =
-          (item["SalesExecutive"] ?? "")
-              .toString()
-              .toLowerCase();
+      final salesExecutive = (item["SalesExecutive"] ?? "")
+          .toString()
+          .toLowerCase();
 
       // ========================================================
       // PURPOSE
       // ========================================================
 
-      final purpose =
-          (item["Purpose"] ?? "")
-              .toString()
-              .toLowerCase();
+      final purpose = (item["Purpose"] ?? "").toString().toLowerCase();
 
       // ========================================================
       // FROM LOCATION
       // ========================================================
 
-      final fromLocation =
-          (item["FromLocationName"] ?? "")
-              .toString()
-              .toLowerCase();
+      final fromLocation = (item["FromLocationName"] ?? "")
+          .toString()
+          .toLowerCase();
 
       // ========================================================
       // TO LOCATION
       // ========================================================
 
-      final toLocation =
-          (item["ToLocationName"] ?? "")
-              .toString()
-              .toLowerCase();
+      final toLocation = (item["ToLocationName"] ?? "")
+          .toString()
+          .toLowerCase();
 
       // ========================================================
       // SEARCH
@@ -452,18 +398,36 @@ class _HomeTabState extends State<HomeTab> {
   // ============================================================
 
   int? getVehicleId(Map<String, dynamic> item) {
-    final value = item["VehicleId"] ?? item["VehicleID"] ?? item["vehicleId"] ?? item["Vehicle_Id"] ?? item["Id"] ?? item["ID"];
+    final value =
+        item["VehicleId"] ??
+        item["VehicleID"] ??
+        item["vehicleId"] ??
+        item["Vehicle_Id"] ??
+        item["Id"] ??
+        item["ID"];
     if (value == null) return null;
     if (value is int) return value;
     return int.tryParse(value.toString());
   }
 
   String getRegistrationNo(Map<String, dynamic> item) {
-    return (item["RegistrationNo"] ?? item["RegistrationNumber"] ?? item["registrationNo"] ?? item["VehicleNo"] ?? "").toString().trim();
+    return (item["RegistrationNo"] ??
+            item["RegistrationNumber"] ??
+            item["registrationNo"] ??
+            item["VehicleNo"] ??
+            "")
+        .toString()
+        .trim();
   }
 
   String getVehicleModel(Map<String, dynamic> item) {
-    return (item["Model"] ?? item["VehicleModel"] ?? item["model"] ?? item["Vehicle_Model"] ?? "").toString().trim();
+    return (item["Model"] ??
+            item["VehicleModel"] ??
+            item["model"] ??
+            item["Vehicle_Model"] ??
+            "")
+        .toString()
+        .trim();
   }
 
   Future<void> showAddFuelVehicleSelection() async {
@@ -491,11 +455,16 @@ class _HomeTabState extends State<HomeTab> {
           final filteredVehicles = vehicles.where((item) {
             final reg = getRegistrationNo(item).toLowerCase();
             final model = getVehicleModel(item).toLowerCase();
-            return search.isEmpty || reg.contains(search) || model.contains(search);
+            return search.isEmpty ||
+                reg.contains(search) ||
+                model.contains(search);
           }).toList();
 
           return AlertDialog(
-            title: const Text("Select Vehicle", style: TextStyle(fontWeight: FontWeight.bold)),
+            title: const Text(
+              "Select Vehicle",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
             content: SizedBox(
               width: double.maxFinite,
               height: 430,
@@ -507,11 +476,18 @@ class _HomeTabState extends State<HomeTab> {
                     decoration: InputDecoration(
                       hintText: "Search vehicle / model...",
                       prefixIcon: const Icon(Icons.search),
-                      suffixIcon: searchController.text.isNotEmpty ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () { searchController.clear(); setDialogState(() {}); },
-                      ) : null,
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                      suffixIcon: searchController.text.isNotEmpty
+                          ? IconButton(
+                              icon: const Icon(Icons.clear),
+                              onPressed: () {
+                                searchController.clear();
+                                setDialogState(() {});
+                              },
+                            )
+                          : null,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -520,7 +496,8 @@ class _HomeTabState extends State<HomeTab> {
                         ? const Center(child: Text("No vehicle found"))
                         : ListView.separated(
                             itemCount: filteredVehicles.length,
-                            separatorBuilder: (_, __) => const Divider(height: 1),
+                            separatorBuilder: (_, __) =>
+                                const Divider(height: 1),
                             itemBuilder: (context, index) {
                               final item = filteredVehicles[index];
                               final registrationNo = getRegistrationNo(item);
@@ -528,16 +505,44 @@ class _HomeTabState extends State<HomeTab> {
                               final vehicleId = getVehicleId(item);
 
                               return ListTile(
-                                leading: const Icon(Icons.directions_car, color: Color(0xff2458A6)),
-                                title: Text(registrationNo, style: const TextStyle(fontWeight: FontWeight.bold)),
-                                subtitle: Text(model.isEmpty ? "Vehicle ID: ${vehicleId ?? '-'}" : "$model • Vehicle ID: ${vehicleId ?? '-'}"),
+                                leading: const Icon(
+                                  Icons.directions_car,
+                                  color: Color(0xff2458A6),
+                                ),
+                                title: Text(
+                                  registrationNo,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  model.isEmpty
+                                      ? "Vehicle ID: ${vehicleId ?? '-'}"
+                                      : "$model • Vehicle ID: ${vehicleId ?? '-'}",
+                                ),
                                 onTap: () {
                                   if (vehicleId == null) {
-                                    ScaffoldMessenger.of(this.context).showSnackBar(const SnackBar(content: Text("Vehicle ID is missing for this vehicle.")));
+                                    ScaffoldMessenger.of(
+                                      this.context,
+                                    ).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          "Vehicle ID is missing for this vehicle.",
+                                        ),
+                                      ),
+                                    );
                                     return;
                                   }
                                   if (model.isEmpty) {
-                                    ScaffoldMessenger.of(this.context).showSnackBar(const SnackBar(content: Text("Vehicle model is missing for this vehicle.")));
+                                    ScaffoldMessenger.of(
+                                      this.context,
+                                    ).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          "Vehicle model is missing for this vehicle.",
+                                        ),
+                                      ),
+                                    );
                                     return;
                                   }
                                   Navigator.pop(dialogContext);
@@ -560,7 +565,10 @@ class _HomeTabState extends State<HomeTab> {
               ),
             ),
             actions: [
-              TextButton(onPressed: () => Navigator.pop(dialogContext), child: const Text("CANCEL")),
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext),
+                child: const Text("CANCEL"),
+              ),
             ],
           );
         },
@@ -573,20 +581,35 @@ class _HomeTabState extends State<HomeTab> {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text("Add Fuel", style: TextStyle(fontWeight: FontWeight.bold)),
-        content: const Text("Do you want to add fuel?", style: TextStyle(fontSize: 16)),
+        title: const Text(
+          "Add Fuel",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        content: const Text(
+          "Do you want to add fuel?",
+          style: TextStyle(fontSize: 16),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: const Text("NO", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+            child: const Text(
+              "NO",
+              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(dialogContext);
               showAddFuelVehicleSelection();
             },
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xff2458A6), foregroundColor: Colors.white),
-            child: const Text("YES", style: TextStyle(fontWeight: FontWeight.bold)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xff2458A6),
+              foregroundColor: Colors.white,
+            ),
+            child: const Text(
+              "YES",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
         ],
       ),
@@ -594,37 +617,24 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   Widget searchArea() {
-    final bool hasDate =
-        selectedDate != null;
+    final bool hasDate = selectedDate != null;
 
-    final bool hasTime =
-        selectedTime != null;
+    final bool hasTime = selectedTime != null;
 
     final bool hasAnyFilter =
-        searchText.trim().isNotEmpty ||
-        hasDate ||
-        hasTime;
+        searchText.trim().isNotEmpty || hasDate || hasTime;
 
     return Container(
       width: double.infinity,
-      padding:
-          const EdgeInsets.fromLTRB(
-        16,
-        8,
-        16,
-        12,
-      ),
-      color:
-          const Color(0xffEEF2F7),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+      color: const Color(0xffEEF2F7),
       child: Column(
         children: [
           // ======================================================
           // TEXT SEARCH
           // ======================================================
-
           TextField(
-            controller:
-                _searchController,
+            controller: _searchController,
 
             onChanged: (value) {
               setState(() {
@@ -632,226 +642,130 @@ class _HomeTabState extends State<HomeTab> {
               });
             },
 
-            textInputAction:
-                TextInputAction.search,
+            textInputAction: TextInputAction.search,
 
-            decoration:
-                InputDecoration(
-              hintText:
-                  "Search Vehicle, Driver, Odometer...",
+            decoration: InputDecoration(
+              hintText: "Search Vehicle, Driver, Odometer...",
 
-              prefixIcon:
-                  const Icon(
-                Icons.search,
-                color:
-                    Color(0xff2458A6),
-              ),
+              prefixIcon: const Icon(Icons.search, color: Color(0xff2458A6)),
 
-              suffixIcon:
-                  searchText.isNotEmpty
-                      ? IconButton(
-                          icon:
-                              const Icon(
-                            Icons.clear,
-                          ),
-                          onPressed: () {
-                            _searchController
-                                .clear();
+              suffixIcon: searchText.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        _searchController.clear();
 
-                            setState(() {
-                              searchText =
-                                  "";
-                            });
-                          },
-                        )
-                      : null,
+                        setState(() {
+                          searchText = "";
+                        });
+                      },
+                    )
+                  : null,
 
               filled: true,
-              fillColor:
-                  Colors.white,
+              fillColor: Colors.white,
 
-              contentPadding:
-                  const EdgeInsets
-                      .symmetric(
+              contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
                 vertical: 15,
               ),
 
-              border:
-                  OutlineInputBorder(
-                borderRadius:
-                    BorderRadius.circular(
-                  12,
-                ),
-                borderSide:
-                    BorderSide.none,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
               ),
 
-              enabledBorder:
-                  OutlineInputBorder(
-                borderRadius:
-                    BorderRadius.circular(
-                  12,
-                ),
-                borderSide:
-                    BorderSide(
-                  color:
-                      Colors.grey.shade300,
-                ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey.shade300),
               ),
 
-              focusedBorder:
-                  OutlineInputBorder(
-                borderRadius:
-                    BorderRadius.circular(
-                  12,
-                ),
-                borderSide:
-                    const BorderSide(
-                  color:
-                      Color(0xff2458A6),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(
+                  color: Color(0xff2458A6),
                   width: 2,
                 ),
               ),
             ),
           ),
 
-          const SizedBox(
-            height: 10,
-          ),
+          const SizedBox(height: 10),
 
           // ======================================================
           // DATE + TIME BUTTONS
           // ======================================================
-
           Row(
             children: [
               // ==================================================
               // DATE BUTTON
               // ==================================================
-
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed:
-                      selectDate,
+                  onPressed: selectDate,
 
-                  icon:
-                      const Icon(
-                    Icons.calendar_month,
-                    size: 20,
-                  ),
+                  icon: const Icon(Icons.calendar_month, size: 20),
 
                   label: Text(
                     hasDate
-                        ? DateFormat(
-                            "dd MMM yyyy",
-                          ).format(
-                            selectedDate!,
-                          )
+                        ? DateFormat("dd MMM yyyy").format(selectedDate!)
                         : "Select Date",
 
-                    overflow:
-                        TextOverflow.ellipsis,
+                    overflow: TextOverflow.ellipsis,
                   ),
 
-                  style:
-                      OutlinedButton.styleFrom(
-                    backgroundColor:
-                        Colors.white,
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: Colors.white,
 
-                    foregroundColor:
-                        const Color(
-                      0xff2458A6,
+                    foregroundColor: const Color(0xff2458A6),
+
+                    side: BorderSide(
+                      color: hasDate
+                          ? const Color(0xff2458A6)
+                          : Colors.grey.shade300,
                     ),
 
-                    side:
-                        BorderSide(
-                      color:
-                          hasDate
-                              ? const Color(
-                                  0xff2458A6,
-                                )
-                              : Colors.grey.shade300,
-                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 13),
 
-                    padding:
-                        const EdgeInsets
-                            .symmetric(
-                      vertical: 13,
-                    ),
-
-                    shape:
-                        RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(
-                        10,
-                      ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                 ),
               ),
 
-              const SizedBox(
-                width: 8,
-              ),
+              const SizedBox(width: 8),
 
               // ==================================================
               // TIME BUTTON
               // ==================================================
-
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed:
-                      selectTime,
+                  onPressed: selectTime,
 
-                  icon:
-                      const Icon(
-                    Icons.access_time,
-                    size: 20,
-                  ),
+                  icon: const Icon(Icons.access_time, size: 20),
 
                   label: Text(
-                    hasTime
-                        ? selectedTime!
-                            .format(context)
-                        : "Select Time",
+                    hasTime ? selectedTime!.format(context) : "Select Time",
 
-                    overflow:
-                        TextOverflow.ellipsis,
+                    overflow: TextOverflow.ellipsis,
                   ),
 
-                  style:
-                      OutlinedButton.styleFrom(
-                    backgroundColor:
-                        Colors.white,
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: Colors.white,
 
-                    foregroundColor:
-                        const Color(
-                      0xff2458A6,
+                    foregroundColor: const Color(0xff2458A6),
+
+                    side: BorderSide(
+                      color: hasTime
+                          ? const Color(0xff2458A6)
+                          : Colors.grey.shade300,
                     ),
 
-                    side:
-                        BorderSide(
-                      color:
-                          hasTime
-                              ? const Color(
-                                  0xff2458A6,
-                                )
-                              : Colors.grey.shade300,
-                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 13),
 
-                    padding:
-                        const EdgeInsets
-                            .symmetric(
-                      vertical: 13,
-                    ),
-
-                    shape:
-                        RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(
-                        10,
-                      ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                 ),
@@ -860,25 +774,15 @@ class _HomeTabState extends State<HomeTab> {
               // ==================================================
               // CLEAR ALL
               // ==================================================
-
               if (hasAnyFilter)
                 Padding(
-                  padding:
-                      const EdgeInsets.only(
-                    left: 8,
-                  ),
+                  padding: const EdgeInsets.only(left: 8),
                   child: IconButton(
-                    tooltip:
-                        "Clear Filters",
+                    tooltip: "Clear Filters",
 
-                    onPressed:
-                        clearAllFilters,
+                    onPressed: clearAllFilters,
 
-                    icon:
-                        const Icon(
-                      Icons.filter_alt_off,
-                      color: Colors.red,
-                    ),
+                    icon: const Icon(Icons.filter_alt_off, color: Colors.red),
                   ),
                 ),
             ],
@@ -887,71 +791,35 @@ class _HomeTabState extends State<HomeTab> {
           // ======================================================
           // SELECTED FILTER CHIPS
           // ======================================================
-
-          if (hasDate ||
-              hasTime)
+          if (hasDate || hasTime)
             Padding(
-              padding:
-                  const EdgeInsets.only(
-                top: 8,
-              ),
+              padding: const EdgeInsets.only(top: 8),
               child: Row(
                 children: [
                   if (hasDate)
                     InputChip(
-                      avatar:
-                          const Icon(
-                        Icons.calendar_today,
-                        size: 16,
-                      ),
+                      avatar: const Icon(Icons.calendar_today, size: 16),
 
                       label: Text(
-                        DateFormat(
-                          "dd MMM yyyy",
-                        ).format(
-                          selectedDate!,
-                        ),
+                        DateFormat("dd MMM yyyy").format(selectedDate!),
                       ),
 
-                      onDeleted:
-                          clearDate,
+                      onDeleted: clearDate,
 
-                      deleteIcon:
-                          const Icon(
-                        Icons.close,
-                        size: 16,
-                      ),
+                      deleteIcon: const Icon(Icons.close, size: 16),
                     ),
 
-                  if (hasDate &&
-                      hasTime)
-                    const SizedBox(
-                      width: 6,
-                    ),
+                  if (hasDate && hasTime) const SizedBox(width: 6),
 
                   if (hasTime)
                     InputChip(
-                      avatar:
-                          const Icon(
-                        Icons.access_time,
-                        size: 16,
-                      ),
+                      avatar: const Icon(Icons.access_time, size: 16),
 
-                      label: Text(
-                        selectedTime!
-                            .format(
-                          context,
-                        ),
-                      ),
+                      label: Text(selectedTime!.format(context)),
 
-                      onDeleted:
-                          clearTime,
+                      onDeleted: clearTime,
 
-                      deleteIcon:
-                          const Icon(
-                        Icons.close,
-                        size: 16,
-                      ),
+                      deleteIcon: const Icon(Icons.close, size: 16),
                     ),
                 ],
               ),
@@ -965,10 +833,7 @@ class _HomeTabState extends State<HomeTab> {
   // RESULT COUNT
   // ============================================================
 
-  Widget resultCount(
-    int total,
-    int filtered,
-  ) {
+  Widget resultCount(int total, int filtered) {
     final bool hasFilter =
         searchText.trim().isNotEmpty ||
         selectedDate != null ||
@@ -980,23 +845,13 @@ class _HomeTabState extends State<HomeTab> {
 
     return Container(
       width: double.infinity,
-      padding:
-          const EdgeInsets.fromLTRB(
-        16,
-        0,
-        16,
-        8,
-      ),
-      color:
-          const Color(0xffEEF2F7),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      color: const Color(0xffEEF2F7),
       child: Text(
         "$filtered result${filtered == 1 ? "" : "s"} found from $total movement${total == 1 ? "" : "s"}",
-        style:
-            const TextStyle(
-          color:
-              Color(0xff2458A6),
-          fontWeight:
-              FontWeight.w600,
+        style: const TextStyle(
+          color: Color(0xff2458A6),
+          fontWeight: FontWeight.w600,
           fontSize: 13,
         ),
       ),
@@ -1008,12 +863,9 @@ class _HomeTabState extends State<HomeTab> {
   // ============================================================
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          const Color(0xffEEF2F7),
+      backgroundColor: const Color(0xffEEF2F7),
 
       body: SafeArea(
         child: Column(
@@ -1021,74 +873,42 @@ class _HomeTabState extends State<HomeTab> {
             // ====================================================
             // HEADER
             // ====================================================
-
             Container(
-              width:
-                  double.infinity,
-              padding:
-                  const EdgeInsets.fromLTRB(
-                20,
-                20,
-                20,
-                20,
-              ),
-              decoration:
-                  const BoxDecoration(
-                color:
-                    Color(0xff2458A6),
-              ),
+              width: double.infinity,
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+              decoration: const BoxDecoration(color: Color(0xff2458A6)),
               child: Row(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Expanded(
                     child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           "📋 Today's Movements",
-                          style:
-                              TextStyle(
-                            color:
-                                Colors.white,
-                            fontSize:
-                                28,
-                            fontWeight:
-                                FontWeight.bold,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(
-                          height: 6,
-                        ),
+                        SizedBox(height: 6),
                         Text(
                           "Security • Main Gate",
-                          style:
-                              TextStyle(
-                            color:
-                                Colors.white70,
-                            fontSize:
-                                16,
-                          ),
+                          style: TextStyle(color: Colors.white70, fontSize: 16),
                         ),
                       ],
                     ),
                   ),
 
-                  const SizedBox(
-                    width: 10,
-                  ),
+                  const SizedBox(width: 10),
 
                   // ==============================================
                   // LOGOUT
                   // ==============================================
-
                   TextButton.icon(
-                    onPressed:
-                        () async {
-                      final prefs =
-                          await SharedPreferences
-                              .getInstance();
+                    onPressed: () async {
+                      final prefs = await SharedPreferences.getInstance();
 
                       await prefs.clear();
 
@@ -1096,36 +916,23 @@ class _HomeTabState extends State<HomeTab> {
                         return;
                       }
 
-                      Navigator
-                          .pushAndRemoveUntil(
+                      Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(
-                          builder:
-                              (_) =>
-                                  const LoginScreen(),
-                        ),
-                        (route) =>
-                            false,
+                        MaterialPageRoute(builder: (_) => const LoginScreen()),
+                        (route) => false,
                       );
                     },
-                    icon:
-                        const Icon(
+                    icon: const Icon(
                       Icons.logout,
-                      color:
-                          Colors.white,
+                      color: Colors.white,
                       size: 20,
                     ),
-                    label:
-                        const Text(
+                    label: const Text(
                       "Logout",
-                      style:
-                          TextStyle(
-                        color:
-                            Colors.white,
-                        fontSize:
-                            14,
-                        fontWeight:
-                            FontWeight.bold,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
@@ -1136,22 +943,15 @@ class _HomeTabState extends State<HomeTab> {
             // ====================================================
             // ADD FUEL + REPORT ACCIDENT
             // ====================================================
-
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(
-                12,
-                10,
-                12,
-                10,
-              ),
+              padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
               color: const Color(0xffEEF2F7),
               child: Row(
                 children: [
                   // ==================================================
                   // ADD FUEL - LEFT
                   // ==================================================
-
                   Expanded(
                     child: ElevatedButton.icon(
                       onPressed: confirmAddFuel,
@@ -1188,7 +988,6 @@ class _HomeTabState extends State<HomeTab> {
                   // ==================================================
                   // REPORT ACCIDENT - RIGHT
                   // ==================================================
-
                   Expanded(
                     child: ElevatedButton.icon(
                       onPressed: () {
@@ -1233,81 +1032,47 @@ class _HomeTabState extends State<HomeTab> {
             // ====================================================
             // SEARCH AREA
             // ====================================================
-
             searchArea(),
 
             // ====================================================
             // MOVEMENT DATA
             // ====================================================
-
             Expanded(
-              child:
-                  RefreshIndicator(
-                onRefresh:
-                    _refresh,
+              child: RefreshIndicator(
+                onRefresh: _refresh,
 
-                child:
-                    FutureBuilder<
-                        List<dynamic>>(
-                  future:
-                      movementFuture,
+                child: FutureBuilder<List<dynamic>>(
+                  future: movementFuture,
 
-                  builder:
-                      (
-                    context,
-                    snapshot,
-                  ) {
+                  builder: (context, snapshot) {
                     // ============================================
                     // LOADING
                     // ============================================
 
-                    if (snapshot
-                            .connectionState ==
-                        ConnectionState
-                            .waiting) {
-                      return const Center(
-                        child:
-                            CircularProgressIndicator(),
-                      );
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
                     }
 
                     // ============================================
                     // ERROR
                     // ============================================
 
-                    if (snapshot
-                        .hasError) {
+                    if (snapshot.hasError) {
                       return ListView(
-                        physics:
-                            const AlwaysScrollableScrollPhysics(),
+                        physics: const AlwaysScrollableScrollPhysics(),
                         children: [
-                          const SizedBox(
-                            height: 100,
-                          ),
+                          const SizedBox(height: 100),
                           const Icon(
-                            Icons
-                                .error_outline,
+                            Icons.error_outline,
                             size: 60,
-                            color:
-                                Colors.red,
+                            color: Colors.red,
                           ),
-                          const SizedBox(
-                            height: 15,
-                          ),
+                          const SizedBox(height: 15),
                           Padding(
-                            padding:
-                                const EdgeInsets
-                                    .all(
-                              20,
-                            ),
-                            child:
-                                Text(
-                              snapshot
-                                  .error
-                                  .toString(),
-                              textAlign:
-                                  TextAlign
-                                      .center,
+                            padding: const EdgeInsets.all(20),
+                            child: Text(
+                              snapshot.error.toString(),
+                              textAlign: TextAlign.center,
                             ),
                           ),
                         ],
@@ -1318,39 +1083,23 @@ class _HomeTabState extends State<HomeTab> {
                     // NO DATA
                     // ============================================
 
-                    if (!snapshot
-                            .hasData ||
-                        snapshot
-                            .data!
-                            .isEmpty) {
+                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return ListView(
-                        physics:
-                            const AlwaysScrollableScrollPhysics(),
+                        physics: const AlwaysScrollableScrollPhysics(),
                         children: const [
-                          SizedBox(
-                            height: 100,
-                          ),
+                          SizedBox(height: 100),
                           Icon(
-                            Icons
-                                .directions_car_outlined,
+                            Icons.directions_car_outlined,
                             size: 60,
-                            color:
-                                Colors.grey,
+                            color: Colors.grey,
                           ),
-                          SizedBox(
-                            height: 15,
-                          ),
+                          SizedBox(height: 15),
                           Center(
-                            child:
-                                Text(
+                            child: Text(
                               "No Movement Found",
-                              style:
-                                  TextStyle(
-                                fontSize:
-                                    18,
-                                fontWeight:
-                                    FontWeight
-                                        .bold,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
@@ -1362,111 +1111,63 @@ class _HomeTabState extends State<HomeTab> {
                     // ALL DATA
                     // ============================================
 
-                    final allMovements =
-                        snapshot.data!;
+                    final allMovements = snapshot.data!;
 
                     // ============================================
                     // FILTER DATA
                     // ============================================
 
-                    final movements =
-                        filterMovements(
-                      allMovements,
-                    );
+                    final movements = filterMovements(allMovements);
 
                     return Column(
                       children: [
                         // ==========================================
                         // RESULT COUNT
                         // ==========================================
-
-                        resultCount(
-                          allMovements
-                              .length,
-                          movements
-                              .length,
-                        ),
+                        resultCount(allMovements.length, movements.length),
 
                         // ==========================================
                         // LIST
                         // ==========================================
-
                         Expanded(
-                          child: movements
-                                  .isEmpty
+                          child: movements.isEmpty
                               ? ListView(
                                   physics:
                                       const AlwaysScrollableScrollPhysics(),
                                   children: const [
-                                    SizedBox(
-                                      height:
-                                          80,
-                                    ),
+                                    SizedBox(height: 80),
                                     Icon(
-                                      Icons
-                                          .search_off,
-                                      size:
-                                          60,
-                                      color:
-                                          Colors.grey,
+                                      Icons.search_off,
+                                      size: 60,
+                                      color: Colors.grey,
                                     ),
-                                    SizedBox(
-                                      height:
-                                          15,
-                                    ),
+                                    SizedBox(height: 15),
                                     Center(
-                                      child:
-                                          Text(
+                                      child: Text(
                                         "No matching movement found",
-                                        style:
-                                            TextStyle(
-                                          fontSize:
-                                              18,
-                                          fontWeight:
-                                              FontWeight.bold,
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                     ),
-                                    SizedBox(
-                                      height:
-                                          8,
-                                    ),
+                                    SizedBox(height: 8),
                                     Center(
-                                      child:
-                                          Text(
+                                      child: Text(
                                         "Try another search, date or time",
-                                        textAlign:
-                                            TextAlign.center,
-                                        style:
-                                            TextStyle(
-                                          color:
-                                              Colors.grey,
-                                        ),
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(color: Colors.grey),
                                       ),
                                     ),
                                   ],
                                 )
-                              : ListView
-                                  .builder(
+                              : ListView.builder(
                                   physics:
                                       const AlwaysScrollableScrollPhysics(),
-                                  padding:
-                                      const EdgeInsets
-                                          .all(
-                                    16,
-                                  ),
-                                  itemCount:
-                                      movements
-                                          .length,
-                                  itemBuilder:
-                                      (
-                                    context,
-                                    index,
-                                  ) {
-                                    return movementTile(
-                                      movements[
-                                          index],
-                                    );
+                                  padding: const EdgeInsets.all(16),
+                                  itemCount: movements.length,
+                                  itemBuilder: (context, index) {
+                                    return movementTile(movements[index]);
                                   },
                                 ),
                         ),
@@ -1486,258 +1187,132 @@ class _HomeTabState extends State<HomeTab> {
   // MOVEMENT TILE
   // ============================================================
 
-  Widget movementTile(
-    Map<String, dynamic> item,
-  ) {
-    final direction =
-        (item["Direction"] ?? "")
-            .toString()
-            .toLowerCase();
+  Widget movementTile(Map<String, dynamic> item) {
+    final direction = (item["Direction"] ?? "").toString().toLowerCase();
 
-    final bool isEntry =
-        direction == "entry";
+    final bool isEntry = direction == "entry";
 
-    final String movementTime =
-        formatMovementTime(
-      item["MovementTime"],
-    );
+    final String movementTime = formatMovementTime(item["MovementTime"]);
 
-    final vehicle =
-        (item["RegistrationNo"] ??
-                "-")
-            .toString();
+    final vehicle = (item["RegistrationNo"] ?? "-").toString();
 
-    final driver =
-        (item["DriverName"] ?? "-")
-            .toString();
+    final driver = (item["DriverName"] ?? "-").toString();
 
-    final movementType =
-        (item["MovementType"] ?? "-")
-            .toString();
+    final movementType = (item["MovementType"] ?? "-").toString();
 
-    final customer =
-        (item["CustomerName"] ?? "-")
-            .toString();
+    final customer = (item["CustomerName"] ?? "-").toString();
 
-    final salesExecutive =
-        (item["SalesExecutive"] ??
-                "-")
-            .toString();
+    final salesExecutive = (item["SalesExecutive"] ?? "-").toString();
 
-    final purpose =
-        (item["Purpose"] ?? "-")
-            .toString();
+    final purpose = (item["Purpose"] ?? "-").toString();
 
-    final fromLocation =
-        (item["FromLocationName"] ??
-                "-")
-            .toString();
+    final fromLocation = (item["FromLocationName"] ?? "-").toString();
 
-    final toLocation =
-        (item["ToLocationName"] ??
-                "-")
-            .toString();
+    final toLocation = (item["ToLocationName"] ?? "-").toString();
 
-    final odometer =
-        (item["Odometer"] ?? "-")
-            .toString();
+    final odometer = (item["Odometer"] ?? "-").toString();
 
     return Card(
       elevation: 3,
-      margin:
-          const EdgeInsets.only(
-        bottom: 14,
-      ),
-      shape:
-          RoundedRectangleBorder(
-        borderRadius:
-            BorderRadius.circular(
-          15,
-        ),
-        side:
-            BorderSide(
-          color: isEntry
-              ? Colors.green.shade200
-              : Colors.red.shade200,
+      margin: const EdgeInsets.only(bottom: 14),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+        side: BorderSide(
+          color: isEntry ? Colors.green.shade200 : Colors.red.shade200,
         ),
       ),
       child: ListTile(
-        contentPadding:
-            const EdgeInsets.all(
-          14,
-        ),
+        contentPadding: const EdgeInsets.all(14),
 
         // ========================================================
         // ICON
         // ========================================================
-
         leading: Container(
           width: 52,
           height: 52,
-          decoration:
-              BoxDecoration(
-            color: isEntry
-                ? Colors.green.shade100
-                : Colors.red.shade100,
-            borderRadius:
-                BorderRadius.circular(
-              12,
-            ),
+          decoration: BoxDecoration(
+            color: isEntry ? Colors.green.shade100 : Colors.red.shade100,
+            borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(
-            isEntry
-                ? Icons.login
-                : Icons.logout,
-            color: isEntry
-                ? Colors.green
-                : Colors.red,
+            isEntry ? Icons.login : Icons.logout,
+            color: isEntry ? Colors.green : Colors.red,
           ),
         ),
 
         // ========================================================
         // VEHICLE
         // ========================================================
-
         title: Text(
           vehicle,
-          style:
-              const TextStyle(
-            fontSize: 18,
-            fontWeight:
-                FontWeight.bold,
-          ),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
 
         // ========================================================
         // DETAILS
         // ========================================================
-
         subtitle: Padding(
-          padding:
-              const EdgeInsets.only(
-            top: 8,
-          ),
+          padding: const EdgeInsets.only(top: 8),
           child: Column(
-            crossAxisAlignment:
-                CrossAxisAlignment
-                    .start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "Driver : $driver",
-              ),
+              Text("Driver : $driver"),
 
-              Text(
-                "Movement : $movementType",
-              ),
+              Text("Movement : $movementType"),
 
-              const SizedBox(
-                height: 6,
-              ),
+              const SizedBox(height: 6),
 
               // ================================================
               // DIRECTION
               // ================================================
-
               Container(
-                padding:
-                    const EdgeInsets
-                        .symmetric(
+                padding: const EdgeInsets.symmetric(
                   horizontal: 10,
                   vertical: 4,
                 ),
-                decoration:
-                    BoxDecoration(
-                  color: isEntry
-                      ? Colors.green
-                          .shade100
-                      : Colors.red
-                          .shade100,
-                  borderRadius:
-                      BorderRadius
-                          .circular(
-                    20,
-                  ),
+                decoration: BoxDecoration(
+                  color: isEntry ? Colors.green.shade100 : Colors.red.shade100,
+                  borderRadius: BorderRadius.circular(20),
                 ),
-                child:
-                    Text(
-                  direction.isEmpty
-                      ? "-"
-                      : direction
-                          .toUpperCase(),
-                  style:
-                      TextStyle(
-                    color: isEntry
-                        ? Colors.green
-                        : Colors.red,
-                    fontWeight:
-                        FontWeight.bold,
+                child: Text(
+                  direction.isEmpty ? "-" : direction.toUpperCase(),
+                  style: TextStyle(
+                    color: isEntry ? Colors.green : Colors.red,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
 
-              const SizedBox(
-                height: 8,
-              ),
+              const SizedBox(height: 8),
 
-              Text(
-                "Customer : $customer",
-              ),
+              Text("Customer : $customer"),
 
-              Text(
-                "Sales Executive : $salesExecutive",
-              ),
+              Text("Sales Executive : $salesExecutive"),
 
-              Text(
-                "Purpose : $purpose",
-              ),
+              Text("Purpose : $purpose"),
 
-              Text(
-                "From Location : $fromLocation",
-              ),
+              Text("From Location : $fromLocation"),
 
-              Text(
-                "To Location : $toLocation",
-              ),
+              Text("To Location : $toLocation"),
 
-              Text(
-                "Odometer : $odometer km",
-              ),
+              Text("Odometer : $odometer km"),
 
-              const SizedBox(
-                height: 8,
-              ),
+              const SizedBox(height: 8),
 
               // ================================================
               // DATE TIME
               // ================================================
-
               Row(
-                crossAxisAlignment:
-                    CrossAxisAlignment
-                        .start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(
-                    Icons.access_time,
-                    size: 16,
-                    color:
-                        Colors.grey,
-                  ),
+                  const Icon(Icons.access_time, size: 16, color: Colors.grey),
 
-                  const SizedBox(
-                    width: 5,
-                  ),
+                  const SizedBox(width: 5),
 
                   Expanded(
-                    child:
-                        Text(
-                      movementTime.isEmpty
-                          ? "-"
-                          : movementTime,
-                      style:
-                          const TextStyle(
-                        color:
-                            Colors.grey,
-                      ),
+                    child: Text(
+                      movementTime.isEmpty ? "-" : movementTime,
+                      style: const TextStyle(color: Colors.grey),
                     ),
                   ),
                 ],
@@ -1749,18 +1324,11 @@ class _HomeTabState extends State<HomeTab> {
         // ========================================================
         // ARROW
         // ========================================================
-
-        trailing:
-            Icon(
-          isEntry
-              ? Icons.arrow_downward
-              : Icons.arrow_upward,
-          color: isEntry
-              ? Colors.green
-              : Colors.red,
+        trailing: Icon(
+          isEntry ? Icons.arrow_downward : Icons.arrow_upward,
+          color: isEntry ? Colors.green : Colors.red,
         ),
       ),
     );
   }
 }
-

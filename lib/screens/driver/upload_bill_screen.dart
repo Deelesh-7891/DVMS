@@ -359,9 +359,7 @@ class _UploadBillScreenState extends State<UploadBillScreen> {
                     label: "Date",
                     icon: Icons.calendar_today,
                   ),
-                  child: Text(
-                    DateFormat("dd MMM yyyy").format(_expenseDate),
-                  ),
+                  child: Text(DateFormat("dd MMM yyyy").format(_expenseDate)),
                 ),
               ),
 
@@ -436,10 +434,7 @@ class _UploadBillScreenState extends State<UploadBillScreen> {
                     IconButton(
                       tooltip: "Remove Photo",
                       onPressed: () => setState(() => _billPhoto = null),
-                      icon: const Icon(
-                        Icons.delete_outline,
-                        color: Colors.red,
-                      ),
+                      icon: const Icon(Icons.delete_outline, color: Colors.red),
                     ),
                   ],
                 ),

@@ -31,9 +31,7 @@ void main() {
   // RUN APP
   // ==========================================================
 
-  runApp(
-    const MyApp(),
-  );
+  runApp(const MyApp());
 }
 
 // ============================================================
@@ -41,9 +39,7 @@ void main() {
 // ============================================================
 
 class MyApp extends StatelessWidget {
-  const MyApp({
-    super.key,
-  });
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +49,6 @@ class MyApp extends StatelessWidget {
       // ======================================================
       // APP TITLE
       // ======================================================
-
       title: 'Demo Vehicle Management',
 
       // ======================================================
@@ -73,17 +68,12 @@ class MyApp extends StatelessWidget {
       //
       // sab screens ke upar update popup show ho sakta hai.
       // ======================================================
-
-      builder: (
-        BuildContext context,
-        Widget? child,
-      ) {
+      builder: (BuildContext context, Widget? child) {
         return UpgradeAlert(
           upgrader: Upgrader(
             // ==================================================
             // CHECK STORE VERSION
             // ==================================================
-
             checkOnResume: true,
 
             // ==================================================
@@ -91,7 +81,6 @@ class MyApp extends StatelessWidget {
             //
             // Production me false rakhein.
             // ==================================================
-
             debugDisplayAlways: false,
             debugDisplayOnce: false,
             debugLogging: false,
@@ -99,16 +88,11 @@ class MyApp extends StatelessWidget {
             // ==================================================
             // POPUP AGAIN AFTER LATER
             // ==================================================
-
-            durationUntilAlertAgain:
-                const Duration(
-              days: 1,
-            ),
+            durationUntilAlertAgain: const Duration(days: 1),
 
             // ==================================================
             // UPDATE LANGUAGE
             // ==================================================
-
             languageCode: 'en',
 
             // ==================================================
@@ -126,7 +110,6 @@ class MyApp extends StatelessWidget {
           // ====================================================
           // BUTTONS
           // ====================================================
-
           showIgnore: true,
           showLater: true,
           showReleaseNotes: true,
@@ -135,7 +118,6 @@ class MyApp extends StatelessWidget {
           // MATERIAL STYLE
           // Android screenshot jaisa
           // ====================================================
-
           dialogStyle: UpgradeDialogStyle.material,
 
           // ====================================================
@@ -145,13 +127,11 @@ class MyApp extends StatelessWidget {
           // User ko IGNORE / LATER / UPDATE NOW me se
           // koi action lena hoga.
           // ====================================================
-
           barrierDismissible: false,
 
           // ====================================================
           // ACTUAL APP
           // ====================================================
-
           child: child ?? const SizedBox.shrink(),
         );
       },
@@ -159,7 +139,6 @@ class MyApp extends StatelessWidget {
       // ========================================================
       // SPLASH
       // ========================================================
-
       home: const SplashScreen(),
     );
   }
@@ -170,22 +149,17 @@ class MyApp extends StatelessWidget {
 // ============================================================
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({
-    super.key,
-  });
+  const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() =>
-      _SplashScreenState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
 // ============================================================
 // SPLASH STATE
 // ============================================================
 
-class _SplashScreenState
-    extends State<SplashScreen> {
-
+class _SplashScreenState extends State<SplashScreen> {
   // ==========================================================
   // INIT STATE
   // ==========================================================
@@ -206,11 +180,7 @@ class _SplashScreenState
     // WAIT UNTIL SCREEN IS READY
     // ========================================================
 
-    await Future.delayed(
-      const Duration(
-        milliseconds: 800,
-      ),
-    );
+    await Future.delayed(const Duration(milliseconds: 800));
 
     if (!mounted) return;
 
@@ -239,49 +209,32 @@ class _SplashScreenState
       // GET PREFERENCES
       // ======================================================
 
-      final prefs =
-          await SharedPreferences.getInstance();
+      final prefs = await SharedPreferences.getInstance();
 
       // ======================================================
       // LOGIN
       // ======================================================
 
-      final bool isLogin =
-          prefs.getBool(
-                "isLogin",
-              ) ??
-              false;
+      final bool isLogin = prefs.getBool("isLogin") ?? false;
 
       // ======================================================
       // TOKEN
       // ======================================================
 
-      final String token =
-          prefs.getString(
-                "token",
-              ) ??
-              "";
+      final String token = prefs.getString("token") ?? "";
 
       // ======================================================
       // ROLE NAME
       // ======================================================
 
-      String role =
-          prefs.getString(
-                "roleName",
-              ) ??
-              "";
+      String role = prefs.getString("roleName") ?? "";
 
       // ======================================================
       // FALLBACK ROLE
       // ======================================================
 
       if (role.trim().isEmpty) {
-        role =
-            prefs.getString(
-                  "role",
-                ) ??
-                "";
+        role = prefs.getString("role") ?? "";
       }
 
       // ======================================================
@@ -290,32 +243,21 @@ class _SplashScreenState
 
       role = role.trim();
 
-      final userRole =
-          UserRole.fromApiValue(role);
+      final userRole = UserRole.fromApiValue(role);
 
       // ======================================================
       // DEBUG
       // ======================================================
 
-      debugPrint(
-        "======================================",
-      );
+      debugPrint("======================================");
 
-      debugPrint(
-        "SPLASH LOGIN CHECK",
-      );
+      debugPrint("SPLASH LOGIN CHECK");
 
-      debugPrint(
-        "======================================",
-      );
+      debugPrint("======================================");
 
-      debugPrint(
-        "IS LOGIN     : $isLogin",
-      );
+      debugPrint("IS LOGIN     : $isLogin");
 
-      debugPrint(
-        "TOKEN EXISTS : ${token.isNotEmpty}",
-      );
+      debugPrint("TOKEN EXISTS : ${token.isNotEmpty}");
 
       debugPrint(
         "ROLE NAME    : "
@@ -327,23 +269,15 @@ class _SplashScreenState
         "${prefs.getString("role")}",
       );
 
-      debugPrint(
-        "FINAL ROLE   : $role",
-      );
+      debugPrint("FINAL ROLE   : $role");
 
-      debugPrint(
-        "======================================",
-      );
+      debugPrint("======================================");
 
       // ======================================================
       // SMALL WAIT
       // ======================================================
 
-      await Future.delayed(
-        const Duration(
-          milliseconds: 300,
-        ),
-      );
+      await Future.delayed(const Duration(milliseconds: 300));
 
       if (!mounted) return;
 
@@ -351,20 +285,12 @@ class _SplashScreenState
       // NOT LOGGED IN
       // ======================================================
 
-      if (!isLogin ||
-          token.isEmpty ||
-          userRole == null) {
-
-        debugPrint(
-          "SESSION INVALID -> LOGIN",
-        );
+      if (!isLogin || token.isEmpty || userRole == null) {
+        debugPrint("SESSION INVALID -> LOGIN");
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-            builder: (_) =>
-                const LoginScreen(),
-          ),
+          MaterialPageRoute(builder: (_) => const LoginScreen()),
         );
 
         return;
@@ -374,31 +300,21 @@ class _SplashScreenState
       // SESSION FOUND
       // ======================================================
 
-      debugPrint(
-        "SESSION FOUND -> HOME",
-      );
+      debugPrint("SESSION FOUND -> HOME");
 
-      openHomePage(
-        userRole,
-      );
-
+      openHomePage(userRole);
     } catch (e) {
       // ======================================================
       // LOGIN CHECK ERROR
       // ======================================================
 
-      debugPrint(
-        "CHECK LOGIN ERROR: $e",
-      );
+      debugPrint("CHECK LOGIN ERROR: $e");
 
       if (!mounted) return;
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (_) =>
-              const LoginScreen(),
-        ),
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
       );
     }
   }
@@ -407,9 +323,7 @@ class _SplashScreenState
   // OPEN HOME PAGE
   // ==========================================================
 
-  void openHomePage(
-    UserRole role,
-  ) {
+  void openHomePage(UserRole role) {
     Widget page;
 
     // ========================================================
@@ -417,15 +331,12 @@ class _SplashScreenState
     // ========================================================
 
     switch (role) {
-
       // ======================================================
       // CORPORATE ADMIN
       // ======================================================
 
       case UserRole.corporateAdmin:
-
-        page =
-            const CorporateAdminHomeScreen();
+        page = const CorporateAdminHomeScreen();
 
         break;
 
@@ -434,7 +345,6 @@ class _SplashScreenState
       // ======================================================
 
       case UserRole.branchAdmin:
-
         page = const CorporateAdminHomeScreen();
 
         break;
@@ -444,7 +354,6 @@ class _SplashScreenState
       // ======================================================
 
       case UserRole.driver:
-
         page = const DriverHomeScreen();
 
         break;
@@ -454,7 +363,6 @@ class _SplashScreenState
       // ======================================================
 
       case UserRole.security:
-
         page = const SecurityHomeScreen();
 
         break;
@@ -464,7 +372,6 @@ class _SplashScreenState
       // ======================================================
 
       case UserRole.accounts:
-
         page = const AccountsHomeScreen();
 
         break;
@@ -474,7 +381,6 @@ class _SplashScreenState
       // ======================================================
 
       case UserRole.stateAdmin:
-
         page = const CorporateAdminHomeScreen();
 
         break;
@@ -484,12 +390,7 @@ class _SplashScreenState
     // NAVIGATE
     // ========================================================
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) => page,
-      ),
-    );
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => page));
   }
 
   // ==========================================================
@@ -497,13 +398,7 @@ class _SplashScreenState
   // ==========================================================
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
-    return const Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: CircularProgressIndicator()));
   }
 }

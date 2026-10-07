@@ -6,16 +6,13 @@ class AppUpdateService {
   // CHECK FOR UPDATE
   // ============================================================
 
-  static Future<void> checkForUpdate(
-    BuildContext context,
-  ) async {
+  static Future<void> checkForUpdate(BuildContext context) async {
     try {
       debugPrint('======================================');
       debugPrint('CHECKING APP UPDATE');
       debugPrint('======================================');
 
-      final AppUpdateInfo updateInfo =
-          await InAppUpdate.checkForUpdate();
+      final AppUpdateInfo updateInfo = await InAppUpdate.checkForUpdate();
 
       debugPrint(
         'Update Availability: '
@@ -43,8 +40,7 @@ class AppUpdateService {
       // NO UPDATE
       // ========================================================
 
-      if (updateInfo.updateAvailability !=
-          UpdateAvailability.updateAvailable) {
+      if (updateInfo.updateAvailability != UpdateAvailability.updateAvailable) {
         debugPrint('NO UPDATE AVAILABLE');
         return;
       }
@@ -64,9 +60,7 @@ class AppUpdateService {
         barrierDismissible: false,
         builder: (dialogContext) {
           return AlertDialog(
-            title: const Text(
-              'Update Available',
-            ),
+            title: const Text('Update Available'),
             content: const Text(
               'A new version of Demo Vehicle Management '
               'is available. Please update the app to '
@@ -76,40 +70,30 @@ class AppUpdateService {
               // ================================================
               // LATER
               // ================================================
-
               TextButton(
                 onPressed: () {
                   Navigator.of(dialogContext).pop();
                 },
-                child: const Text(
-                  'Later',
-                ),
+                child: const Text('Later'),
               ),
 
               // ================================================
               // UPDATE NOW
               // ================================================
-
               ElevatedButton(
                 onPressed: () async {
                   Navigator.of(dialogContext).pop();
 
-                  await _startUpdate(
-                    updateInfo,
-                  );
+                  await _startUpdate(updateInfo);
                 },
-                child: const Text(
-                  'Update Now',
-                ),
+                child: const Text('Update Now'),
               ),
             ],
           );
         },
       );
     } catch (e) {
-      debugPrint(
-        'APP UPDATE ERROR: $e',
-      );
+      debugPrint('APP UPDATE ERROR: $e');
     }
   }
 
@@ -117,18 +101,14 @@ class AppUpdateService {
   // START UPDATE
   // ============================================================
 
-  static Future<void> _startUpdate(
-    AppUpdateInfo updateInfo,
-  ) async {
+  static Future<void> _startUpdate(AppUpdateInfo updateInfo) async {
     try {
       // ========================================================
       // IMMEDIATE UPDATE
       // ========================================================
 
       if (updateInfo.immediateUpdateAllowed) {
-        debugPrint(
-          'STARTING IMMEDIATE UPDATE',
-        );
+        debugPrint('STARTING IMMEDIATE UPDATE');
 
         await InAppUpdate.performImmediateUpdate();
 
@@ -140,22 +120,16 @@ class AppUpdateService {
       // ========================================================
 
       if (updateInfo.flexibleUpdateAllowed) {
-        debugPrint(
-          'STARTING FLEXIBLE UPDATE',
-        );
+        debugPrint('STARTING FLEXIBLE UPDATE');
 
         await InAppUpdate.startFlexibleUpdate();
 
         return;
       }
 
-      debugPrint(
-        'NO UPDATE METHOD ALLOWED',
-      );
+      debugPrint('NO UPDATE METHOD ALLOWED');
     } catch (e) {
-      debugPrint(
-        'UPDATE INSTALL ERROR: $e',
-      );
+      debugPrint('UPDATE INSTALL ERROR: $e');
     }
   }
 }

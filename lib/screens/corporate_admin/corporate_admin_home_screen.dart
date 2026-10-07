@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dashboard_page.dart';
 import 'approvals_page.dart';
 import 'alerts_page.dart';
+
 class CorporateAdminHomeScreen extends StatefulWidget {
   const CorporateAdminHomeScreen({super.key});
 
@@ -11,7 +12,6 @@ class CorporateAdminHomeScreen extends StatefulWidget {
 }
 
 class _CorporateAdminHomeScreenState extends State<CorporateAdminHomeScreen> {
-
   int currentIndex = 0;
 
   final List<Widget> pages = const [
@@ -23,20 +23,18 @@ class _CorporateAdminHomeScreenState extends State<CorporateAdminHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: pages[currentIndex],
 
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: currentIndex,
 
-        onTap: (index){
+        onTap: (index) {
           setState(() {
-            currentIndex=index;
+            currentIndex = index;
           });
         },
 
         items: const [
-
           BottomNavigationBarItem(
             icon: Icon(Icons.dashboard_outlined),
             label: "Stats",
@@ -51,7 +49,6 @@ class _CorporateAdminHomeScreenState extends State<CorporateAdminHomeScreen> {
             icon: Icon(Icons.notifications_none),
             label: "Alerts",
           ),
-
         ],
       ),
     );

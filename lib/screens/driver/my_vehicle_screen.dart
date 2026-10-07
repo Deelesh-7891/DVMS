@@ -7,7 +7,7 @@ class MyVehicleScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xffEEF2F7),
-       appBar: AppBar(
+      appBar: AppBar(
         backgroundColor: const Color(0xff2457B3),
         elevation: 0,
         titleSpacing: 0,
@@ -15,25 +15,18 @@ class MyVehicleScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-             "My Vehicle",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 22,
-              ),
+              "My Vehicle",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
             ),
             SizedBox(height: 4),
-            Text(
-              "Currently assigned",
-              style: TextStyle(fontSize: 14),
-            ),
+            Text("Currently assigned", style: TextStyle(fontSize: 14)),
           ],
         ),
       ),
       body: Column(
         children: [
-     
           //================ HEADER =================
-              
+
           // Container(
           //   width: double.infinity,
           //   padding: const EdgeInsets.fromLTRB(20, 50, 20, 20),
@@ -75,31 +68,24 @@ class MyVehicleScreen extends StatelessWidget {
           //     ],
           //   ),
           // ),
-
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
                 children: [
-
                   //================ VEHICLE CARD =================
-
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(18),
                       gradient: const LinearGradient(
-                        colors: [
-                          Color(0xff2F66C6),
-                          Color(0xff4A86E8),
-                        ],
+                        colors: [Color(0xff2F66C6), Color(0xff4A86E8)],
                       ),
                     ),
                     child: const Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-
                         Text(
                           "TATA HARRIER · XZA",
                           style: TextStyle(
@@ -123,10 +109,7 @@ class MyVehicleScreen extends StatelessWidget {
 
                         Text(
                           "1,180 km · Jaipur Branch",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                          ),
+                          style: TextStyle(color: Colors.white, fontSize: 18),
                         ),
                       ],
                     ),
@@ -135,7 +118,6 @@ class MyVehicleScreen extends StatelessWidget {
                   const SizedBox(height: 18),
 
                   //================ QR CARD =================
-
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(25),
@@ -143,15 +125,11 @@ class MyVehicleScreen extends StatelessWidget {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(18),
                       boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.shade300,
-                          blurRadius: 8,
-                        ),
+                        BoxShadow(color: Colors.grey.shade300, blurRadius: 8),
                       ],
                     ),
                     child: Column(
                       children: [
-
                         const Icon(
                           Icons.qr_code_2,
                           size: 120,
@@ -174,21 +152,16 @@ class MyVehicleScreen extends StatelessWidget {
                   const SizedBox(height: 18),
 
                   //================ DETAILS =================
-
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(18),
                       boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.shade300,
-                          blurRadius: 8,
-                        ),
+                        BoxShadow(color: Colors.grey.shade300, blurRadius: 8),
                       ],
                     ),
                     child: Column(
                       children: [
-
                         vehicleTile(
                           Icons.shield_outlined,
                           Colors.blue,
@@ -222,19 +195,17 @@ class MyVehicleScreen extends StatelessWidget {
           ),
         ],
       ),
-
     );
   }
 
   Widget vehicleTile(
-      IconData icon,
-      Color color,
-      String title,
-      String subtitle,
-      ) {
+    IconData icon,
+    Color color,
+    String title,
+    String subtitle,
+  ) {
     return ListTile(
-      contentPadding:
-          const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
 
       leading: Container(
         width: 48,
@@ -243,26 +214,15 @@ class MyVehicleScreen extends StatelessWidget {
           color: const Color(0xffEEF4FF),
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Icon(
-          icon,
-          color: color,
-        ),
+        child: Icon(icon, color: color),
       ),
 
       title: Text(
         title,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 18,
-        ),
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
       ),
 
-      subtitle: Text(
-        subtitle,
-        style: const TextStyle(
-          color: Colors.grey,
-        ),
-      ),
+      subtitle: Text(subtitle, style: const TextStyle(color: Colors.grey)),
     );
   }
 }

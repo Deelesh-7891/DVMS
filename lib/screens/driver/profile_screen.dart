@@ -9,8 +9,7 @@ class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() =>
-      _ProfileScreenState();
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
@@ -49,44 +48,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // ============================================================
 
   Future<void> loadUser() async {
-    final prefs =
-        await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
 
     if (!mounted) return;
 
     setState(() {
-      userId =
-          prefs.getInt("userId") ?? 0;
+      userId = prefs.getInt("userId") ?? 0;
 
-      name =
-          prefs.getString("name") ?? "Driver";
+      name = prefs.getString("fullName") ?? "Driver";
 
-      phone =
-          prefs.getString("phone") ?? "";
+      phone = prefs.getString("phone") ?? "";
 
-      email =
-          prefs.getString("email") ?? "";
+      email = prefs.getString("email") ?? "";
 
-      role =
-          prefs.getString("role") ?? "";
+      role = prefs.getString("role") ?? "";
 
-      roleId =
-          prefs.getInt("roleId") ?? 0;
+      roleId = prefs.getInt("roleId") ?? 0;
 
-      branchId =
-          prefs.getInt("branchId") ?? 0;
+      branchId = prefs.getInt("branchId") ?? 0;
 
-      stateId =
-          prefs.getInt("stateId") ?? 0;
+      stateId = prefs.getInt("stateId") ?? 0;
 
-      stateName =
-          prefs.getString("stateName") ?? "";
+      stateName = prefs.getString("stateName") ?? "";
 
-      cityId =
-          prefs.getInt("cityId") ?? 0;
+      cityId = prefs.getInt("cityId") ?? 0;
 
-      cityName =
-          prefs.getString("cityName") ?? "";
+      cityName = prefs.getString("cityName") ?? "";
 
       isLoading = false;
     });
@@ -118,17 +105,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       return "D";
     }
 
-    final List<String> parts =
-        name.trim().split(" ");
+    final List<String> parts = name.trim().split(" ");
 
     if (parts.length == 1) {
       return parts.first[0].toUpperCase();
     }
 
-    return (
-      parts.first[0] +
-      parts.last[0]
-    ).toUpperCase();
+    return (parts.first[0] + parts.last[0]).toUpperCase();
   }
 
   // ============================================================
@@ -136,8 +119,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // ============================================================
 
   Future<void> logout() async {
-    final prefs =
-        await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
 
     await DriverTracker.instance.stop();
 
@@ -147,10 +129,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(
-        builder: (_) =>
-            const DriverHomeScreen(),
-      ),
+      MaterialPageRoute(builder: (_) => const DriverHomeScreen()),
       (route) => false,
     );
   }
@@ -162,85 +141,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          const Color(0xffEEF2F7),
+      backgroundColor: const Color(0xffEEF2F7),
 
       // ========================================================
       // BODY
       // ========================================================
-
       body: isLoading
-          ? const Center(
-              child:
-                  CircularProgressIndicator(),
-            )
+          ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
-
                 // ==================================================
                 // HEADER
                 // ==================================================
-
                 Container(
-                  width:
-                      double.infinity,
+                  width: double.infinity,
 
-                  padding:
-                      const EdgeInsets.fromLTRB(
-                    20,
-                    50,
-                    20,
-                    20,
-                  ),
+                  padding: const EdgeInsets.fromLTRB(20, 50, 20, 20),
 
-                  color:
-                      const Color(0xff2457B3),
+                  color: const Color(0xff2457B3),
 
                   child: const Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
 
                     children: [
-
                       Row(
                         children: [
+                          Icon(Icons.person, color: Colors.white),
 
-                          Icon(
-                            Icons.person,
-                            color:
-                                Colors.white,
-                          ),
-
-                          SizedBox(
-                            width: 8,
-                          ),
+                          SizedBox(width: 8),
 
                           Text(
                             "Profile",
-                            style:
-                                TextStyle(
-                              color:
-                                  Colors.white,
-                              fontWeight:
-                                  FontWeight.bold,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
                               fontSize: 28,
                             ),
                           ),
                         ],
                       ),
 
-                      SizedBox(
-                        height: 5,
-                      ),
+                      SizedBox(height: 5),
 
                       Text(
                         "Account & Location Details",
-                        style:
-                            TextStyle(
-                          color:
-                              Colors.white70,
-                          fontSize: 15,
-                        ),
+                        style: TextStyle(color: Colors.white70, fontSize: 15),
                       ),
                     ],
                   ),
@@ -249,423 +194,269 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 // ==================================================
                 // CONTENT
                 // ==================================================
-
                 Expanded(
-                  child:
-                      SingleChildScrollView(
-                    padding:
-                        const EdgeInsets.all(
-                      16,
-                    ),
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16),
 
                     child: Column(
                       children: [
-
                         // ==========================================
                         // PROFILE CARD
                         // ==========================================
-
                         Container(
-                          width:
-                              double.infinity,
+                          width: double.infinity,
 
-                          padding:
-                              const EdgeInsets.all(
-                            20,
-                          ),
+                          padding: const EdgeInsets.all(20),
 
-                          decoration:
-                              BoxDecoration(
-                            color:
-                                Colors.white,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
 
-                            borderRadius:
-                                BorderRadius
-                                    .circular(
-                              18,
-                            ),
+                            borderRadius: BorderRadius.circular(18),
 
                             boxShadow: [
                               BoxShadow(
-                                color:
-                                    Colors.grey
-                                        .shade300,
+                                color: Colors.grey.shade300,
 
-                                blurRadius:
-                                    8,
+                                blurRadius: 8,
 
-                                offset:
-                                    const Offset(
-                                  0,
-                                  3,
-                                ),
+                                offset: const Offset(0, 3),
                               ),
                             ],
                           ),
 
-                          child:
-                              Column(
+                          child: Column(
                             children: [
-
                               // Avatar
                               CircleAvatar(
                                 radius: 40,
 
-                                backgroundColor:
-                                    const Color(
-                                  0xff2457B3,
-                                ),
+                                backgroundColor: const Color(0xff2457B3),
 
                                 child: Text(
                                   getInitials(),
 
-                                  style:
-                                      const TextStyle(
-                                    color:
-                                        Colors.white,
+                                  style: const TextStyle(
+                                    color: Colors.white,
 
-                                    fontSize:
-                                        28,
+                                    fontSize: 28,
 
-                                    fontWeight:
-                                        FontWeight
-                                            .bold,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               ),
 
-                              const SizedBox(
-                                height: 15,
-                              ),
+                              const SizedBox(height: 15),
 
                               // Name
                               Text(
                                 name,
 
-                                textAlign:
-                                    TextAlign
-                                        .center,
+                                textAlign: TextAlign.center,
 
-                                style:
-                                    const TextStyle(
+                                style: const TextStyle(
                                   fontSize: 24,
-                                  fontWeight:
-                                      FontWeight
-                                          .bold,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
 
-                              const SizedBox(
-                                height: 6,
-                              ),
+                              const SizedBox(height: 6),
 
                               // Role + State
                               Text(
-                                role.isEmpty
-                                    ? stateName
-                                    : "$role • $stateName",
+                                role.isEmpty ? stateName : "$role • $stateName",
 
-                                textAlign:
-                                    TextAlign
-                                        .center,
+                                textAlign: TextAlign.center,
 
-                                style:
-                                    const TextStyle(
-                                  color:
-                                      Colors.grey,
+                                style: const TextStyle(
+                                  color: Colors.grey,
 
-                                  fontSize:
-                                      16,
+                                  fontSize: 16,
                                 ),
                               ),
                             ],
                           ),
                         ),
 
-                        const SizedBox(
-                          height: 20,
-                        ),
+                        const SizedBox(height: 20),
 
                         // ==========================================
                         // BASIC DETAILS
                         // ==========================================
+                        _buildSectionTitle("Personal Details"),
 
-                        _buildSectionTitle(
-                          "Personal Details",
-                        ),
-
-                        const SizedBox(
-                          height: 10,
-                        ),
+                        const SizedBox(height: 10),
 
                         Container(
-                          decoration:
-                              BoxDecoration(
-                            color:
-                                Colors.white,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
 
-                            borderRadius:
-                                BorderRadius
-                                    .circular(
-                              18,
-                            ),
+                            borderRadius: BorderRadius.circular(18),
 
                             boxShadow: [
                               BoxShadow(
-                                color:
-                                    Colors.grey
-                                        .shade300,
+                                color: Colors.grey.shade300,
 
-                                blurRadius:
-                                    8,
+                                blurRadius: 8,
 
-                                offset:
-                                    const Offset(
-                                  0,
-                                  3,
-                                ),
+                                offset: const Offset(0, 3),
                               ),
                             ],
                           ),
 
-                          child:
-                              Column(
+                          child: Column(
                             children: [
-
                               profileTile(
                                 Icons.email,
                                 Colors.blue,
                                 "Email",
-                                email.isEmpty
-                                    ? "-"
-                                    : email,
+                                email.isEmpty ? "-" : email,
                               ),
 
-                              const Divider(
-                                height: 1,
-                              ),
+                              const Divider(height: 1),
 
                               profileTile(
                                 Icons.phone,
                                 Colors.red,
                                 "Phone",
-                                phone.isEmpty
-                                    ? "-"
-                                    : phone,
+                                phone.isEmpty ? "-" : phone,
                               ),
 
-                              const Divider(
-                                height: 1,
-                              ),
+                              const Divider(height: 1),
 
                               profileTile(
                                 Icons.badge,
                                 Colors.deepPurple,
                                 "Role",
-                                role.isEmpty
-                                    ? "-"
-                                    : role,
+                                role.isEmpty ? "-" : role,
                               ),
                             ],
                           ),
                         ),
 
-                        const SizedBox(
-                          height: 20,
-                        ),
+                        const SizedBox(height: 20),
 
                         // ==========================================
                         // LOCATION DETAILS
                         // ==========================================
+                        _buildSectionTitle("Location Details"),
 
-                        _buildSectionTitle(
-                          "Location Details",
-                        ),
-
-                        const SizedBox(
-                          height: 10,
-                        ),
+                        const SizedBox(height: 10),
 
                         Container(
-                          decoration:
-                              BoxDecoration(
-                            color:
-                                Colors.white,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
 
-                            borderRadius:
-                                BorderRadius
-                                    .circular(
-                              18,
-                            ),
+                            borderRadius: BorderRadius.circular(18),
 
                             boxShadow: [
                               BoxShadow(
-                                color:
-                                    Colors.grey
-                                        .shade300,
+                                color: Colors.grey.shade300,
 
-                                blurRadius:
-                                    8,
+                                blurRadius: 8,
 
-                                offset:
-                                    const Offset(
-                                  0,
-                                  3,
-                                ),
+                                offset: const Offset(0, 3),
                               ),
                             ],
                           ),
 
-                          child:
-                              Column(
+                          child: Column(
                             children: [
-
                               profileTile(
                                 Icons.map,
                                 Colors.green,
                                 "State",
-                                stateName.isEmpty
-                                    ? "-"
-                                    : stateName,
+                                stateName.isEmpty ? "-" : stateName,
                               ),
 
-                              const Divider(
-                                height: 1,
-                              ),
+                              const Divider(height: 1),
 
                               profileTile(
                                 Icons.location_city,
                                 Colors.orange,
                                 "City",
-                                cityName.isEmpty
-                                    ? "-"
-                                    : cityName,
+                                cityName.isEmpty ? "-" : cityName,
                               ),
 
-                              const Divider(
-                                height: 1,
-                              ),
+                              const Divider(height: 1),
 
                               profileTile(
                                 Icons.business,
                                 Colors.blue,
                                 "Branch ID",
-                                branchId
-                                    .toString(),
+                                branchId.toString(),
                               ),
                             ],
                           ),
                         ),
 
-                        const SizedBox(
-                          height: 20,
-                        ),
+                        const SizedBox(height: 20),
 
                         // ==========================================
                         // ACCOUNT DETAILS
                         // ==========================================
+                        _buildSectionTitle("Account Details"),
 
-                        _buildSectionTitle(
-                          "Account Details",
-                        ),
-
-                        const SizedBox(
-                          height: 10,
-                        ),
+                        const SizedBox(height: 10),
 
                         Container(
-                          decoration:
-                              BoxDecoration(
-                            color:
-                                Colors.white,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
 
-                            borderRadius:
-                                BorderRadius
-                                    .circular(
-                              18,
-                            ),
+                            borderRadius: BorderRadius.circular(18),
 
                             boxShadow: [
                               BoxShadow(
-                                color:
-                                    Colors.grey
-                                        .shade300,
+                                color: Colors.grey.shade300,
 
-                                blurRadius:
-                                    8,
+                                blurRadius: 8,
 
-                                offset:
-                                    const Offset(
-                                  0,
-                                  3,
-                                ),
+                                offset: const Offset(0, 3),
                               ),
                             ],
                           ),
 
-                          child:
-                              Column(
+                          child: Column(
                             children: [
-
                               profileTile(
-                                Icons
-                                    .account_circle,
+                                Icons.account_circle,
                                 Colors.indigo,
                                 "User ID",
-                                userId
-                                    .toString(),
+                                userId.toString(),
                               ),
 
-                              const Divider(
-                                height: 1,
-                              ),
+                              const Divider(height: 1),
 
                               profileTile(
-                                Icons
-                                    .admin_panel_settings,
+                                Icons.admin_panel_settings,
                                 Colors.purple,
                                 "Role ID",
-                                roleId
-                                    .toString(),
+                                roleId.toString(),
                               ),
 
-                              const Divider(
-                                height: 1,
-                              ),
+                              const Divider(height: 1),
 
                               profileTile(
                                 Icons.map_outlined,
                                 Colors.teal,
                                 "State ID",
-                                stateId
-                                    .toString(),
+                                stateId.toString(),
                               ),
 
-                              const Divider(
-                                height: 1,
-                              ),
+                              const Divider(height: 1),
 
                               profileTile(
-                                Icons
-                                    .location_city_outlined,
+                                Icons.location_city_outlined,
                                 Colors.deepOrange,
                                 "City ID",
-                                cityId
-                                    .toString(),
+                                cityId.toString(),
                               ),
                             ],
                           ),
                         ),
 
-                        const SizedBox(
-                          height: 25,
-                        ),
+                        const SizedBox(height: 25),
 
-                        
-
-                        const SizedBox(
-                          height: 20,
-                        ),
+                        const SizedBox(height: 20),
                       ],
                     ),
                   ),
@@ -676,33 +467,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
       // ==========================================================
       // BOTTOM NAVIGATION
       // ==========================================================
-
-      bottomNavigationBar:
-          BottomNavigationBar(
+      bottomNavigationBar: BottomNavigationBar(
         currentIndex: 2,
 
-        selectedItemColor:
-            const Color(
-          0xff2457B3,
-        ),
+        selectedItemColor: const Color(0xff2457B3),
 
-        unselectedItemColor:
-            Colors.grey,
+        unselectedItemColor: Colors.grey,
 
-        type:
-            BottomNavigationBarType
-                .fixed,
+        type: BottomNavigationBarType.fixed,
 
         onTap: (index) {
-
           // HOME
           if (index == 0) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                builder: (_) =>
-                    const DriverHomeScreen(),
-              ),
+              MaterialPageRoute(builder: (_) => const DriverHomeScreen()),
             );
           }
 
@@ -710,10 +489,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           if (index == 1) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                builder: (_) =>
-                    const MyBillsScreen(),
-              ),
+              MaterialPageRoute(builder: (_) => const MyBillsScreen()),
             );
           }
 
@@ -724,26 +500,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
         },
 
         items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
 
           BottomNavigationBarItem(
-            icon:
-                Icon(Icons.home),
-            label: "Home",
-          ),
-
-          BottomNavigationBarItem(
-            icon:
-                Icon(
-              Icons.receipt_long,
-            ),
+            icon: Icon(Icons.receipt_long),
             label: "Bills",
           ),
 
-          BottomNavigationBarItem(
-            icon:
-                Icon(Icons.person),
-            label: "Profile",
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
         ],
       ),
     );
@@ -753,25 +517,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // SECTION TITLE
   // ============================================================
 
-  Widget _buildSectionTitle(
-    String title,
-  ) {
+  Widget _buildSectionTitle(String title) {
     return Align(
-      alignment:
-          Alignment.centerLeft,
+      alignment: Alignment.centerLeft,
 
       child: Text(
         title,
 
-        style:
-            const TextStyle(
+        style: const TextStyle(
           fontSize: 17,
 
-          fontWeight:
-              FontWeight.bold,
+          fontWeight: FontWeight.bold,
 
-          color:
-              Color(0xff12386B),
+          color: Color(0xff12386B),
         ),
       ),
     );
@@ -788,73 +546,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
     String subtitle,
   ) {
     return ListTile(
-      contentPadding:
-          const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 8,
-      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
 
-      leading:
-          Container(
+      leading: Container(
         width: 48,
         height: 48,
 
-        decoration:
-            BoxDecoration(
-          color:
-              const Color(
-            0xffEEF4FF,
-          ),
+        decoration: BoxDecoration(
+          color: const Color(0xffEEF4FF),
 
-          borderRadius:
-              BorderRadius.circular(
-            12,
-          ),
+          borderRadius: BorderRadius.circular(12),
         ),
 
-        child:
-            Icon(
-          icon,
-          color: color,
-        ),
+        child: Icon(icon, color: color),
       ),
 
-      title:
-          Text(
+      title: Text(
         title,
 
-        style:
-            const TextStyle(
-          fontWeight:
-              FontWeight.bold,
-
-          fontSize: 16,
-        ),
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
       ),
 
-      subtitle:
-          Padding(
-        padding:
-            const EdgeInsets.only(
-          top: 3,
-        ),
+      subtitle: Padding(
+        padding: const EdgeInsets.only(top: 3),
 
-        child:
-            Text(
+        child: Text(
           subtitle,
 
           maxLines: 2,
 
-          overflow:
-              TextOverflow.ellipsis,
+          overflow: TextOverflow.ellipsis,
 
-          style:
-              const TextStyle(
-            color:
-                Colors.grey,
-
-            fontSize: 14,
-          ),
+          style: const TextStyle(color: Colors.grey, fontSize: 14),
         ),
       ),
     );

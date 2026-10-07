@@ -100,10 +100,12 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
             _serviceId(service).toLowerCase().contains(search) ||
             _vehicleNo(service).toLowerCase().contains(search);
 
-        final matchesServiceType = selectedServiceType == "All services" ||
+        final matchesServiceType =
+            selectedServiceType == "All services" ||
             _serviceType(service) == selectedServiceType;
 
-        final matchesStatus = selectedStatus == "All statuses" ||
+        final matchesStatus =
+            selectedStatus == "All statuses" ||
             _status(service) == selectedStatus;
 
         return matchesSearch && matchesServiceType && matchesStatus;
@@ -147,206 +149,210 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
         child: _loading
             ? const Center(child: CircularProgressIndicator())
             : _loadError != null
-                ? Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.error_outline,
-                              size: 48, color: Colors.red),
-                          const SizedBox(height: 12),
-                          Text(_loadError!, textAlign: TextAlign.center),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: _loadServices,
-                            child: const Text("Retry"),
+            ? Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.error_outline,
+                        size: 48,
+                        color: Colors.red,
+                      ),
+                      const SizedBox(height: 12),
+                      Text(_loadError!, textAlign: TextAlign.center),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: _loadServices,
+                        child: const Text("Retry"),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            : Padding(
+                padding: const EdgeInsets.all(8),
+                child: Column(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(18),
+                      decoration: BoxDecoration(
+                        color: const Color(0xffF1F4F8),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: const Color(0xffDCE3EC)),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 4,
+                            offset: Offset(0, 2),
                           ),
                         ],
                       ),
-                    ),
-                  )
-                : Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Column(
-                      children: [
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(18),
-                          decoration: BoxDecoration(
-                            color: const Color(0xffF1F4F8),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: const Color(0xffDCE3EC)),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Colors.black12,
-                                blurRadius: 4,
-                                offset: Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: LayoutBuilder(
-                            builder: (context, constraints) {
-                              final isSmall = width < 700;
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          final isSmall = width < 700;
 
-                              if (isSmall) {
-                                return Column(
+                          if (isSmall) {
+                            return Column(
+                              children: [
+                                searchBox(),
+                                const SizedBox(height: 10),
+                                serviceTypeDropdown(),
+                                const SizedBox(height: 10),
+                                statusDropdown(),
+                                const SizedBox(height: 10),
+                                Row(
                                   children: [
-                                    searchBox(),
-                                    const SizedBox(height: 10),
-                                    serviceTypeDropdown(),
-                                    const SizedBox(height: 10),
-                                    statusDropdown(),
-                                    const SizedBox(height: 10),
-                                    Row(
-                                      children: [
-                                        Expanded(child: filterButton()),
-                                        const SizedBox(width: 10),
-                                        Expanded(child: resetButton()),
-                                      ],
-                                    ),
+                                    Expanded(child: filterButton()),
+                                    const SizedBox(width: 10),
+                                    Expanded(child: resetButton()),
                                   ],
-                                );
-                              }
+                                ),
+                              ],
+                            );
+                          }
 
-                              return Row(
-                                children: [
-                                  SizedBox(width: 260, child: searchBox()),
-                                  const SizedBox(width: 12),
-                                  SizedBox(
-                                      width: 180,
-                                      child: serviceTypeDropdown()),
-                                  const SizedBox(width: 12),
-                                  SizedBox(width: 160, child: statusDropdown()),
-                                  const SizedBox(width: 12),
-                                  filterButton(),
-                                  const SizedBox(width: 12),
-                                  resetButton(),
-                                ],
-                              );
-                            },
-                          ),
+                          return Row(
+                            children: [
+                              SizedBox(width: 260, child: searchBox()),
+                              const SizedBox(width: 12),
+                              SizedBox(
+                                width: 180,
+                                child: serviceTypeDropdown(),
+                              ),
+                              const SizedBox(width: 12),
+                              SizedBox(width: 160, child: statusDropdown()),
+                              const SizedBox(width: 12),
+                              filterButton(),
+                              const SizedBox(width: 12),
+                              resetButton(),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: const Color(0xffDCE3EC)),
                         ),
-                        const SizedBox(height: 18),
-                        Expanded(
-                          child: Container(
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(16),
-                              border:
-                                  Border.all(color: const Color(0xffDCE3EC)),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(16),
-                              child: filteredServices.isEmpty
-                                  ? const Center(
-                                      child: Padding(
-                                        padding: EdgeInsets.all(24),
-                                        child: Text(
-                                          "No service records found",
-                                          style:
-                                              TextStyle(color: Colors.grey),
-                                        ),
-                                      ),
-                                    )
-                                  : SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: SingleChildScrollView(
-                                  child: DataTable(
-                                    headingRowHeight: 48,
-                                    dataRowMinHeight: 66,
-                                    dataRowMaxHeight: 66,
-                                    columnSpacing: 30,
-                                    headingRowColor: WidgetStateProperty.all(
-                                      const Color(0xffF8FAFD),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: filteredServices.isEmpty
+                              ? const Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(24),
+                                    child: Text(
+                                      "No service records found",
+                                      style: TextStyle(color: Colors.grey),
                                     ),
-                                    columns: const [
-                                      DataColumn(label: Text("SERVICE ID")),
-                                      DataColumn(label: Text("VEHICLE NO")),
-                                      DataColumn(label: Text("DATE")),
-                                      DataColumn(label: Text("TYPE")),
-                                      DataColumn(label: Text("INVOICE NO")),
-                                      DataColumn(label: Text("VENDOR")),
-                                      DataColumn(label: Text("AMOUNT")),
-                                      DataColumn(label: Text("STATUS")),
-                                      DataColumn(label: Text("PHOTO")),
-                                      DataColumn(label: Text("VIEW")),
-                                    ],
-                                    rows: filteredServices.map((service) {
-                                      return DataRow(
-                                        cells: [
-                                          DataCell(
-                                            Text(
-                                              _serviceId(service),
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Color(0xff172033),
+                                  ),
+                                )
+                              : SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: SingleChildScrollView(
+                                    child: DataTable(
+                                      headingRowHeight: 48,
+                                      dataRowMinHeight: 66,
+                                      dataRowMaxHeight: 66,
+                                      columnSpacing: 30,
+                                      headingRowColor: WidgetStateProperty.all(
+                                        const Color(0xffF8FAFD),
+                                      ),
+                                      columns: const [
+                                        DataColumn(label: Text("SERVICE ID")),
+                                        DataColumn(label: Text("VEHICLE NO")),
+                                        DataColumn(label: Text("DATE")),
+                                        DataColumn(label: Text("TYPE")),
+                                        DataColumn(label: Text("INVOICE NO")),
+                                        DataColumn(label: Text("VENDOR")),
+                                        DataColumn(label: Text("AMOUNT")),
+                                        DataColumn(label: Text("STATUS")),
+                                        DataColumn(label: Text("PHOTO")),
+                                        DataColumn(label: Text("VIEW")),
+                                      ],
+                                      rows: filteredServices.map((service) {
+                                        return DataRow(
+                                          cells: [
+                                            DataCell(
+                                              Text(
+                                                _serviceId(service),
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Color(0xff172033),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          DataCell(
-                                            Text(
-                                              _vehicleNo(service),
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.w600,
+                                            DataCell(
+                                              Text(
+                                                _vehicleNo(service),
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          DataCell(Text(_date(service))),
-                                          DataCell(
-                                              Text(_serviceType(service))),
-                                          DataCell(
-                                              Text(_invoiceNo(service))),
-                                          DataCell(
-                                              Text(_serviceCenter(service))),
-                                          DataCell(
-                                            Text(
-                                              _amount(service),
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Color(0xff172033),
+                                            DataCell(Text(_date(service))),
+                                            DataCell(
+                                              Text(_serviceType(service)),
+                                            ),
+                                            DataCell(Text(_invoiceNo(service))),
+                                            DataCell(
+                                              Text(_serviceCenter(service)),
+                                            ),
+                                            DataCell(
+                                              Text(
+                                                _amount(service),
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Color(0xff172033),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          DataCell(
-                                              statusBadge(_status(service))),
-                                          DataCell(
-                                            PhotoThumbnail(
-                                              photoPath: _photoPath(service),
+                                            DataCell(
+                                              statusBadge(_status(service)),
                                             ),
-                                          ),
-                                          DataCell(
-                                            outlineButton(
-                                              "View",
-                                              icon: Icons.visibility,
-                                              onPressed: () =>
-                                                  viewService(service),
+                                            DataCell(
+                                              PhotoThumbnail(
+                                                photoPath: _photoPath(service),
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      );
-                                    }).toList(),
+                                            DataCell(
+                                              outlineButton(
+                                                "View",
+                                                icon: Icons.visibility,
+                                                onPressed: () =>
+                                                    viewService(service),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      }).toList(),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                          ),
                         ),
-                        const SizedBox(height: 8),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "${filteredServices.length} service records found",
-                            style: const TextStyle(
-                              color: Colors.grey,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 8),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "${filteredServices.length} service records found",
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
       ),
     );
   }
@@ -385,8 +391,9 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
     ];
 
     return DropdownButtonFormField<String>(
-      value:
-          types.contains(selectedServiceType) ? selectedServiceType : "All services",
+      value: types.contains(selectedServiceType)
+          ? selectedServiceType
+          : "All services",
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,
@@ -410,8 +417,9 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
     ];
 
     return DropdownButtonFormField<String>(
-      value:
-          statuses.contains(selectedStatus) ? selectedStatus : "All statuses",
+      value: statuses.contains(selectedStatus)
+          ? selectedStatus
+          : "All statuses",
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,
@@ -437,8 +445,10 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
-      child:
-          const Text("Filter", style: TextStyle(fontWeight: FontWeight.bold)),
+      child: const Text(
+        "Filter",
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
     );
   }
 
@@ -451,8 +461,7 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
         side: const BorderSide(color: Color(0xffDCE3EC)),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
-      child:
-          const Text("Reset", style: TextStyle(fontWeight: FontWeight.bold)),
+      child: const Text("Reset", style: TextStyle(fontWeight: FontWeight.bold)),
     );
   }
 
@@ -474,15 +483,16 @@ class _ServiceListScreenState extends State<ServiceListScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
       decoration: BoxDecoration(
-          color: background, borderRadius: BorderRadius.circular(20)),
+        color: background,
+        borderRadius: BorderRadius.circular(20),
+      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
             width: 8,
             height: 8,
-            decoration:
-                BoxDecoration(color: textColor, shape: BoxShape.circle),
+            decoration: BoxDecoration(color: textColor, shape: BoxShape.circle),
           ),
           const SizedBox(width: 6),
           Text(

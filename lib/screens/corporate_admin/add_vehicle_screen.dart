@@ -4,8 +4,7 @@ class AddVehicleScreen extends StatefulWidget {
   const AddVehicleScreen({super.key});
 
   @override
-  State<AddVehicleScreen> createState() =>
-      _AddVehicleScreenState();
+  State<AddVehicleScreen> createState() => _AddVehicleScreenState();
 }
 
 class _AddVehicleScreenState extends State<AddVehicleScreen> {
@@ -28,9 +27,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   void saveVehicle() {
     if (registrationController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Please enter Registration No"),
-        ),
+        const SnackBar(content: Text("Please enter Registration No")),
       );
       return;
     }
@@ -75,15 +72,11 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
             fillColor: Colors.white,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
-                color: Color(0xffdbe3ef),
-              ),
+              borderSide: const BorderSide(color: Color(0xffdbe3ef)),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
-                color: Color(0xffdbe3ef),
-              ),
+              borderSide: const BorderSide(color: Color(0xffdbe3ef)),
             ),
           ),
         ),
@@ -101,9 +94,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
         foregroundColor: Colors.white,
         title: const Text(
           "Add Vehicle",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
 
@@ -111,22 +102,17 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
         padding: const EdgeInsets.all(20),
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: 900,
-            ),
+            constraints: const BoxConstraints(maxWidth: 900),
             child: Container(
               padding: const EdgeInsets.all(22),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(18),
-                border: Border.all(
-                  color: const Color(0xffdce3ec),
-                ),
+                border: Border.all(color: const Color(0xffdce3ec)),
               ),
 
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
                     "Vehicle Information",
@@ -141,17 +127,14 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
 
                   const Text(
                     "Enter vehicle details",
-                    style: TextStyle(
-                      color: Color(0xff64748b),
-                    ),
+                    style: TextStyle(color: Color(0xff64748b)),
                   ),
 
                   const SizedBox(height: 25),
 
                   field(
                     label: "Registration No",
-                    controller:
-                        registrationController,
+                    controller: registrationController,
                     hint: "Enter registration number",
                   ),
 
@@ -162,8 +145,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                       Expanded(
                         child: field(
                           label: "Model",
-                          controller:
-                              modelController,
+                          controller: modelController,
                           hint: "Enter model",
                         ),
                       ),
@@ -171,8 +153,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                       Expanded(
                         child: field(
                           label: "Variant",
-                          controller:
-                              variantController,
+                          controller: variantController,
                           hint: "Enter variant",
                         ),
                       ),
@@ -186,8 +167,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                       Expanded(
                         child: field(
                           label: "Chassis No",
-                          controller:
-                              chassisController,
+                          controller: chassisController,
                           hint: "Enter chassis number",
                         ),
                       ),
@@ -195,8 +175,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                       Expanded(
                         child: field(
                           label: "Engine No",
-                          controller:
-                              engineController,
+                          controller: engineController,
                           hint: "Enter engine number",
                         ),
                       ),
@@ -206,8 +185,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                   const SizedBox(height: 30),
 
                   Row(
-                    mainAxisAlignment:
-                        MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       OutlinedButton(
                         onPressed: () {
@@ -220,23 +198,12 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
 
                       ElevatedButton.icon(
                         onPressed: saveVehicle,
-                        icon: const Icon(
-                          Icons.save,
-                        ),
-                        label: const Text(
-                          "Save Vehicle",
-                        ),
-                        style:
-                            ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color(
-                            0xff2458A6,
-                          ),
-                          foregroundColor:
-                              Colors.white,
-                          padding:
-                              const EdgeInsets
-                                  .symmetric(
+                        icon: const Icon(Icons.save),
+                        label: const Text("Save Vehicle"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xff2458A6),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
                             horizontal: 22,
                             vertical: 14,
                           ),

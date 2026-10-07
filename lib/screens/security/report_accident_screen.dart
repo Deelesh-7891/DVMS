@@ -12,8 +12,7 @@ class ReportAccidentScreen extends StatefulWidget {
   const ReportAccidentScreen({super.key});
 
   @override
-  State<ReportAccidentScreen> createState() =>
-      _ReportAccidentScreenState();
+  State<ReportAccidentScreen> createState() => _ReportAccidentScreenState();
 }
 
 class _ReportAccidentScreenState extends State<ReportAccidentScreen> {
@@ -143,10 +142,8 @@ class _ReportAccidentScreenState extends State<ReportAccidentScreen> {
       if (decoded is List) {
         rawData = decoded;
       } else if (decoded is Map) {
-        rawData = decoded["data"] ??
-            decoded["accidents"] ??
-            decoded["result"] ??
-            [];
+        rawData =
+            decoded["data"] ?? decoded["accidents"] ?? decoded["result"] ?? [];
       }
 
       final result = <Map<String, dynamic>>[];
@@ -172,9 +169,9 @@ class _ReportAccidentScreenState extends State<ReportAccidentScreen> {
 
       setState(() => _loadingAccidents = false);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Unable to load accidents: $e")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Unable to load accidents: $e")));
     }
   }
 
@@ -216,10 +213,8 @@ class _ReportAccidentScreenState extends State<ReportAccidentScreen> {
       if (decoded is List) {
         rawData = decoded;
       } else if (decoded is Map) {
-        rawData = decoded["data"] ??
-            decoded["vehicles"] ??
-            decoded["result"] ??
-            [];
+        rawData =
+            decoded["data"] ?? decoded["vehicles"] ?? decoded["result"] ?? [];
       }
 
       final result = <Map<String, dynamic>>[];
@@ -264,7 +259,8 @@ class _ReportAccidentScreenState extends State<ReportAccidentScreen> {
   }
 
   int? _extractVehicleId(Map<String, dynamic> vehicle) {
-    final value = vehicle["VehicleId"] ??
+    final value =
+        vehicle["VehicleId"] ??
         vehicle["vehicleId"] ??
         vehicle["vehicleID"] ??
         vehicle["vehicle_id"] ??
@@ -332,11 +328,11 @@ class _ReportAccidentScreenState extends State<ReportAccidentScreen> {
                   filteredVehicles = List.from(_vehicles);
                 } else {
                   filteredVehicles = _vehicles.where((vehicle) {
-                    final id =
-                        (_extractVehicleId(vehicle)?.toString() ?? "")
-                            .toLowerCase();
-                    final registration =
-                        _extractRegistration(vehicle).toLowerCase();
+                    final id = (_extractVehicleId(vehicle)?.toString() ?? "")
+                        .toLowerCase();
+                    final registration = _extractRegistration(
+                      vehicle,
+                    ).toLowerCase();
                     final model = _extractModel(vehicle).toLowerCase();
                     final label = _vehicleLabel(vehicle).toLowerCase();
 
@@ -412,10 +408,7 @@ class _ReportAccidentScreenState extends State<ReportAccidentScreen> {
                                       ),
                                     ),
                                     onTap: () {
-                                      Navigator.pop(
-                                        dialogContext,
-                                        vehicle,
-                                      );
+                                      Navigator.pop(dialogContext, vehicle);
                                     },
                                   ),
                                 );
@@ -462,11 +455,7 @@ class _ReportAccidentScreenState extends State<ReportAccidentScreen> {
       final bytes = await photo.readAsBytes();
 
       request.files.add(
-        http.MultipartFile.fromBytes(
-          "file",
-          bytes,
-          filename: photo.name,
-        ),
+        http.MultipartFile.fromBytes("file", bytes, filename: photo.name),
       );
     } else {
       request.files.add(
@@ -486,15 +475,14 @@ class _ReportAccidentScreenState extends State<ReportAccidentScreen> {
     debugPrint("PHOTO UPLOAD STATUS: ${response.statusCode}");
     debugPrint("PHOTO UPLOAD RESPONSE: ${response.body}");
 
-    if (response.statusCode != 200 &&
-        response.statusCode != 201) {
+    if (response.statusCode != 200 && response.statusCode != 201) {
       String message = response.body;
 
       try {
         final error = jsonDecode(response.body);
         if (error is Map) {
-          message =
-              (error["error"] ?? error["message"] ?? response.body).toString();
+          message = (error["error"] ?? error["message"] ?? response.body)
+              .toString();
         }
       } catch (_) {}
 
@@ -504,9 +492,8 @@ class _ReportAccidentScreenState extends State<ReportAccidentScreen> {
     final decoded = jsonDecode(response.body);
 
     if (decoded is Map) {
-      final id = decoded["attachmentId"] ??
-          decoded["AttachmentId"] ??
-          decoded["id"];
+      final id =
+          decoded["attachmentId"] ?? decoded["AttachmentId"] ?? decoded["id"];
 
       return int.tryParse(id?.toString() ?? "");
     }
@@ -551,15 +538,14 @@ class _ReportAccidentScreenState extends State<ReportAccidentScreen> {
     debugPrint("ACCIDENT SAVE STATUS: ${response.statusCode}");
     debugPrint("ACCIDENT SAVE RESPONSE: ${response.body}");
 
-    if (response.statusCode != 200 &&
-        response.statusCode != 201) {
+    if (response.statusCode != 200 && response.statusCode != 201) {
       String message = response.body;
 
       try {
         final error = jsonDecode(response.body);
         if (error is Map) {
-          message =
-              (error["error"] ?? error["message"] ?? response.body).toString();
+          message = (error["error"] ?? error["message"] ?? response.body)
+              .toString();
         }
       } catch (_) {}
 
@@ -584,19 +570,19 @@ class _ReportAccidentScreenState extends State<ReportAccidentScreen> {
     if (q.isEmpty) return _accidents;
 
     return _accidents.where((item) {
-      final vehicle = (item["RegistrationNo"] ??
-              item["vehicle"] ??
-              item["registrationNo"] ??
-              "")
+      final vehicle =
+          (item["RegistrationNo"] ??
+                  item["vehicle"] ??
+                  item["registrationNo"] ??
+                  "")
+              .toString()
+              .toLowerCase();
+
+      final model = (item["Model"] ?? item["model"] ?? "")
           .toString()
           .toLowerCase();
 
-      final model =
-          (item["Model"] ?? item["model"] ?? "").toString().toLowerCase();
-
-      final description = (item["Description"] ??
-              item["description"] ??
-              "")
+      final description = (item["Description"] ?? item["description"] ?? "")
           .toString()
           .toLowerCase();
 
@@ -659,9 +645,9 @@ class _ReportAccidentScreenState extends State<ReportAccidentScreen> {
               } catch (e) {
                 if (!context.mounted) return;
 
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text("Photo error: $e")),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text("Photo error: $e")));
               }
             }
 
@@ -736,12 +722,9 @@ class _ReportAccidentScreenState extends State<ReportAccidentScreen> {
                   final text = result.recognizedWords.trim();
 
                   if (text.isNotEmpty) {
-                    descriptionController.value =
-                        TextEditingValue(
+                    descriptionController.value = TextEditingValue(
                       text: text,
-                      selection: TextSelection.collapsed(
-                        offset: text.length,
-                      ),
+                      selection: TextSelection.collapsed(offset: text.length),
                     );
                   }
 
@@ -759,16 +742,12 @@ class _ReportAccidentScreenState extends State<ReportAccidentScreen> {
 
               // Manual mode: API still requires an EXISTING VehicleId.
               if (manualVehicle) {
-                vehicleId = int.tryParse(
-                  manualVehicleIdController.text.trim(),
-                );
+                vehicleId = int.tryParse(manualVehicleIdController.text.trim());
 
                 if (vehicleId == null || vehicleId <= 0) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text(
-                        "Enter a valid existing Vehicle ID.",
-                      ),
+                      content: Text("Enter a valid existing Vehicle ID."),
                     ),
                   );
                   return;
@@ -786,18 +765,14 @@ class _ReportAccidentScreenState extends State<ReportAccidentScreen> {
 
               if (vehicleId == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Please select vehicle."),
-                  ),
+                  const SnackBar(content: Text("Please select vehicle.")),
                 );
                 return;
               }
 
               if (descriptionController.text.trim().isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Please enter description."),
-                  ),
+                  const SnackBar(content: Text("Please enter description.")),
                 );
                 return;
               }
@@ -857,9 +832,7 @@ class _ReportAccidentScreenState extends State<ReportAccidentScreen> {
                 });
 
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text("Accident save failed: $e"),
-                  ),
+                  SnackBar(content: Text("Accident save failed: $e")),
                 );
               }
             }
@@ -880,12 +853,7 @@ class _ReportAccidentScreenState extends State<ReportAccidentScreen> {
                       // HEADER
                       // ======================================================
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(
-                          20,
-                          16,
-                          10,
-                          12,
-                        ),
+                        padding: const EdgeInsets.fromLTRB(20, 16, 10, 12),
                         child: Row(
                           children: [
                             const Expanded(
@@ -937,16 +905,22 @@ class _ReportAccidentScreenState extends State<ReportAccidentScreen> {
                                     ? null
                                     : () async {
                                         final vehicle =
-                                            await _searchAndSelectVehicle(context);
+                                            await _searchAndSelectVehicle(
+                                              context,
+                                            );
 
                                         if (vehicle == null) return;
 
                                         final id = _extractVehicleId(vehicle);
 
                                         if (id == null) {
-                                          ScaffoldMessenger.of(context).showSnackBar(
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
                                             const SnackBar(
-                                              content: Text("Invalid Vehicle ID."),
+                                              content: Text(
+                                                "Invalid Vehicle ID.",
+                                              ),
                                             ),
                                           );
                                           return;
@@ -979,14 +953,20 @@ class _ReportAccidentScreenState extends State<ReportAccidentScreen> {
                                         child: selectedVehicleId == null
                                             ? const Text(
                                                 "Search and select vehicle",
-                                                style: TextStyle(color: Colors.grey),
+                                                style: TextStyle(
+                                                  color: Colors.grey,
+                                                ),
                                               )
                                             : Builder(
                                                 builder: (context) {
-                                                  Map<String, dynamic>? selectedVehicle;
+                                                  Map<String, dynamic>?
+                                                  selectedVehicle;
 
-                                                  for (final vehicle in _vehicles) {
-                                                    if (_extractVehicleId(vehicle) ==
+                                                  for (final vehicle
+                                                      in _vehicles) {
+                                                    if (_extractVehicleId(
+                                                          vehicle,
+                                                        ) ==
                                                         selectedVehicleId) {
                                                       selectedVehicle = vehicle;
                                                       break;
@@ -996,10 +976,14 @@ class _ReportAccidentScreenState extends State<ReportAccidentScreen> {
                                                   return Text(
                                                     selectedVehicle == null
                                                         ? "Selected vehicle"
-                                                        : _vehicleLabel(selectedVehicle!),
-                                                    overflow: TextOverflow.ellipsis,
+                                                        : _vehicleLabel(
+                                                            selectedVehicle!,
+                                                          ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
                                                     style: const TextStyle(
-                                                      fontWeight: FontWeight.w600,
+                                                      fontWeight:
+                                                          FontWeight.w600,
                                                     ),
                                                   );
                                                 },
@@ -1114,8 +1098,9 @@ class _ReportAccidentScreenState extends State<ReportAccidentScreen> {
 
                                       final time = await showTimePicker(
                                         context: context,
-                                        initialTime:
-                                            TimeOfDay.fromDateTime(captured),
+                                        initialTime: TimeOfDay.fromDateTime(
+                                          captured,
+                                        ),
                                       );
 
                                       if (time == null) return;
@@ -1173,9 +1158,7 @@ class _ReportAccidentScreenState extends State<ReportAccidentScreen> {
                                 OutlinedButton.icon(
                                   onPressed: saving ? null : toggleSpeech,
                                   icon: Icon(
-                                    listening
-                                        ? Icons.mic
-                                        : Icons.mic_none,
+                                    listening ? Icons.mic : Icons.mic_none,
                                     size: 18,
                                     color: listening
                                         ? Colors.red
@@ -1286,14 +1269,14 @@ class _ReportAccidentScreenState extends State<ReportAccidentScreen> {
                                     : Row(
                                         children: [
                                           ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
                                             child: kIsWeb
                                                 ? FutureBuilder<Uint8List>(
                                                     future: selectedPhoto!
                                                         .readAsBytes(),
-                                                    builder:
-                                                        (context, snapshot) {
+                                                    builder: (context, snapshot) {
                                                       if (!snapshot.hasData) {
                                                         return const SizedBox(
                                                           width: 56,
@@ -1386,8 +1369,8 @@ class _ReportAccidentScreenState extends State<ReportAccidentScreen> {
                                         strokeWidth: 2,
                                         valueColor:
                                             AlwaysStoppedAnimation<Color>(
-                                          Colors.white,
-                                        ),
+                                              Colors.white,
+                                            ),
                                       ),
                                     )
                                   : const Text(
@@ -1482,10 +1465,7 @@ class _ReportAccidentScreenState extends State<ReportAccidentScreen> {
                     children: [
                       search,
                       const SizedBox(height: 10),
-                      SizedBox(
-                        width: double.infinity,
-                        child: addButton,
-                      ),
+                      SizedBox(width: double.infinity, child: addButton),
                     ],
                   );
                 }
@@ -1503,307 +1483,273 @@ class _ReportAccidentScreenState extends State<ReportAccidentScreen> {
 
           Expanded(
             child: _loadingAccidents
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
+                ? const Center(child: CircularProgressIndicator())
                 : list.isEmpty
-                    ? RefreshIndicator(
-                        onRefresh: _loadAccidents,
-                        child: ListView(
-                          physics:
-                              const AlwaysScrollableScrollPhysics(),
-                          children: const [
-                            SizedBox(height: 160),
-                            Center(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.car_crash_outlined,
-                                    size: 60,
-                                    color: Color(0xff9AA9BD),
-                                  ),
-                                  SizedBox(height: 12),
-                                  Text(
-                                    "No Accident Found",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xff52627A),
-                                    ),
-                                  ),
-                                  SizedBox(height: 6),
-                                  Text(
-                                    "Add a new accident to get started.",
-                                    style: TextStyle(
-                                      color: Color(0xff8FA2BF),
-                                    ),
-                                  ),
-                                ],
+                ? RefreshIndicator(
+                    onRefresh: _loadAccidents,
+                    child: ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children: const [
+                        SizedBox(height: 160),
+                        Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.car_crash_outlined,
+                                size: 60,
+                                color: Color(0xff9AA9BD),
                               ),
-                            ),
-                          ],
+                              SizedBox(height: 12),
+                              Text(
+                                "No Accident Found",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xff52627A),
+                                ),
+                              ),
+                              SizedBox(height: 6),
+                              Text(
+                                "Add a new accident to get started.",
+                                style: TextStyle(color: Color(0xff8FA2BF)),
+                              ),
+                            ],
+                          ),
                         ),
-                      )
-                    : RefreshIndicator(
-                        onRefresh: _loadAccidents,
-                        child: ListView.builder(
-                          padding:
-                              const EdgeInsets.fromLTRB(16, 0, 16, 90),
-                          itemCount: list.length,
-                          itemBuilder: (context, index) {
-                            final item = list[index];
+                      ],
+                    ),
+                  )
+                : RefreshIndicator(
+                    onRefresh: _loadAccidents,
+                    child: ListView.builder(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 90),
+                      itemCount: list.length,
+                      itemBuilder: (context, index) {
+                        final item = list[index];
 
-                            final registration =
-                                (item["RegistrationNo"] ??
-                                        item["vehicle"] ??
-                                        item["registrationNo"] ??
-                                        "-")
-                                    .toString();
+                        final registration =
+                            (item["RegistrationNo"] ??
+                                    item["vehicle"] ??
+                                    item["registrationNo"] ??
+                                    "-")
+                                .toString();
 
-                            final model =
-                                (item["Model"] ?? item["model"] ?? "")
-                                    .toString();
+                        final model = (item["Model"] ?? item["model"] ?? "")
+                            .toString();
 
-                            final description =
-                                (item["Description"] ??
-                                        item["description"] ??
-                                        "-")
-                                    .toString();
+                        final description =
+                            (item["Description"] ?? item["description"] ?? "-")
+                                .toString();
 
-                            final capturedAt =
-                                item["CapturedAt"] ?? item["date"];
+                        final capturedAt = item["CapturedAt"] ?? item["date"];
 
-                            final accidentId =
-                                item["AccidentId"] ??
-                                    item["accidentId"];
+                        final accidentId =
+                            item["AccidentId"] ?? item["accidentId"];
 
-                            final photoPath =
-                                (item["PhotoPath"] ?? "").toString();
+                        final photoPath = (item["PhotoPath"] ?? "").toString();
 
-                            // Server returns PhotoPath as a root-relative
-                            // path ("/uploads/xxx.jpg") — baseUrl already
-                            // ends in "/api", so strip that to get the host
-                            // the file actually lives under.
-                            final photoUrl = photoPath.isEmpty
-                                ? null
-                                : baseUrl.replaceFirst(
-                                      RegExp(r'/api/?$'),
-                                      '',
-                                    ) +
-                                    photoPath;
+                        // Server returns PhotoPath as a root-relative
+                        // path ("/uploads/xxx.jpg") — baseUrl already
+                        // ends in "/api", so strip that to get the host
+                        // the file actually lives under.
+                        final photoUrl = photoPath.isEmpty
+                            ? null
+                            : baseUrl.replaceFirst(RegExp(r'/api/?$'), '') +
+                                  photoPath;
 
-                            final locationName = (item["LocationName"] ??
-                                    item["CityName"] ??
-                                    "")
+                        final locationName =
+                            (item["LocationName"] ?? item["CityName"] ?? "")
                                 .toString()
                                 .trim();
 
-                            final reportedBy =
-                                (item["ReportedByName"] ?? "")
-                                    .toString()
-                                    .trim();
+                        final reportedBy = (item["ReportedByName"] ?? "")
+                            .toString()
+                            .trim();
 
-                            return Card(
-                              margin: const EdgeInsets.only(bottom: 12),
-                              elevation: 2,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(14),
-                                child: Row(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                  children: [
-                                    Container(
-                                      width: 50,
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                        color: Colors.red.shade50,
-                                        borderRadius:
-                                            BorderRadius.circular(12),
-                                      ),
-                                      child: const Icon(
-                                        Icons.car_crash,
-                                        color: Colors.red,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            model.isEmpty
-                                                ? registration
-                                                : "$registration • $model",
-                                            style: const TextStyle(
-                                              fontSize: 17,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 6),
-                                          if (accidentId != null)
-                                            Text(
-                                              "Accident ID: $accidentId",
-                                              style: const TextStyle(
-                                                color: Color(0xff6B7A90),
-                                                fontSize: 13,
-                                              ),
-                                            ),
-                                          Text(
-                                            "Captured: "
-                                            "${_formatCapturedDate(capturedAt)}",
-                                            style: const TextStyle(
-                                              color: Color(0xff6B7A90),
-                                              fontSize: 13,
-                                            ),
-                                          ),
-                                          if (locationName.isNotEmpty)
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                top: 2,
-                                              ),
-                                              child: Row(
-                                                children: [
-                                                  const Icon(
-                                                    Icons.location_on,
-                                                    size: 14,
-                                                    color: Color(0xff6B7A90),
-                                                  ),
-                                                  const SizedBox(width: 4),
-                                                  Expanded(
-                                                    child: Text(
-                                                      locationName,
-                                                      style: const TextStyle(
-                                                        color:
-                                                            Color(0xff6B7A90),
-                                                        fontSize: 13,
-                                                      ),
-                                                      overflow: TextOverflow
-                                                          .ellipsis,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          if (reportedBy.isNotEmpty)
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                top: 2,
-                                              ),
-                                              child: Row(
-                                                children: [
-                                                  const Icon(
-                                                    Icons.person_outline,
-                                                    size: 14,
-                                                    color: Color(0xff6B7A90),
-                                                  ),
-                                                  const SizedBox(width: 4),
-                                                  Text(
-                                                    "Reported by $reportedBy",
-                                                    style: const TextStyle(
-                                                      color:
-                                                          Color(0xff6B7A90),
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          const SizedBox(height: 6),
-                                          Text(
-                                            description,
-                                            maxLines: 2,
-                                            overflow:
-                                                TextOverflow.ellipsis,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    if (photoUrl != null)
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                          left: 8,
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          elevation: 2,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(14),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: 50,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    color: Colors.red.shade50,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: const Icon(
+                                    Icons.car_crash,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        model.isEmpty
+                                            ? registration
+                                            : "$registration • $model",
+                                        style: const TextStyle(
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                        child: GestureDetector(
-                                          onTap: () => showDialog(
-                                            context: context,
-                                            builder: (_) => Dialog(
-                                              backgroundColor:
-                                                  Colors.transparent,
-                                              child: InteractiveViewer(
-                                                child: Image.network(
-                                                  photoUrl,
-                                                  errorBuilder:
-                                                      (_, __, ___) =>
-                                                          const Icon(
-                                                    Icons
-                                                        .broken_image_outlined,
+                                      ),
+                                      const SizedBox(height: 6),
+                                      if (accidentId != null)
+                                        Text(
+                                          "Accident ID: $accidentId",
+                                          style: const TextStyle(
+                                            color: Color(0xff6B7A90),
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                      Text(
+                                        "Captured: "
+                                        "${_formatCapturedDate(capturedAt)}",
+                                        style: const TextStyle(
+                                          color: Color(0xff6B7A90),
+                                          fontSize: 13,
+                                        ),
+                                      ),
+                                      if (locationName.isNotEmpty)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 2,
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              const Icon(
+                                                Icons.location_on,
+                                                size: 14,
+                                                color: Color(0xff6B7A90),
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Expanded(
+                                                child: Text(
+                                                  locationName,
+                                                  style: const TextStyle(
+                                                    color: Color(0xff6B7A90),
+                                                    fontSize: 13,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      if (reportedBy.isNotEmpty)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 2,
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              const Icon(
+                                                Icons.person_outline,
+                                                size: 14,
+                                                color: Color(0xff6B7A90),
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                "Reported by $reportedBy",
+                                                style: const TextStyle(
+                                                  color: Color(0xff6B7A90),
+                                                  fontSize: 13,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        description,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                if (photoUrl != null)
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8),
+                                    child: GestureDetector(
+                                      onTap: () => showDialog(
+                                        context: context,
+                                        builder: (_) => Dialog(
+                                          backgroundColor: Colors.transparent,
+                                          child: InteractiveViewer(
+                                            child: Image.network(
+                                              photoUrl,
+                                              errorBuilder: (_, __, ___) =>
+                                                  const Icon(
+                                                    Icons.broken_image_outlined,
                                                     color: Colors.white,
                                                     size: 48,
                                                   ),
-                                                ),
-                                              ),
                                             ),
                                           ),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            child: Image.network(
-                                              photoUrl,
-                                              width: 56,
-                                              height: 56,
-                                              fit: BoxFit.cover,
-                                              errorBuilder:
-                                                  (_, __, ___) => Container(
+                                        ),
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: Image.network(
+                                          photoUrl,
+                                          width: 56,
+                                          height: 56,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (_, __, ___) =>
+                                              Container(
                                                 width: 56,
                                                 height: 56,
                                                 color: Colors.grey.shade200,
                                                 child: const Icon(
-                                                  Icons
-                                                      .broken_image_outlined,
+                                                  Icons.broken_image_outlined,
                                                   color: Colors.grey,
                                                 ),
                                               ),
-                                              loadingBuilder: (
-                                                _,
-                                                child,
-                                                progress,
-                                              ) {
-                                                if (progress == null) {
-                                                  return child;
-                                                }
-                                                return Container(
-                                                  width: 56,
-                                                  height: 56,
-                                                  color:
-                                                      Colors.grey.shade100,
-                                                  child: const Center(
-                                                    child: SizedBox(
-                                                      width: 18,
-                                                      height: 18,
-                                                      child:
-                                                          CircularProgressIndicator(
+                                          loadingBuilder: (_, child, progress) {
+                                            if (progress == null) {
+                                              return child;
+                                            }
+                                            return Container(
+                                              width: 56,
+                                              height: 56,
+                                              color: Colors.grey.shade100,
+                                              child: const Center(
+                                                child: SizedBox(
+                                                  width: 18,
+                                                  height: 18,
+                                                  child:
+                                                      CircularProgressIndicator(
                                                         strokeWidth: 2,
                                                       ),
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          ),
+                                                ),
+                                              ),
+                                            );
+                                          },
                                         ),
                                       ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
           ),
         ],
       ),

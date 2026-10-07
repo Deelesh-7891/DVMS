@@ -5,8 +5,7 @@ class ExpensesScreen extends StatefulWidget {
   const ExpensesScreen({super.key});
 
   @override
-  State<ExpensesScreen> createState() =>
-      _ExpensesScreenState();
+  State<ExpensesScreen> createState() => _ExpensesScreenState();
 }
 
 class _ExpensesScreenState extends State<ExpensesScreen> {
@@ -20,14 +19,11 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
   // CONTROLLERS
   // =========================================================
 
-  final TextEditingController vehicleController =
-      TextEditingController();
+  final TextEditingController vehicleController = TextEditingController();
 
-  final TextEditingController typeController =
-      TextEditingController();
+  final TextEditingController typeController = TextEditingController();
 
-  final TextEditingController vendorController =
-      TextEditingController();
+  final TextEditingController vendorController = TextEditingController();
 
   // =========================================================
   // API DATA
@@ -65,15 +61,14 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
     });
 
     try {
-      final result = await _authService.getexpenses();
+      final result = await _authService.getExpenses();
 
       if (!mounted) return;
 
       setState(() {
         allExpenses = List<dynamic>.from(result);
 
-        filteredExpenses =
-            List<dynamic>.from(result);
+        filteredExpenses = List<dynamic>.from(result);
 
         isLoading = false;
       });
@@ -90,9 +85,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
         filteredExpenses = [];
       });
 
-      debugPrint(
-        "Expense API Error: $e",
-      );
+      debugPrint("Expense API Error: $e");
     }
   }
 
@@ -100,10 +93,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
   // SAFE VALUE
   // =========================================================
 
-  String getValue(
-    Map<String, dynamic> data,
-    List<String> keys,
-  ) {
+  String getValue(Map<String, dynamic> data, List<String> keys) {
     for (final key in keys) {
       final value = data[key];
 
@@ -121,72 +111,50 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
   // VEHICLE
   // =========================================================
 
-  String getVehicle(
-    Map<String, dynamic> data,
-  ) {
-    return getValue(
-      data,
-      [
-        "RegistrationNo",
-        "VehicleNo",
-        "VehicleNumber",
-        "Vehicle",
-        "VehicleName",
-      ],
-    );
+  String getVehicle(Map<String, dynamic> data) {
+    return getValue(data, [
+      "RegistrationNo",
+      "VehicleNo",
+      "VehicleNumber",
+      "Vehicle",
+      "VehicleName",
+    ]);
   }
 
   // =========================================================
   // TYPE
   // =========================================================
 
-  String getExpenseType(
-    Map<String, dynamic> data,
-  ) {
-    return getValue(
-      data,
-      [
-        "Type",
-        "ExpenseType",
-        "ExpenseCategory",
-        "Category",
-        "MovementType",
-      ],
-    );
+  String getExpenseType(Map<String, dynamic> data) {
+    return getValue(data, [
+      "Type",
+      "ExpenseType",
+      "ExpenseCategory",
+      "Category",
+      "MovementType",
+    ]);
   }
 
   // =========================================================
   // VENDOR
   // =========================================================
 
-  String getVendor(
-    Map<String, dynamic> data,
-  ) {
-    return getValue(
-      data,
-      [
-        "VendorName",
-        "Vendor",
-        "Vendor_Name",
-        "SupplierName",
-        "Supplier",
-      ],
-    );
+  String getVendor(Map<String, dynamic> data) {
+    return getValue(data, [
+      "VendorName",
+      "Vendor",
+      "Vendor_Name",
+      "SupplierName",
+      "Supplier",
+    ]);
   }
 
   // =========================================================
   // AMOUNT
   // =========================================================
 
-  dynamic getAmount(
-    Map<String, dynamic> data,
-  ) {
-    for (final key in [
-      "Amount",
-      "ExpenseAmount",
-      "TotalAmount",
-      "amount",
-    ]) {
+  dynamic getAmount(Map<String, dynamic> data) {
+    for (final key in ["Amount", "ExpenseAmount", "TotalAmount", "amount"]) {
       if (data[key] != null) {
         return data[key];
       }
@@ -199,56 +167,37 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
   // INVOICE
   // =========================================================
 
-  String getInvoice(
-    Map<String, dynamic> data,
-  ) {
-    return getValue(
-      data,
-      [
-        "InvoiceNo",
-        "InvoiceNumber",
-        "Invoice",
-        "Invoice_No",
-        "BillNo",
-        "BillNumber",
-      ],
-    );
+  String getInvoice(Map<String, dynamic> data) {
+    return getValue(data, [
+      "InvoiceNo",
+      "InvoiceNumber",
+      "Invoice",
+      "Invoice_No",
+      "BillNo",
+      "BillNumber",
+    ]);
   }
 
   // =========================================================
   // STATUS
   // =========================================================
 
-  String getStatus(
-    Map<String, dynamic> data,
-  ) {
-    return getValue(
-      data,
-      [
-        "Status",
-        "ExpenseStatus",
-        "ApprovalStatus",
-      ],
-    );
+  String getStatus(Map<String, dynamic> data) {
+    return getValue(data, ["Status", "ExpenseStatus", "ApprovalStatus"]);
   }
 
   // =========================================================
   // DATE
   // =========================================================
 
-  String getExpenseDate(
-    Map<String, dynamic> data,
-  ) {
-    final value = getValue(
-      data,
-      [
-        "ExpenseDate",
-        "Date",
-        "CreatedDate",
-        "CreatedAt",
-        "MovementTime",
-      ],
-    );
+  String getExpenseDate(Map<String, dynamic> data) {
+    final value = getValue(data, [
+      "ExpenseDate",
+      "Date",
+      "CreatedDate",
+      "CreatedAt",
+      "MovementTime",
+    ]);
 
     if (value == "-") {
       return "-";
@@ -261,19 +210,13 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
   // FORMAT DATE
   // =========================================================
 
-  String formatExpenseDate(
-    dynamic value,
-  ) {
+  String formatExpenseDate(dynamic value) {
     if (value == null) {
       return "-";
     }
 
     try {
-      final date = DateTime
-          .parse(
-            value.toString(),
-          )
-          .toLocal();
+      final date = DateTime.parse(value.toString()).toLocal();
 
       return "${date.day}/${date.month}/${date.year}";
     } catch (_) {
@@ -285,9 +228,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
   // FORMAT AMOUNT
   // =========================================================
 
-  String formatAmount(
-    dynamic value,
-  ) {
+  String formatAmount(dynamic value) {
     if (value == null) {
       return "₹0";
     }
@@ -316,25 +257,13 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
   // =========================================================
 
   void applyFilters() {
-    final vehicleSearch =
-        vehicleController.text
-            .trim()
-            .toLowerCase();
+    final vehicleSearch = vehicleController.text.trim().toLowerCase();
 
-    final typeSearch =
-        typeController.text
-            .trim()
-            .toLowerCase();
+    final typeSearch = typeController.text.trim().toLowerCase();
 
-    final vendorSearch =
-        vendorController.text
-            .trim()
-            .toLowerCase();
+    final vendorSearch = vendorController.text.trim().toLowerCase();
 
-    List<dynamic> result =
-        List<dynamic>.from(
-      allExpenses,
-    );
+    List<dynamic> result = List<dynamic>.from(allExpenses);
 
     // =======================================================
     // VEHICLE FILTER
@@ -342,16 +271,9 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
 
     if (vehicleSearch.isNotEmpty) {
       result = result.where((item) {
-        final data =
-            Map<String, dynamic>.from(
-          item,
-        );
+        final data = Map<String, dynamic>.from(item);
 
-        return getVehicle(data)
-            .toLowerCase()
-            .contains(
-              vehicleSearch,
-            );
+        return getVehicle(data).toLowerCase().contains(vehicleSearch);
       }).toList();
     }
 
@@ -361,16 +283,9 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
 
     if (typeSearch.isNotEmpty) {
       result = result.where((item) {
-        final data =
-            Map<String, dynamic>.from(
-          item,
-        );
+        final data = Map<String, dynamic>.from(item);
 
-        return getExpenseType(data)
-            .toLowerCase()
-            .contains(
-              typeSearch,
-            );
+        return getExpenseType(data).toLowerCase().contains(typeSearch);
       }).toList();
     }
 
@@ -380,16 +295,9 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
 
     if (vendorSearch.isNotEmpty) {
       result = result.where((item) {
-        final data =
-            Map<String, dynamic>.from(
-          item,
-        );
+        final data = Map<String, dynamic>.from(item);
 
-        return getVendor(data)
-            .toLowerCase()
-            .contains(
-              vendorSearch,
-            );
+        return getVendor(data).toLowerCase().contains(vendorSearch);
       }).toList();
     }
 
@@ -414,10 +322,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
     if (!mounted) return;
 
     setState(() {
-      filteredExpenses =
-          List<dynamic>.from(
-        allExpenses,
-      );
+      filteredExpenses = List<dynamic>.from(allExpenses);
     });
   }
 
@@ -434,67 +339,34 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
       height: 44,
       child: TextField(
         controller: controller,
-        textInputAction:
-            TextInputAction.search,
+        textInputAction: TextInputAction.search,
         decoration: InputDecoration(
           hintText: hint,
 
-          hintStyle:
-              const TextStyle(
-            color:
-                Color(0xff64748b),
-            fontSize: 16,
-          ),
+          hintStyle: const TextStyle(color: Color(0xff64748b), fontSize: 16),
 
           filled: true,
 
-          fillColor:
-              Colors.white,
+          fillColor: Colors.white,
 
-          contentPadding:
-              const EdgeInsets.symmetric(
+          contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 10,
           ),
 
-          border:
-              OutlineInputBorder(
-            borderRadius:
-                BorderRadius.circular(
-              10,
-            ),
-            borderSide:
-                const BorderSide(
-              color:
-                  Color(0xffdbe2ea),
-            ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: Color(0xffdbe2ea)),
           ),
 
-          enabledBorder:
-              OutlineInputBorder(
-            borderRadius:
-                BorderRadius.circular(
-              10,
-            ),
-            borderSide:
-                const BorderSide(
-              color:
-                  Color(0xffdbe2ea),
-            ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: Color(0xffdbe2ea)),
           ),
 
-          focusedBorder:
-              OutlineInputBorder(
-            borderRadius:
-                BorderRadius.circular(
-              10,
-            ),
-            borderSide:
-                const BorderSide(
-              color:
-                  Color(0xff2161b5),
-              width: 1.2,
-            ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: Color(0xff2161b5), width: 1.2),
           ),
         ),
       ),
@@ -509,80 +381,47 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
     return Container(
       width: double.infinity,
 
-      padding:
-          const EdgeInsets.fromLTRB(
-        20,
-        20,
-        20,
-        20,
-      ),
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
 
-      decoration:
-          BoxDecoration(
-        color:
-            const Color(0xfff1f4f8),
+      decoration: BoxDecoration(
+        color: const Color(0xfff1f4f8),
 
-        borderRadius:
-            BorderRadius.circular(
-          16,
-        ),
+        borderRadius: BorderRadius.circular(16),
 
-        border:
-            Border.all(
-          color:
-              const Color(
-            0xffdfe6ee,
-          ),
-        ),
+        border: Border.all(color: const Color(0xffdfe6ee)),
 
         boxShadow: const [
           BoxShadow(
-            color:
-                Color(0x05000000),
+            color: Color(0x05000000),
             blurRadius: 5,
-            offset:
-                Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
 
       child: LayoutBuilder(
-        builder:
-            (
-          context,
-          constraints,
-        ) {
-          final isSmall =
-              constraints.maxWidth <
-                  1100;
+        builder: (context, constraints) {
+          final isSmall = constraints.maxWidth < 1100;
 
           if (isSmall) {
             return Wrap(
               spacing: 12,
               runSpacing: 12,
-              crossAxisAlignment:
-                  WrapCrossAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-
                 buildSearchField(
-                  controller:
-                      vehicleController,
-                  hint:
-                      "Type to search...",
+                  controller: vehicleController,
+                  hint: "Type to search...",
                 ),
 
                 buildSearchField(
-                  controller:
-                      typeController,
-                  hint:
-                      "Type to search...",
+                  controller: typeController,
+                  hint: "Type to search...",
                 ),
 
                 buildSearchField(
-                  controller:
-                      vendorController,
-                  hint:
-                      "Search vendor...",
+                  controller: vendorController,
+                  hint: "Search vendor...",
                 ),
 
                 buildFilterButton(),
@@ -595,80 +434,56 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
           }
 
           return Row(
-            crossAxisAlignment:
-                CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
 
             children: [
-
               // =================================================
               // SEARCH 1
               // =================================================
-
               buildSearchField(
-                controller:
-                    vehicleController,
-                hint:
-                    "Type to search...",
+                controller: vehicleController,
+                hint: "Type to search...",
               ),
 
-              const SizedBox(
-                width: 14,
-              ),
+              const SizedBox(width: 14),
 
               // =================================================
               // SEARCH 2
               // =================================================
-
               buildSearchField(
-                controller:
-                    typeController,
-                hint:
-                    "Type to search...",
+                controller: typeController,
+                hint: "Type to search...",
               ),
 
-              const SizedBox(
-                width: 14,
-              ),
+              const SizedBox(width: 14),
 
               // =================================================
               // VENDOR
               // =================================================
-
               buildSearchField(
-                controller:
-                    vendorController,
-                hint:
-                    "Search vendor...",
+                controller: vendorController,
+                hint: "Search vendor...",
               ),
 
-              const SizedBox(
-                width: 14,
-              ),
+              const SizedBox(width: 14),
 
               // =================================================
               // FILTER
               // =================================================
-
               buildFilterButton(),
 
-              const SizedBox(
-                width: 14,
-              ),
+              const SizedBox(width: 14),
 
               // =================================================
               // RESET
               // =================================================
-
               buildResetButton(),
 
-              const SizedBox(
-                width: 14,
-              ),
+              const SizedBox(width: 14),
 
               // =================================================
               // COUNT
               // =================================================
-
               buildRecordCount(),
             ],
           );
@@ -685,48 +500,31 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
     return SizedBox(
       height: 44,
       child: ElevatedButton(
-        onPressed:
-            applyFilters,
+        onPressed: applyFilters,
 
-        style:
-            ElevatedButton.styleFrom(
+        style: ElevatedButton.styleFrom(
           elevation: 0,
 
-          backgroundColor:
-              const Color(
-            0xff2161b5,
-          ),
+          backgroundColor: const Color(0xff2161b5),
 
-          foregroundColor:
-              Colors.white,
+          foregroundColor: Colors.white,
 
-          padding:
-              const EdgeInsets.symmetric(
-            horizontal: 18,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 18),
 
-          shape:
-              RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.circular(
-              10,
-            ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
           ),
         ),
 
-        child:
-            const Text(
+        child: const Text(
           "Filter",
 
-          style:
-              TextStyle(
+          style: TextStyle(
             fontSize: 14,
 
-            fontWeight:
-                FontWeight.w700,
+            fontWeight: FontWeight.w700,
 
-            color:
-                Colors.white,
+            color: Colors.white,
           ),
         ),
       ),
@@ -741,50 +539,26 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
     return SizedBox(
       height: 44,
       child: OutlinedButton(
-        onPressed:
-            resetFilters,
+        onPressed: resetFilters,
 
-        style:
-            OutlinedButton.styleFrom(
-          backgroundColor:
-              Colors.white,
+        style: OutlinedButton.styleFrom(
+          backgroundColor: Colors.white,
 
-          foregroundColor:
-              const Color(
-            0xff475569,
-          ),
+          foregroundColor: const Color(0xff475569),
 
-          padding:
-              const EdgeInsets.symmetric(
-            horizontal: 18,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 18),
 
-          side:
-              const BorderSide(
-            color:
-                Color(0xffd5dde7),
-          ),
+          side: const BorderSide(color: Color(0xffd5dde7)),
 
-          shape:
-              RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.circular(
-              10,
-            ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
           ),
         ),
 
-        child:
-            const Text(
+        child: const Text(
           "Reset",
 
-          style:
-              TextStyle(
-            fontSize: 14,
-
-            fontWeight:
-                FontWeight.w600,
-          ),
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
         ),
       ),
     );
@@ -798,15 +572,12 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
     return Text(
       "${filteredExpenses.length} records",
 
-      style:
-          const TextStyle(
+      style: const TextStyle(
         fontSize: 15,
 
-        color:
-            Color(0xff8da0b9),
+        color: Color(0xff8da0b9),
 
-        fontWeight:
-            FontWeight.w500,
+        fontWeight: FontWeight.w500,
       ),
     );
   }
@@ -815,29 +586,22 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
   // TABLE HEADER
   // =========================================================
 
-  Widget tableHeader(
-    String title,
-  ) {
+  Widget tableHeader(String title) {
     return Text(
       title,
 
       maxLines: 1,
 
-      overflow:
-          TextOverflow.ellipsis,
+      overflow: TextOverflow.ellipsis,
 
-      style:
-          const TextStyle(
+      style: const TextStyle(
         fontSize: 12,
 
-        fontWeight:
-            FontWeight.w700,
+        fontWeight: FontWeight.w700,
 
-        letterSpacing:
-            0.4,
+        letterSpacing: 0.4,
 
-        color:
-            Color(0xff94a3b8),
+        color: Color(0xff94a3b8),
       ),
     );
   }
@@ -846,113 +610,70 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
   // EXPENSE STATUS
   // =========================================================
 
-  Widget expenseStatusBadge(
-    String status,
-  ) {
-    final normalized =
-        status
-            .trim()
-            .toLowerCase();
+  Widget expenseStatusBadge(String status) {
+    final normalized = status.trim().toLowerCase();
 
-    final isApproved =
-        normalized == "approved";
+    final isApproved = normalized == "approved";
 
-    final isRejected =
-        normalized == "rejected" ||
-        normalized == "cancelled";
+    final isRejected = normalized == "rejected" || normalized == "cancelled";
 
     Color backgroundColor;
     Color dotColor;
     Color textColor;
 
     if (isApproved) {
-      backgroundColor =
-          const Color(0xffdcfce7);
+      backgroundColor = const Color(0xffdcfce7);
 
-      dotColor =
-          const Color(0xff16a34a);
+      dotColor = const Color(0xff16a34a);
 
-      textColor =
-          const Color(0xff15803d);
+      textColor = const Color(0xff15803d);
     } else if (isRejected) {
-      backgroundColor =
-          const Color(0xffffe4e6);
+      backgroundColor = const Color(0xffffe4e6);
 
-      dotColor =
-          const Color(0xffe11d48);
+      dotColor = const Color(0xffe11d48);
 
-      textColor =
-          const Color(0xffbe123c);
+      textColor = const Color(0xffbe123c);
     } else {
-      backgroundColor =
-          const Color(0xfffff1c7);
+      backgroundColor = const Color(0xfffff1c7);
 
-      dotColor =
-          const Color(0xfff59e0b);
+      dotColor = const Color(0xfff59e0b);
 
-      textColor =
-          const Color(0xffb45309);
+      textColor = const Color(0xffb45309);
     }
 
-    final displayStatus =
-        status == "-"
-            ? "Approved"
-            : status;
+    final displayStatus = status == "-" ? "Approved" : status;
 
     return Container(
-      padding:
-          const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 6,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
 
-      decoration:
-          BoxDecoration(
-        color:
-            backgroundColor,
+      decoration: BoxDecoration(
+        color: backgroundColor,
 
-        borderRadius:
-            BorderRadius.circular(
-          20,
-        ),
+        borderRadius: BorderRadius.circular(20),
       ),
 
       child: Row(
-        mainAxisSize:
-            MainAxisSize.min,
+        mainAxisSize: MainAxisSize.min,
 
         children: [
-
           Container(
             width: 9,
             height: 9,
 
-            decoration:
-                BoxDecoration(
-              color:
-                  dotColor,
-
-              shape:
-                  BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: dotColor, shape: BoxShape.circle),
           ),
 
-          const SizedBox(
-            width: 7,
-          ),
+          const SizedBox(width: 7),
 
           Text(
             displayStatus,
 
-            style:
-                TextStyle(
+            style: TextStyle(
               fontSize: 13,
 
-              fontWeight:
-                  FontWeight.w700,
+              fontWeight: FontWeight.w700,
 
-              color:
-                  textColor,
+              color: textColor,
             ),
           ),
         ],
@@ -970,111 +691,52 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
 
       height: 300,
 
-      decoration:
-          BoxDecoration(
-        color:
-            const Color(0xfff1f4f8),
+      decoration: BoxDecoration(
+        color: const Color(0xfff1f4f8),
 
-        borderRadius:
-            BorderRadius.circular(
-          16,
-        ),
+        borderRadius: BorderRadius.circular(16),
 
-        border:
-            Border.all(
-          color:
-              const Color(
-            0xffdfe6ee,
-          ),
-        ),
+        border: Border.all(color: const Color(0xffdfe6ee)),
       ),
 
-      child:
-          Column(
+      child: Column(
         children: [
-
           // HEADER
           Container(
             height: 50,
 
-            padding:
-                const EdgeInsets.symmetric(
-              horizontal: 18,
+            padding: const EdgeInsets.symmetric(horizontal: 18),
+
+            decoration: const BoxDecoration(
+              border: Border(bottom: BorderSide(color: Color(0xffdfe6ee))),
             ),
 
-            decoration:
-                const BoxDecoration(
-              border:
-                  Border(
-                bottom:
-                    BorderSide(
-                  color:
-                      Color(
-                    0xffdfe6ee,
-                  ),
-                ),
-              ),
-            ),
-
-            child:
-                Row(
+            child: Row(
               children: [
+                _emptyHeader("DATE", 130),
 
-                _emptyHeader(
-                  "DATE",
-                  130,
-                ),
+                _emptyHeader("VEHICLE", 160),
 
-                _emptyHeader(
-                  "VEHICLE",
-                  160,
-                ),
+                _emptyHeader("TYPE", 110),
 
-                _emptyHeader(
-                  "TYPE",
-                  110,
-                ),
+                _emptyHeader("VENDOR", 500),
 
-                _emptyHeader(
-                  "VENDOR",
-                  500,
-                ),
+                _emptyHeader("AMOUNT", 120),
 
-                _emptyHeader(
-                  "AMOUNT",
-                  120,
-                ),
+                _emptyHeader("INVOICE", 250),
 
-                _emptyHeader(
-                  "INVOICE",
-                  250,
-                ),
-
-                _emptyHeader(
-                  "STATUS",
-                  150,
-                ),
+                _emptyHeader("STATUS", 150),
               ],
             ),
           ),
 
           // EMPTY TEXT
           const Expanded(
-            child:
-                Center(
-              child:
-                  Text(
+            child: Center(
+              child: Text(
                 "No expense records found",
 
-                style:
-                    TextStyle(
-                  fontSize: 15,
-
-                  color:
-                      Color(
-                    0xff8da0b9,
-                  ),
-                ),
+                style: TextStyle(fontSize: 15, color: Color(0xff8da0b9)),
               ),
             ),
           ),
@@ -1087,18 +749,8 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
   // EMPTY HEADER
   // =========================================================
 
-  Widget _emptyHeader(
-    String title,
-    double width,
-  ) {
-    return SizedBox(
-      width: width,
-
-      child:
-          tableHeader(
-        title,
-      ),
-    );
+  Widget _emptyHeader(String title, double width) {
+    return SizedBox(width: width, child: tableHeader(title));
   }
 
   // =========================================================
@@ -1116,30 +768,15 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
 
         height: 300,
 
-        decoration:
-            BoxDecoration(
-          color:
-              Colors.white,
+        decoration: BoxDecoration(
+          color: Colors.white,
 
-          borderRadius:
-              BorderRadius.circular(
-            16,
-          ),
+          borderRadius: BorderRadius.circular(16),
 
-          border:
-              Border.all(
-            color:
-                const Color(
-              0xffdfe6ee,
-            ),
-          ),
+          border: Border.all(color: const Color(0xffdfe6ee)),
         ),
 
-        child:
-            const Center(
-          child:
-              CircularProgressIndicator(),
-        ),
+        child: const Center(child: CircularProgressIndicator()),
       );
     }
 
@@ -1153,93 +790,46 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
 
         height: 300,
 
-        decoration:
-            BoxDecoration(
-          color:
-              Colors.white,
+        decoration: BoxDecoration(
+          color: Colors.white,
 
-          borderRadius:
-              BorderRadius.circular(
-            16,
-          ),
+          borderRadius: BorderRadius.circular(16),
 
-          border:
-              Border.all(
-            color:
-                const Color(
-              0xffdfe6ee,
-            ),
-          ),
+          border: Border.all(color: const Color(0xffdfe6ee)),
         ),
 
-        child:
-            Center(
-          child:
-              Column(
-            mainAxisSize:
-                MainAxisSize.min,
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
 
             children: [
+              const Icon(Icons.error_outline, size: 48, color: Colors.red),
 
-              const Icon(
-                Icons
-                    .error_outline,
-                size: 48,
-                color:
-                    Colors.red,
-              ),
-
-              const SizedBox(
-                height: 12,
-              ),
+              const SizedBox(height: 12),
 
               Padding(
-                padding:
-                    const EdgeInsets
-                        .symmetric(
-                  horizontal: 30,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 30),
 
-                child:
-                    Text(
+                child: Text(
                   errorMessage!,
-                  textAlign:
-                      TextAlign.center,
+                  textAlign: TextAlign.center,
 
-                  style:
-                      const TextStyle(
-                    color:
-                        Colors.red,
-                    fontSize: 14,
-                  ),
+                  style: const TextStyle(color: Colors.red, fontSize: 14),
                 ),
               ),
 
-              const SizedBox(
-                height: 16,
-              ),
+              const SizedBox(height: 16),
 
               ElevatedButton(
-                onPressed:
-                    loadExpenses,
+                onPressed: loadExpenses,
 
-                style:
-                    ElevatedButton
-                        .styleFrom(
-                  backgroundColor:
-                      const Color(
-                    0xff2161b5,
-                  ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xff2161b5),
                 ),
 
-                child:
-                    const Text(
+                child: const Text(
                   "Retry",
-                  style:
-                      TextStyle(
-                    color:
-                        Colors.white,
-                  ),
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
             ],
@@ -1263,383 +853,225 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
     return Container(
       width: double.infinity,
 
-      decoration:
-          BoxDecoration(
-        color:
-            const Color(
-          0xfff1f4f8,
-        ),
+      decoration: BoxDecoration(
+        color: const Color(0xfff1f4f8),
 
-        borderRadius:
-            BorderRadius.circular(
-          16,
-        ),
+        borderRadius: BorderRadius.circular(16),
 
-        border:
-            Border.all(
-          color:
-              const Color(
-            0xffdfe6ee,
-          ),
-        ),
+        border: Border.all(color: const Color(0xffdfe6ee)),
       ),
 
-      child:
-          ClipRRect(
-        borderRadius:
-            BorderRadius.circular(
-          16,
-        ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
 
-        child:
-            SingleChildScrollView(
-          scrollDirection:
-              Axis.horizontal,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
 
-          child:
-              DataTable(
-            horizontalMargin:
-                18,
+          child: DataTable(
+            horizontalMargin: 18,
 
-            columnSpacing:
-                28,
+            columnSpacing: 28,
 
-            headingRowHeight:
-                50,
+            headingRowHeight: 50,
 
-            dataRowMinHeight:
-                58,
+            dataRowMinHeight: 58,
 
-            dataRowMaxHeight:
-                72,
+            dataRowMaxHeight: 72,
 
-            dividerThickness:
-                0.7,
+            dividerThickness: 0.7,
 
             columns: [
+              DataColumn(label: tableHeader("DATE")),
 
-              DataColumn(
-                label:
-                    tableHeader(
-                  "DATE",
-                ),
-              ),
+              DataColumn(label: tableHeader("VEHICLE")),
 
-              DataColumn(
-                label:
-                    tableHeader(
-                  "VEHICLE",
-                ),
-              ),
+              DataColumn(label: tableHeader("TYPE")),
 
-              DataColumn(
-                label:
-                    tableHeader(
-                  "TYPE",
-                ),
-              ),
+              DataColumn(label: tableHeader("VENDOR")),
 
-              DataColumn(
-                label:
-                    tableHeader(
-                  "VENDOR",
-                ),
-              ),
+              DataColumn(label: tableHeader("AMOUNT")),
 
-              DataColumn(
-                label:
-                    tableHeader(
-                  "AMOUNT",
-                ),
-              ),
+              DataColumn(label: tableHeader("INVOICE")),
 
-              DataColumn(
-                label:
-                    tableHeader(
-                  "INVOICE",
-                ),
-              ),
-
-              DataColumn(
-                label:
-                    tableHeader(
-                  "STATUS",
-                ),
-              ),
+              DataColumn(label: tableHeader("STATUS")),
             ],
 
-            rows:
-                filteredExpenses
-                    .map<DataRow>(
-              (item) {
-                final data =
-                    Map<String,
-                            dynamic>.from(
-                  item,
-                );
+            rows: filteredExpenses.map<DataRow>((item) {
+              final data = Map<String, dynamic>.from(item);
 
-                final date =
-                    getExpenseDate(
-                  data,
-                );
+              final date = getExpenseDate(data);
 
-                final vehicle =
-                    getVehicle(
-                  data,
-                );
+              final vehicle = getVehicle(data);
 
-                final type =
-                    getExpenseType(
-                  data,
-                );
+              final type = getExpenseType(data);
 
-                final vendor =
-                    getVendor(
-                  data,
-                );
+              final vendor = getVendor(data);
 
-                final amount =
-                    getAmount(
-                  data,
-                );
+              final amount = getAmount(data);
 
-                final invoice =
-                    getInvoice(
-                  data,
-                );
+              final invoice = getInvoice(data);
 
-                final status =
-                    getStatus(
-                  data,
-                );
+              final status = getStatus(data);
 
-                return DataRow(
-                  cells: [
+              return DataRow(
+                cells: [
+                  // =========================================
+                  // DATE
+                  // =========================================
+                  DataCell(
+                    SizedBox(
+                      width: 120,
 
-                    // =========================================
-                    // DATE
-                    // =========================================
+                      child: Text(
+                        date,
 
-                    DataCell(
-                      SizedBox(
-                        width: 120,
+                        maxLines: 1,
 
-                        child:
-                            Text(
-                          date,
+                        overflow: TextOverflow.ellipsis,
+
+                        style: const TextStyle(
+                          fontSize: 14,
+
+                          color: Color(0xff1e293b),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // =========================================
+                  // VEHICLE
+                  // =========================================
+                  DataCell(
+                    SizedBox(
+                      width: 150,
+
+                      child: Text(
+                        vehicle,
+
+                        maxLines: 1,
+
+                        overflow: TextOverflow.ellipsis,
+
+                        style: const TextStyle(
+                          fontSize: 14,
+
+                          fontWeight: FontWeight.w800,
+
+                          color: Color(0xff1e293b),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // =========================================
+                  // TYPE
+                  // =========================================
+                  DataCell(
+                    SizedBox(
+                      width: 90,
+
+                      child: Text(
+                        type,
+
+                        maxLines: 1,
+
+                        overflow: TextOverflow.ellipsis,
+
+                        style: const TextStyle(
+                          fontSize: 14,
+
+                          fontWeight: FontWeight.w600,
+
+                          color: Color(0xff475569),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // =========================================
+                  // VENDOR
+                  // =========================================
+                  DataCell(
+                    SizedBox(
+                      width: 500,
+
+                      child: Text(
+                        vendor,
+
+                        maxLines: 1,
+
+                        overflow: TextOverflow.ellipsis,
+
+                        style: const TextStyle(
+                          fontSize: 14,
+
+                          color: Color(0xff1e293b),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // =========================================
+                  // AMOUNT
+                  // =========================================
+                  DataCell(
+                    SizedBox(
+                      width: 110,
+
+                      child: Align(
+                        alignment: Alignment.centerRight,
+
+                        child: Text(
+                          formatAmount(amount),
 
                           maxLines: 1,
 
-                          overflow:
-                              TextOverflow
-                                  .ellipsis,
+                          overflow: TextOverflow.ellipsis,
 
-                          style:
-                              const TextStyle(
+                          style: const TextStyle(
                             fontSize: 14,
 
-                            color:
-                                Color(
-                              0xff1e293b,
-                            ),
+                            fontWeight: FontWeight.w500,
+
+                            color: Color(0xff1e293b),
                           ),
                         ),
                       ),
                     ),
+                  ),
 
-                    // =========================================
-                    // VEHICLE
-                    // =========================================
+                  // =========================================
+                  // INVOICE
+                  // =========================================
+                  DataCell(
+                    SizedBox(
+                      width: 250,
 
-                    DataCell(
-                      SizedBox(
-                        width: 150,
+                      child: Text(
+                        invoice,
 
-                        child:
-                            Text(
-                          vehicle,
+                        maxLines: 1,
 
-                          maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
 
-                          overflow:
-                              TextOverflow
-                                  .ellipsis,
+                        style: const TextStyle(
+                          fontSize: 14,
 
-                          style:
-                              const TextStyle(
-                            fontSize: 14,
+                          fontWeight: FontWeight.w500,
 
-                            fontWeight:
-                                FontWeight
-                                    .w800,
-
-                            color:
-                                Color(
-                              0xff1e293b,
-                            ),
-                          ),
+                          color: Color(0xff8da0b9),
                         ),
                       ),
                     ),
+                  ),
 
-                    // =========================================
-                    // TYPE
-                    // =========================================
-
-                    DataCell(
-                      SizedBox(
-                        width: 90,
-
-                        child:
-                            Text(
-                          type,
-
-                          maxLines: 1,
-
-                          overflow:
-                              TextOverflow
-                                  .ellipsis,
-
-                          style:
-                              const TextStyle(
-                            fontSize: 14,
-
-                            fontWeight:
-                                FontWeight
-                                    .w600,
-
-                            color:
-                                Color(
-                              0xff475569,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    // =========================================
-                    // VENDOR
-                    // =========================================
-
-                    DataCell(
-                      SizedBox(
-                        width: 500,
-
-                        child:
-                            Text(
-                          vendor,
-
-                          maxLines: 1,
-
-                          overflow:
-                              TextOverflow
-                                  .ellipsis,
-
-                          style:
-                              const TextStyle(
-                            fontSize: 14,
-
-                            color:
-                                Color(
-                              0xff1e293b,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    // =========================================
-                    // AMOUNT
-                    // =========================================
-
-                    DataCell(
-                      SizedBox(
-                        width: 110,
-
-                        child:
-                            Align(
-                          alignment:
-                              Alignment
-                                  .centerRight,
-
-                          child:
-                              Text(
-                            formatAmount(
-                              amount,
-                            ),
-
-                            maxLines: 1,
-
-                            overflow:
-                                TextOverflow
-                                    .ellipsis,
-
-                            style:
-                                const TextStyle(
-                              fontSize: 14,
-
-                              fontWeight:
-                                  FontWeight
-                                      .w500,
-
-                              color:
-                                  Color(
-                                0xff1e293b,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    // =========================================
-                    // INVOICE
-                    // =========================================
-
-                    DataCell(
-                      SizedBox(
-                        width: 250,
-
-                        child:
-                            Text(
-                          invoice,
-
-                          maxLines: 1,
-
-                          overflow:
-                              TextOverflow
-                                  .ellipsis,
-
-                          style:
-                              const TextStyle(
-                            fontSize: 14,
-
-                            fontWeight:
-                                FontWeight
-                                    .w500,
-
-                            color:
-                                Color(
-                              0xff8da0b9,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    // =========================================
-                    // STATUS
-                    // =========================================
-
-                    DataCell(
-                      expenseStatusBadge(
-                        status,
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ).toList(),
+                  // =========================================
+                  // STATUS
+                  // =========================================
+                  DataCell(expenseStatusBadge(status)),
+                ],
+              );
+            }).toList(),
           ),
         ),
       ),
@@ -1651,49 +1083,28 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
   // =========================================================
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          const Color(
-        0xfff4f7fb,
-      ),
+      backgroundColor: const Color(0xfff4f7fb),
 
-      body:
-          SafeArea(
-        child:
-            SingleChildScrollView(
-          padding:
-              const EdgeInsets.fromLTRB(
-            18,
-            20,
-            18,
-            20,
-          ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(18, 20, 18, 20),
 
-          child:
-              Column(
-            crossAxisAlignment:
-                CrossAxisAlignment
-                    .start,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
 
             children: [
-
               // ===============================================
               // FILTER
               // ===============================================
-
               buildFilterSection(),
 
-              const SizedBox(
-                height: 18,
-              ),
+              const SizedBox(height: 18),
 
               // ===============================================
               // TABLE
               // ===============================================
-
               buildExpenseTable(),
             ],
           ),

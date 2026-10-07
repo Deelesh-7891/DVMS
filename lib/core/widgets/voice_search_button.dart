@@ -31,9 +31,22 @@ class _VoiceSearchButtonState extends State<VoiceSearchButton> {
   bool _available = true;
 
   static const Map<String, String> _numberWords = {
-    "zero": "0", "oh": "0", "one": "1", "won": "1", "two": "2", "to": "2",
-    "too": "2", "three": "3", "four": "4", "for": "4", "five": "5",
-    "six": "6", "seven": "7", "eight": "8", "ate": "8", "nine": "9",
+    "zero": "0",
+    "oh": "0",
+    "one": "1",
+    "won": "1",
+    "two": "2",
+    "to": "2",
+    "too": "2",
+    "three": "3",
+    "four": "4",
+    "for": "4",
+    "five": "5",
+    "six": "6",
+    "seven": "7",
+    "eight": "8",
+    "ate": "8",
+    "nine": "9",
     "double": "",
   };
 

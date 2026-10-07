@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../auth/login_screen.dart';
@@ -134,9 +133,7 @@ class _DashboardPageState extends State<DashboardPage> {
         "${stopwatch.elapsedMilliseconds} ms",
       );
 
-      debugPrint(
-        "Dashboard response type: ${data.runtimeType}",
-      );
+      debugPrint("Dashboard response type: ${data.runtimeType}");
 
       if (!mounted) {
         debugPrint("Dashboard disposed before API completed");
@@ -165,9 +162,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
       debugPrint("======================================");
       debugPrint("DASHBOARD ERROR");
-      debugPrint(
-        "Time: ${stopwatch.elapsedMilliseconds} ms",
-      );
+      debugPrint("Time: ${stopwatch.elapsedMilliseconds} ms");
       debugPrint("Error: $e");
       debugPrint("StackTrace: $stackTrace");
       debugPrint("======================================");
@@ -204,9 +199,7 @@ class _DashboardPageState extends State<DashboardPage> {
       if (!mounted) return;
 
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (_) => const LoginScreen(),
-        ),
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
         (route) => false,
       );
 
@@ -222,16 +215,11 @@ class _DashboardPageState extends State<DashboardPage> {
   // SAFE NAVIGATION
   // ============================================================
 
-  void _openPage(
-    Widget page,
-    String pageName,
-  ) {
+  void _openPage(Widget page, String pageName) {
     if (!mounted) return;
 
     if (_isNavigating) {
-      debugPrint(
-        "Navigation blocked: already navigating",
-      );
+      debugPrint("Navigation blocked: already navigating");
       return;
     }
 
@@ -244,23 +232,19 @@ class _DashboardPageState extends State<DashboardPage> {
 
     Navigator.of(context)
         .push(
-      MaterialPageRoute(
-        builder: (_) {
-          debugPrint(
-            "BUILDING PAGE: $pageName",
-          );
+          MaterialPageRoute(
+            builder: (_) {
+              debugPrint("BUILDING PAGE: $pageName");
 
-          return page;
-        },
-      ),
-    )
+              return page;
+            },
+          ),
+        )
         .then((_) {
-      _isNavigating = false;
+          _isNavigating = false;
 
-      debugPrint(
-        "RETURNED FROM PAGE: $pageName",
-      );
-    });
+          debugPrint("RETURNED FROM PAGE: $pageName");
+        });
   }
 
   // ============================================================
@@ -275,10 +259,7 @@ class _DashboardPageState extends State<DashboardPage> {
     Future.microtask(() {
       if (!mounted) return;
 
-      _openPage(
-        const QrMovementScreen(),
-        "QrMovementScreen",
-      );
+      _openPage(const QrMovementScreen(), "QrMovementScreen");
     });
   }
 
@@ -286,9 +267,7 @@ class _DashboardPageState extends State<DashboardPage> {
   // DRAWER
   // ============================================================
 
-  Widget _buildFleetDrawer(
-    BuildContext context,
-  ) {
+  Widget _buildFleetDrawer(BuildContext context) {
     return Drawer(
       width: 285,
       backgroundColor: const Color(0xff12345B),
@@ -298,15 +277,9 @@ class _DashboardPageState extends State<DashboardPage> {
             // ======================================================
             // DRAWER HEADER
             // ======================================================
-
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(
-                20,
-                18,
-                10,
-                18,
-              ),
+              padding: const EdgeInsets.fromLTRB(20, 18, 10, 18),
               child: Row(
                 children: [
                   const Icon(
@@ -334,29 +307,20 @@ class _DashboardPageState extends State<DashboardPage> {
                         Navigator.pop(context);
                       }
                     },
-                    icon: const Icon(
-                      Icons.close,
-                      color: Colors.white,
-                    ),
+                    icon: const Icon(Icons.close, color: Colors.white),
                   ),
                 ],
               ),
             ),
 
-            const Divider(
-              color: Colors.white24,
-              height: 1,
-            ),
+            const Divider(color: Colors.white24, height: 1),
 
             // ======================================================
             // MENU
             // ======================================================
-
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 8,
-                ),
+                padding: const EdgeInsets.symmetric(vertical: 8),
                 children: [
                   _drawerItem(
                     context,
@@ -415,10 +379,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       Future.microtask(() {
                         if (!mounted) return;
 
-                        _openPage(
-                          const QrMovementScreen(),
-                          "QrMovementScreen",
-                        );
+                        _openPage(const QrMovementScreen(), "QrMovementScreen");
                       });
                     },
                   ),
@@ -434,10 +395,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       Future.microtask(() {
                         if (!mounted) return;
 
-                        _openPage(
-                          const ExpensesScreen(),
-                          "ExpensesScreen",
-                        );
+                        _openPage(const ExpensesScreen(), "ExpensesScreen");
                       });
                     },
                   ),
@@ -491,10 +449,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       Future.microtask(() {
                         if (!mounted) return;
 
-                        _openPage(
-                          const FastagScreen(),
-                          "FastagScreen",
-                        );
+                        _openPage(const FastagScreen(), "FastagScreen");
                       });
                     },
                   ),
@@ -510,10 +465,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       Future.microtask(() {
                         if (!mounted) return;
 
-                        _openPage(
-                          const ChallansScreen(),
-                          "ChallansScreen",
-                        );
+                        _openPage(const ChallansScreen(), "ChallansScreen");
                       });
                     },
                   ),
@@ -529,10 +481,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       Future.microtask(() {
                         if (!mounted) return;
 
-                        _openPage(
-                          const PucScreen(),
-                          "PucScreen",
-                        );
+                        _openPage(const PucScreen(), "PucScreen");
                       });
                     },
                   ),
@@ -548,10 +497,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       Future.microtask(() {
                         if (!mounted) return;
 
-                        _openPage(
-                          const FitnessScreen(),
-                          "FitnessScreen",
-                        );
+                        _openPage(const FitnessScreen(), "FitnessScreen");
                       });
                     },
                   ),
@@ -567,10 +513,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       Future.microtask(() {
                         if (!mounted) return;
 
-                        _openPage(
-                          const EmployeesScreen(),
-                          "EmployeesScreen",
-                        );
+                        _openPage(const EmployeesScreen(), "EmployeesScreen");
                       });
                     },
                   ),
@@ -586,10 +529,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       Future.microtask(() {
                         if (!mounted) return;
 
-                        _openPage(
-                          const AccidentsScreen(),
-                          "AccidentsScreen",
-                        );
+                        _openPage(const AccidentsScreen(), "AccidentsScreen");
                       });
                     },
                   ),
@@ -605,10 +545,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       Future.microtask(() {
                         if (!mounted) return;
 
-                        _openPage(
-                          const UsersScreen(),
-                          "UsersScreen",
-                        );
+                        _openPage(const UsersScreen(), "UsersScreen");
                       });
                     },
                   ),
@@ -624,10 +561,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       Future.microtask(() {
                         if (!mounted) return;
 
-                        _openPage(
-                          const MileageScreen(),
-                          "MileageScreen",
-                        );
+                        _openPage(const MileageScreen(), "MileageScreen");
                       });
                     },
                   ),
@@ -643,10 +577,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       Future.microtask(() {
                         if (!mounted) return;
 
-                        _openPage(
-                          const ReportsScreen(),
-                          "ReportsScreen",
-                        );
+                        _openPage(const ReportsScreen(), "ReportsScreen");
                       });
                     },
                   ),
@@ -686,17 +617,10 @@ class _DashboardPageState extends State<DashboardPage> {
   ) {
     return ListTile(
       minVerticalPadding: 3,
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: 20,
-        vertical: 2,
-      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
       leading: SizedBox(
         width: 30,
-        child: Icon(
-          icon,
-          color: iconColor,
-          size: 23,
-        ),
+        child: Icon(icon, color: iconColor, size: 23),
       ),
       title: Text(
         title,
@@ -722,34 +646,22 @@ class _DashboardPageState extends State<DashboardPage> {
     double valueFontSize = 20,
   }) {
     return Container(
-      constraints: const BoxConstraints(
-        minHeight: 62,
-      ),
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 8,
-      ),
+      constraints: const BoxConstraints(minHeight: 62),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(11),
-        border: Border.all(
-          color: Colors.grey.shade200,
-        ),
+        border: Border.all(color: Colors.grey.shade200),
       ),
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
-        mainAxisAlignment:
-            MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
             title,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 4),
@@ -774,11 +686,9 @@ class _DashboardPageState extends State<DashboardPage> {
   // ============================================================
 
   Widget _monthlySpendCard() {
-    final monthlyService =
-        dashboardData["MonthlyServiceCost"] ?? 0;
+    final monthlyService = dashboardData["MonthlyServiceCost"] ?? 0;
 
-    final monthlyFuel =
-        dashboardData["MonthlyFuelCost"] ?? 0;
+    final monthlyFuel = dashboardData["MonthlyFuelCost"] ?? 0;
 
     return Container(
       width: double.infinity,
@@ -786,13 +696,10 @@ class _DashboardPageState extends State<DashboardPage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Colors.grey.shade300,
-        ),
+        border: Border.all(color: Colors.grey.shade300),
       ),
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
             "MONTHLY SPEND",
@@ -807,20 +714,14 @@ class _DashboardPageState extends State<DashboardPage> {
 
           Text(
             "₹$monthlyService",
-            style: const TextStyle(
-              fontSize: 27,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 27, fontWeight: FontWeight.bold),
           ),
 
           const SizedBox(height: 4),
 
           Text(
             "Fuel ₹$monthlyFuel",
-            style: const TextStyle(
-              color: Colors.grey,
-              fontSize: 12,
-            ),
+            style: const TextStyle(color: Colors.grey, fontSize: 12),
           ),
         ],
       ),
@@ -836,24 +737,16 @@ class _DashboardPageState extends State<DashboardPage> {
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
-          mainAxisAlignment:
-              MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.error_outline,
-              size: 55,
-              color: Colors.red,
-            ),
+            const Icon(Icons.error_outline, size: 55, color: Colors.red),
 
             const SizedBox(height: 15),
 
             const Text(
               "Dashboard could not be loaded",
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
 
             const SizedBox(height: 8),
@@ -863,10 +756,7 @@ class _DashboardPageState extends State<DashboardPage> {
               textAlign: TextAlign.center,
               maxLines: 4,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: Colors.grey,
-                fontSize: 13,
-              ),
+              style: const TextStyle(color: Colors.grey, fontSize: 13),
             ),
 
             const SizedBox(height: 20),
@@ -888,8 +778,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   Widget _buildDashboardContent() {
     return ListView(
-      physics:
-          const AlwaysScrollableScrollPhysics(),
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.all(12),
       children: [
         // ROW 1
@@ -1034,8 +923,7 @@ class _DashboardPageState extends State<DashboardPage> {
     debugPrint("DASHBOARD BUILD");
 
     return Scaffold(
-      backgroundColor:
-          const Color(0xffEEF2F7),
+      backgroundColor: const Color(0xffEEF2F7),
 
       drawer: _buildFleetDrawer(context),
 
@@ -1045,37 +933,26 @@ class _DashboardPageState extends State<DashboardPage> {
             // ======================================================
             // HEADER
             // ======================================================
-
             Container(
               width: double.infinity,
-              padding:
-                  const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 14,
-              ),
-              decoration:
-                  const BoxDecoration(
-                color: Color(0xff2458A6),
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              decoration: const BoxDecoration(color: Color(0xff2458A6)),
               child: Row(
-                crossAxisAlignment:
-                    CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   // IMPORTANT:
                   // No const here because fullName
                   // and greeting are runtime values.
                   Expanded(
                     child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
                           "Dashboard",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 22,
-                            fontWeight:
-                                FontWeight.bold,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
 
@@ -1103,13 +980,9 @@ class _DashboardPageState extends State<DashboardPage> {
                           size: 30,
                         ),
                         onPressed: () {
-                          debugPrint(
-                            "DRAWER OPEN",
-                          );
+                          debugPrint("DRAWER OPEN");
 
-                          Scaffold.of(
-                            drawerContext,
-                          ).openDrawer();
+                          Scaffold.of(drawerContext).openDrawer();
                         },
                       );
                     },
@@ -1121,21 +994,15 @@ class _DashboardPageState extends State<DashboardPage> {
             // ======================================================
             // BODY
             // ======================================================
-
             Expanded(
               child: isLoading
-                  ? const Center(
-                      child:
-                          CircularProgressIndicator(),
-                    )
+                  ? const Center(child: CircularProgressIndicator())
                   : hasError
-                      ? _buildErrorView()
-                      : RefreshIndicator(
-                          onRefresh:
-                              loadDashboard,
-                          child:
-                              _buildDashboardContent(),
-                        ),
+                  ? _buildErrorView()
+                  : RefreshIndicator(
+                      onRefresh: loadDashboard,
+                      child: _buildDashboardContent(),
+                    ),
             ),
           ],
         ),
@@ -1149,13 +1016,9 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   void dispose() {
-    debugPrint(
-      "======================================",
-    );
+    debugPrint("======================================");
     debugPrint("DASHBOARD DISPOSE");
-    debugPrint(
-      "======================================",
-    );
+    debugPrint("======================================");
 
     super.dispose();
   }

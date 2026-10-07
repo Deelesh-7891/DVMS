@@ -52,17 +52,13 @@ class _MyBillsScreenState extends State<MyBillsScreen> {
 
       body: Column(
         children: [
-
           ///================ HEADER =================
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(20),
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  Color(0xff4338CA),
-                  Color(0xff4F46E5),
-                ],
+                colors: [Color(0xff4338CA), Color(0xff4F46E5)],
               ),
             ),
             child: SafeArea(
@@ -70,12 +66,10 @@ class _MyBillsScreenState extends State<MyBillsScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   /// LEFT SIDE
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: const [
-
                       Text(
                         "My Bills",
                         style: TextStyle(
@@ -89,10 +83,7 @@ class _MyBillsScreenState extends State<MyBillsScreen> {
 
                       Text(
                         "Uploaded expense receipts",
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 16,
-                        ),
+                        style: TextStyle(color: Colors.white70, fontSize: 16),
                       ),
                     ],
                   ),
@@ -100,8 +91,7 @@ class _MyBillsScreenState extends State<MyBillsScreen> {
                   /// LOGOUT BUTTON
                   TextButton.icon(
                     onPressed: () async {
-                      final prefs =
-                          await SharedPreferences.getInstance();
+                      final prefs = await SharedPreferences.getInstance();
 
                       await DriverTracker.instance.stop();
 
@@ -109,16 +99,11 @@ class _MyBillsScreenState extends State<MyBillsScreen> {
 
                       Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(
-                          builder: (_) => const LoginScreen(),
-                        ),
+                        MaterialPageRoute(builder: (_) => const LoginScreen()),
                         (route) => false,
                       );
                     },
-                    icon: const Icon(
-                      Icons.logout,
-                      color: Colors.white,
-                    ),
+                    icon: const Icon(Icons.logout, color: Colors.white),
                     label: const Text(
                       "Logout",
                       style: TextStyle(
@@ -135,48 +120,38 @@ class _MyBillsScreenState extends State<MyBillsScreen> {
           ///================ LIST =================
           Expanded(
             child: isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
+                ? const Center(child: CircularProgressIndicator())
                 : expenseList.isEmpty
-                    ? const Center(
-                        child: Text(
-                          "No Bills Found",
-                          style: TextStyle(fontSize: 18),
-                        ),
-                      )
-                    : ListView.builder(
-                        padding: const EdgeInsets.all(16),
-                        itemCount: expenseList.length,
-                        itemBuilder: (context, index) {
-                          final item = expenseList[index];
+                ? const Center(
+                    child: Text(
+                      "No Bills Found",
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: expenseList.length,
+                    itemBuilder: (context, index) {
+                      final item = expenseList[index];
 
-                          return billTile(
-                            icon: Icons.receipt_long,
-                            iconColor: Colors.indigo,
-                            title:
-                                item["Vendor"]?.toString() ?? "Vendor",
-                            date: item["RegistrationNo"]
-                                    ?.toString() ??
-                                "",
-                            amount:
-                                "₹${item["Amount"] ?? 0}",
-                            status: item["ApprovalStatus"]
-                                    ?.toString() ??
-                                "Pending",
-                            statusColor:
-                                item["ApprovalStatus"] == "Approved"
-                                    ? Colors.green
-                                    : Colors.orange,
-                            statusBg:
-                                item["ApprovalStatus"] == "Approved"
-                                    ? const Color(0xffDFF8E8)
-                                    : const Color(0xffFFF4D6),
-                          );
-                        },
-                      ),
+                      return billTile(
+                        icon: Icons.receipt_long,
+                        iconColor: Colors.indigo,
+                        title: item["Vendor"]?.toString() ?? "Vendor",
+                        date: item["RegistrationNo"]?.toString() ?? "",
+                        amount: "₹${item["Amount"] ?? 0}",
+                        status: item["ApprovalStatus"]?.toString() ?? "Pending",
+                        statusColor: item["ApprovalStatus"] == "Approved"
+                            ? Colors.green
+                            : Colors.orange,
+                        statusBg: item["ApprovalStatus"] == "Approved"
+                            ? const Color(0xffDFF8E8)
+                            : const Color(0xffFFF4D6),
+                      );
+                    },
+                  ),
           ),
-                  ],
+        ],
       ),
 
       ///================ BOTTOM NAVIGATION =================
@@ -190,9 +165,7 @@ class _MyBillsScreenState extends State<MyBillsScreen> {
           if (index == 0) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                builder: (_) => const DriverHomeScreen(),
-              ),
+              MaterialPageRoute(builder: (_) => const DriverHomeScreen()),
             );
           }
 
@@ -203,31 +176,24 @@ class _MyBillsScreenState extends State<MyBillsScreen> {
           if (index == 2) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(
-                builder: (_) => const ProfileScreen(),
-              ),
+              MaterialPageRoute(builder: (_) => const ProfileScreen()),
             );
           }
         },
 
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: "Home",
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
           BottomNavigationBarItem(
             icon: Icon(Icons.receipt_long),
             label: "Bills",
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: "Profile",
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
         ],
       ),
     );
   }
-    Widget billTile({
+
+  Widget billTile({
     required IconData icon,
     required Color iconColor,
     required String title,
@@ -263,11 +229,7 @@ class _MyBillsScreenState extends State<MyBillsScreen> {
                 color: const Color(0xffEEF4FF),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(
-                icon,
-                color: iconColor,
-                size: 28,
-              ),
+              child: Icon(icon, color: iconColor, size: 28),
             ),
 
             const SizedBox(width: 14),
@@ -289,10 +251,7 @@ class _MyBillsScreenState extends State<MyBillsScreen> {
 
                   Text(
                     "Vehicle No : $date",
-                    style: const TextStyle(
-                      color: Colors.grey,
-                      fontSize: 14,
-                    ),
+                    style: const TextStyle(color: Colors.grey, fontSize: 14),
                   ),
 
                   const SizedBox(height: 4),
@@ -311,10 +270,7 @@ class _MyBillsScreenState extends State<MyBillsScreen> {
 
             /// Status Badge
             Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 7,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
               decoration: BoxDecoration(
                 color: statusBg,
                 borderRadius: BorderRadius.circular(20),
@@ -322,10 +278,7 @@ class _MyBillsScreenState extends State<MyBillsScreen> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  CircleAvatar(
-                    radius: 4,
-                    backgroundColor: statusColor,
-                  ),
+                  CircleAvatar(radius: 4, backgroundColor: statusColor),
                   const SizedBox(width: 6),
                   Text(
                     status,

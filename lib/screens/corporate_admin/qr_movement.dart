@@ -7,13 +7,10 @@ class QrMovementScreen extends StatefulWidget {
   const QrMovementScreen({super.key});
 
   @override
-  State<QrMovementScreen> createState() =>
-      _QrMovementScreenState();
+  State<QrMovementScreen> createState() => _QrMovementScreenState();
 }
 
-class _QrMovementScreenState
-    extends State<QrMovementScreen> {
-
+class _QrMovementScreenState extends State<QrMovementScreen> {
   // =========================================================
   // AUTH SERVICE
   // =========================================================
@@ -24,11 +21,9 @@ class _QrMovementScreenState
   // CONTROLLERS
   // =========================================================
 
-  final TextEditingController searchController =
-      TextEditingController();
+  final TextEditingController searchController = TextEditingController();
 
-  final TextEditingController driverController =
-      TextEditingController();
+  final TextEditingController driverController = TextEditingController();
 
   // =========================================================
   // API DATA
@@ -60,13 +55,9 @@ class _QrMovementScreenState
 
     loadMovements();
 
-    searchController.addListener(
-      applyFilters,
-    );
+    searchController.addListener(applyFilters);
 
-    driverController.addListener(
-      applyFilters,
-    );
+    driverController.addListener(applyFilters);
   }
 
   // =========================================================
@@ -82,39 +73,33 @@ class _QrMovementScreenState
     });
 
     try {
-      final result =
-          await _authService.getmovement();
+      final result = await _authService.getmovement();
 
       if (!mounted) return;
 
       setState(() {
         allMovements = result;
 
-        filteredMovements =
-            List<dynamic>.from(result);
+        filteredMovements = List<dynamic>.from(result);
 
         isLoading = false;
       });
 
       applyFilters();
-
     } catch (e) {
       if (!mounted) return;
 
       setState(() {
         isLoading = false;
 
-        errorMessage =
-            e.toString();
+        errorMessage = e.toString();
 
         allMovements = [];
 
         filteredMovements = [];
       });
 
-      debugPrint(
-        "Movement API Error: $e",
-      );
+      debugPrint("Movement API Error: $e");
     }
   }
 
@@ -123,20 +108,11 @@ class _QrMovementScreenState
   // =========================================================
 
   void applyFilters() {
-    final vehicleSearch =
-        searchController.text
-            .trim()
-            .toLowerCase();
+    final vehicleSearch = searchController.text.trim().toLowerCase();
 
-    final driverSearch =
-        driverController.text
-            .trim()
-            .toLowerCase();
+    final driverSearch = driverController.text.trim().toLowerCase();
 
-    List<dynamic> result =
-        List<dynamic>.from(
-      allMovements,
-    );
+    List<dynamic> result = List<dynamic>.from(allMovements);
 
     // =======================================================
     // VEHICLE SEARCH
@@ -144,17 +120,9 @@ class _QrMovementScreenState
 
     if (vehicleSearch.isNotEmpty) {
       result = result.where((item) {
+        final vehicle = item["RegistrationNo"]?.toString().toLowerCase() ?? "";
 
-        final vehicle =
-            item["RegistrationNo"]
-                    ?.toString()
-                    .toLowerCase() ??
-                "";
-
-        return vehicle.contains(
-          vehicleSearch,
-        );
-
+        return vehicle.contains(vehicleSearch);
       }).toList();
     }
 
@@ -164,17 +132,9 @@ class _QrMovementScreenState
 
     if (driverSearch.isNotEmpty) {
       result = result.where((item) {
+        final driver = item["DriverName"]?.toString().toLowerCase() ?? "";
 
-        final driver =
-            item["DriverName"]
-                    ?.toString()
-                    .toLowerCase() ??
-                "";
-
-        return driver.contains(
-          driverSearch,
-        );
-
+        return driver.contains(driverSearch);
       }).toList();
     }
 
@@ -184,35 +144,21 @@ class _QrMovementScreenState
 
     if (fromDate != null) {
       result = result.where((item) {
-
-        final date =
-            _parseApiDate(
-          item["MovementTime"],
-        );
+        final date = _parseApiDate(item["MovementTime"]);
 
         if (date == null) {
           return false;
         }
 
-        final selectedFrom =
-            DateTime(
+        final selectedFrom = DateTime(
           fromDate!.year,
           fromDate!.month,
           fromDate!.day,
         );
 
-        final movementDate =
-            DateTime(
-          date.year,
-          date.month,
-          date.day,
-        );
+        final movementDate = DateTime(date.year, date.month, date.day);
 
-        return !movementDate
-            .isBefore(
-          selectedFrom,
-        );
-
+        return !movementDate.isBefore(selectedFrom);
       }).toList();
     }
 
@@ -222,35 +168,17 @@ class _QrMovementScreenState
 
     if (toDate != null) {
       result = result.where((item) {
-
-        final date =
-            _parseApiDate(
-          item["MovementTime"],
-        );
+        final date = _parseApiDate(item["MovementTime"]);
 
         if (date == null) {
           return false;
         }
 
-        final selectedTo =
-            DateTime(
-          toDate!.year,
-          toDate!.month,
-          toDate!.day,
-        );
+        final selectedTo = DateTime(toDate!.year, toDate!.month, toDate!.day);
 
-        final movementDate =
-            DateTime(
-          date.year,
-          date.month,
-          date.day,
-        );
+        final movementDate = DateTime(date.year, date.month, date.day);
 
-        return !movementDate
-            .isAfter(
-          selectedTo,
-        );
-
+        return !movementDate.isAfter(selectedTo);
       }).toList();
     }
 
@@ -266,22 +194,16 @@ class _QrMovementScreenState
   // =========================================================
 
   void resetFilters() {
-
     searchController.clear();
 
     driverController.clear();
 
     setState(() {
-
       fromDate = null;
 
       toDate = null;
 
-      filteredMovements =
-          List<dynamic>.from(
-        allMovements,
-      );
-
+      filteredMovements = List<dynamic>.from(allMovements);
     });
   }
 
@@ -289,26 +211,17 @@ class _QrMovementScreenState
   // DATE PICKER
   // =========================================================
 
-  Future<void> selectDate({
-    required bool isFromDate,
-  }) async {
-
-    final picked =
-        await showDatePicker(
+  Future<void> selectDate({required bool isFromDate}) async {
+    final picked = await showDatePicker(
       context: context,
 
-      initialDate:
-          isFromDate
-              ? fromDate ??
-                  DateTime.now()
-              : toDate ??
-                  DateTime.now(),
+      initialDate: isFromDate
+          ? fromDate ?? DateTime.now()
+          : toDate ?? DateTime.now(),
 
-      firstDate:
-          DateTime(2020),
+      firstDate: DateTime(2020),
 
-      lastDate:
-          DateTime(2035),
+      lastDate: DateTime(2035),
     );
 
     if (picked == null) {
@@ -316,13 +229,11 @@ class _QrMovementScreenState
     }
 
     setState(() {
-
       if (isFromDate) {
         fromDate = picked;
       } else {
         toDate = picked;
       }
-
     });
 
     applyFilters();
@@ -332,24 +243,14 @@ class _QrMovementScreenState
   // PARSE API DATE
   // =========================================================
 
-  DateTime? _parseApiDate(
-    dynamic value,
-  ) {
-
+  DateTime? _parseApiDate(dynamic value) {
     if (value == null) {
       return null;
     }
 
     try {
-
-      return DateTime
-          .parse(
-        value.toString(),
-      )
-          .toLocal();
-
+      return DateTime.parse(value.toString()).toLocal();
     } catch (e) {
-
       return null;
     }
   }
@@ -358,16 +259,12 @@ class _QrMovementScreenState
   // FORMAT DATE
   // =========================================================
 
-  String formatDate(
-    DateTime? date,
-  ) {
-
+  String formatDate(DateTime? date) {
     if (date == null) {
       return "dd-mm-yyyy";
     }
 
-    return
-        "${date.day.toString().padLeft(2, '0')}-"
+    return "${date.day.toString().padLeft(2, '0')}-"
         "${date.month.toString().padLeft(2, '0')}-"
         "${date.year}";
   }
@@ -376,49 +273,29 @@ class _QrMovementScreenState
   // FORMAT MOVEMENT TIME
   // =========================================================
 
-  String formatMovementTime(
-    dynamic value,
-  ) {
-
+  String formatMovementTime(dynamic value) {
     if (value == null) {
       return "-";
     }
 
     try {
+      final date = DateTime.parse(value.toString()).toLocal();
 
-      final date =
-          DateTime.parse(
-        value.toString(),
-      ).toLocal();
+      final hour = date.hour == 0
+          ? 12
+          : date.hour > 12
+          ? date.hour - 12
+          : date.hour;
 
-      final hour =
-          date.hour == 0
-              ? 12
-              : date.hour > 12
-                  ? date.hour - 12
-                  : date.hour;
+      final minute = date.minute.toString().padLeft(2, '0');
 
-      final minute =
-          date.minute
-              .toString()
-              .padLeft(2, '0');
+      final second = date.second.toString().padLeft(2, '0');
 
-      final second =
-          date.second
-              .toString()
-              .padLeft(2, '0');
+      final amPm = date.hour >= 12 ? "pm" : "am";
 
-      final amPm =
-          date.hour >= 12
-              ? "pm"
-              : "am";
-
-      return
-          "${date.day}/${date.month}/${date.year}, "
+      return "${date.day}/${date.month}/${date.year}, "
           "$hour:$minute:$second $amPm";
-
     } catch (e) {
-
       return value.toString();
     }
   }
@@ -427,31 +304,16 @@ class _QrMovementScreenState
   // FROM LOCATION
   // =========================================================
 
-  String getFromLocation(
-    Map<String, dynamic> item,
-  ) {
+  String getFromLocation(Map<String, dynamic> item) {
+    final location = item["FromLocationName"];
 
-    final location =
-        item["FromLocationName"];
+    final city = item["FromCityName"];
 
-    final city =
-        item["FromCityName"];
-
-    if (location != null &&
-        location
-            .toString()
-            .trim()
-            .isNotEmpty) {
-
+    if (location != null && location.toString().trim().isNotEmpty) {
       return location.toString();
     }
 
-    if (city != null &&
-        city
-            .toString()
-            .trim()
-            .isNotEmpty) {
-
+    if (city != null && city.toString().trim().isNotEmpty) {
       return city.toString();
     }
 
@@ -462,31 +324,16 @@ class _QrMovementScreenState
   // TO LOCATION
   // =========================================================
 
-  String getToLocation(
-    Map<String, dynamic> item,
-  ) {
+  String getToLocation(Map<String, dynamic> item) {
+    final location = item["ToLocationName"];
 
-    final location =
-        item["ToLocationName"];
+    final city = item["ToCityName"];
 
-    final city =
-        item["ToCityName"];
-
-    if (location != null &&
-        location
-            .toString()
-            .trim()
-            .isNotEmpty) {
-
+    if (location != null && location.toString().trim().isNotEmpty) {
       return location.toString();
     }
 
-    if (city != null &&
-        city
-            .toString()
-            .trim()
-            .isNotEmpty) {
-
+    if (city != null && city.toString().trim().isNotEmpty) {
       return city.toString();
     }
 
@@ -499,154 +346,96 @@ class _QrMovementScreenState
   // =========================================================
 
   Widget buildHeader() {
-
     return LayoutBuilder(
-      builder:
-          (
-        BuildContext context,
-        BoxConstraints constraints,
-      ) {
-
-        final bool isMobile =
-            constraints.maxWidth < 700;
+      builder: (BuildContext context, BoxConstraints constraints) {
+        final bool isMobile = constraints.maxWidth < 700;
 
         // =====================================================
         // MOBILE
         // =====================================================
 
         if (isMobile) {
-
           return Container(
             width: double.infinity,
 
-            padding:
-                const EdgeInsets.fromLTRB(
-              16,
-              14,
-              16,
-              12,
-            ),
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
 
             child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
 
               children: [
-
                 // =============================================
                 // TITLE
                 // =============================================
-
                 const SizedBox(
                   width: double.infinity,
                   child: Text(
                     "QR Movement",
                     maxLines: 1,
                     softWrap: false,
-                    overflow:
-                        TextOverflow.ellipsis,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       fontSize: 24,
-                      fontWeight:
-                          FontWeight.w800,
+                      fontWeight: FontWeight.w800,
                       color: Colors.black,
                     ),
                   ),
                 ),
 
-                const SizedBox(
-                  height: 4,
-                ),
+                const SizedBox(height: 4),
 
                 // =============================================
                 // SUBTITLE
                 // =============================================
-
                 const SizedBox(
                   width: double.infinity,
                   child: Text(
                     "Gate entry / exit log via QR scan",
                     maxLines: 1,
                     softWrap: false,
-                    overflow:
-                        TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color:
-                          Color(0xff64748b),
-                    ),
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 13, color: Color(0xff64748b)),
                   ),
                 ),
 
-                const SizedBox(
-                  height: 12,
-                ),
+                const SizedBox(height: 12),
 
                 // =============================================
                 // BUTTONS
                 // =============================================
-
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
 
                   children: [
-
                     // =========================================
                     // MANUAL ENTRY
                     // =========================================
-
                     SizedBox(
                       height: 42,
-                      child:
-                          OutlinedButton.icon(
+                      child: OutlinedButton.icon(
                         onPressed: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const ManualEntryScreen(),
-        ),
-      );
-    },
-
-                        icon:
-                            const Icon(
-                          Icons
-                              .keyboard_alt_outlined,
-                          size: 17,
-                        ),
-
-                        label:
-                            const Text(
-                          "Manual Entry",
-                        ),
-
-                        style:
-                            OutlinedButton
-                                .styleFrom(
-                          foregroundColor:
-                              const Color(
-                            0xff334155,
-                          ),
-
-                          backgroundColor:
-                              Colors.white,
-
-                          side:
-                              const BorderSide(
-                            color:
-                                Color(
-                              0xffdbe2ea,
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const ManualEntryScreen(),
                             ),
-                          ),
+                          );
+                        },
 
-                          shape:
-                              RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius
-                                    .circular(
-                              10,
-                            ),
+                        icon: const Icon(Icons.keyboard_alt_outlined, size: 17),
+
+                        label: const Text("Manual Entry"),
+
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: const Color(0xff334155),
+
+                          backgroundColor: Colors.white,
+
+                          side: const BorderSide(color: Color(0xffdbe2ea)),
+
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                       ),
@@ -655,56 +444,36 @@ class _QrMovementScreenState
                     // =========================================
                     // SCAN QR
                     // =========================================
-
                     SizedBox(
                       height: 42,
-                      child:
-                          ElevatedButton.icon(
-                       onPressed: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const ScanQRScreen(),
-        ),
-      );
-    },
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const ScanQRScreen(),
+                            ),
+                          );
+                        },
 
-                        icon:
-                            const Icon(
-                          Icons
-                              .qr_code_scanner,
+                        icon: const Icon(
+                          Icons.qr_code_scanner,
                           size: 18,
-                          color:
-                              Colors.white,
+                          color: Colors.white,
                         ),
 
-                        label:
-                            const Text(
+                        label: const Text(
                           "Scan QR",
-                          style:
-                              TextStyle(
-                            color:
-                                Colors.white,
-                          ),
+                          style: TextStyle(color: Colors.white),
                         ),
 
-                        style:
-                            ElevatedButton
-                                .styleFrom(
+                        style: ElevatedButton.styleFrom(
                           elevation: 0,
 
-                          backgroundColor:
-                              const Color(
-                            0xff2161b5,
-                          ),
+                          backgroundColor: const Color(0xff2161b5),
 
-                          shape:
-                              RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius
-                                    .circular(
-                              10,
-                            ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                       ),
@@ -713,26 +482,19 @@ class _QrMovementScreenState
                     // =========================================
                     // DATE
                     // =========================================
-
                     SizedBox(
                       height: 42,
 
-                      child:
-                          Center(
+                      child: Center(
                         child: Text(
                           _todayText(),
 
                           maxLines: 1,
 
-                          style:
-                              const TextStyle(
+                          style: const TextStyle(
                             fontSize: 13,
-                            fontWeight:
-                                FontWeight.w600,
-                            color:
-                                Color(
-                              0xff1e293b,
-                            ),
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xff1e293b),
                           ),
                         ),
                       ),
@@ -749,31 +511,20 @@ class _QrMovementScreenState
         // =====================================================
 
         return Padding(
-          padding:
-              const EdgeInsets.fromLTRB(
-            20,
-            18,
-            20,
-            15,
-          ),
+          padding: const EdgeInsets.fromLTRB(20, 18, 20, 15),
 
           child: Row(
-            crossAxisAlignment:
-                CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
 
             children: [
-
               // =================================================
               // TITLE
               // =================================================
-
               Expanded(
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
 
                   children: const [
-
                     Text(
                       "QR Movement",
                       maxLines: 1,
@@ -783,14 +534,11 @@ class _QrMovementScreenState
                       style: TextStyle(
                         fontSize: 25,
                         fontWeight: FontWeight.w800,
-                        color:
-                            Colors.black,
+                        color: Colors.black,
                       ),
                     ),
 
-                    SizedBox(
-                      height: 4,
-                    ),
+                    SizedBox(height: 4),
 
                     Text(
                       "Gate entry / exit log via QR scan",
@@ -798,26 +546,17 @@ class _QrMovementScreenState
                       softWrap: false,
                       overflow: TextOverflow.ellipsis,
 
-                      style: TextStyle(
-                        fontSize: 14,
-                        color:
-                            Color(
-                          0xff64748b,
-                        ),
-                      ),
+                      style: TextStyle(fontSize: 14, color: Color(0xff64748b)),
                     ),
                   ],
                 ),
               ),
 
-              const SizedBox(
-                width: 15,
-              ),
+              const SizedBox(width: 15),
 
               // =================================================
               // MANUAL ENTRY
               // =================================================
-
               SizedBox(
                 height: 43,
 
@@ -827,131 +566,78 @@ class _QrMovementScreenState
                     // Manual Entry
                   },
 
-                  icon:
-                      const Icon(
-                    Icons
-                        .keyboard_alt_outlined,
-                    size: 18,
-                  ),
+                  icon: const Icon(Icons.keyboard_alt_outlined, size: 18),
 
-                  label:
-                      const Text(
-                    "Manual Entry",
-                  ),
+                  label: const Text("Manual Entry"),
 
-                  style:
-                      OutlinedButton
-                          .styleFrom(
-                    foregroundColor:
-                        const Color(
-                      0xff334155,
-                    ),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color(0xff334155),
 
-                    backgroundColor:
-                        Colors.white,
+                    backgroundColor: Colors.white,
 
-                    side:
-                        const BorderSide(
-                      color:
-                          Color(
-                        0xffdbe2ea,
-                      ),
-                    ),
+                    side: const BorderSide(color: Color(0xffdbe2ea)),
 
-                    shape:
-                        RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(
-                        10,
-                      ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                 ),
               ),
 
-              const SizedBox(
-                width: 10,
-              ),
+              const SizedBox(width: 10),
 
               // =================================================
               // SCAN QR
               // =================================================
-
               SizedBox(
                 height: 43,
 
-                child:
-                    ElevatedButton.icon(
+                child: ElevatedButton.icon(
                   onPressed: () {
                     // TODO:
                     // QR Scanner
                   },
 
-                  icon:
-                      const Icon(
+                  icon: const Icon(
                     Icons.qr_code_scanner,
                     size: 18,
-                    color:
-                        Colors.white,
+                    color: Colors.white,
                   ),
 
-                  label:
-                      const Text(
+                  label: const Text(
                     "Scan QR",
-                    style:
-                        TextStyle(
-                      color:
-                          Colors.white,
-                    ),
+                    style: TextStyle(color: Colors.white),
                   ),
 
-                  style:
-                      ElevatedButton
-                          .styleFrom(
+                  style: ElevatedButton.styleFrom(
                     elevation: 0,
 
-                    backgroundColor:
-                        const Color(
-                      0xff2161b5,
-                    ),
+                    backgroundColor: const Color(0xff2161b5),
 
-                    shape:
-                        RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(
-                        10,
-                      ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                 ),
               ),
 
-              const SizedBox(
-                width: 15,
-              ),
+              const SizedBox(width: 15),
 
               // =================================================
               // DATE
               // =================================================
-
               Flexible(
                 child: Text(
                   _todayText(),
 
                   maxLines: 1,
 
-                  overflow:
-                      TextOverflow.ellipsis,
+                  overflow: TextOverflow.ellipsis,
 
-                  style:
-                      const TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
-                    fontWeight:
-                        FontWeight.w600,
-                    color:
-                        Color(
-                      0xff1e293b,
-                    ),
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xff1e293b),
                   ),
                 ),
               ),
@@ -967,9 +653,7 @@ class _QrMovementScreenState
   // =========================================================
 
   String _todayText() {
-
-    final now =
-        DateTime.now();
+    final now = DateTime.now();
 
     const weekdays = [
       "Monday",
@@ -996,8 +680,7 @@ class _QrMovementScreenState
       "Dec",
     ];
 
-    return
-        "${weekdays[now.weekday - 1]}, "
+    return "${weekdays[now.weekday - 1]}, "
         "${now.day} "
         "${months[now.month - 1]} "
         "${now.year}";
@@ -1008,34 +691,23 @@ class _QrMovementScreenState
   // =========================================================
 
   Widget buildFilterSection() {
-
     return Container(
       width: double.infinity,
 
-      padding:
-          const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(18),
 
-      decoration:
-          BoxDecoration(
-        color:
-            const Color(0xfff8fafc),
+      decoration: BoxDecoration(
+        color: const Color(0xfff8fafc),
 
-        borderRadius:
-            BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16),
 
-        border:
-            Border.all(
-          color:
-              const Color(0xffe2e8f0),
-        ),
+        border: Border.all(color: const Color(0xffe2e8f0)),
 
         boxShadow: const [
           BoxShadow(
-            color:
-                Color(0x08000000),
+            color: Color(0x08000000),
             blurRadius: 8,
-            offset:
-                Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
@@ -1044,85 +716,44 @@ class _QrMovementScreenState
         spacing: 12,
         runSpacing: 12,
 
-        crossAxisAlignment:
-            WrapCrossAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
 
         children: [
-
           // ===================================================
           // VEHICLE SEARCH
           // ===================================================
-
           SizedBox(
             width: 245,
             height: 40,
 
             child: TextField(
-              controller:
-                  searchController,
+              controller: searchController,
 
-              decoration:
-                  InputDecoration(
-                hintText:
-                    "Type to search...",
+              decoration: InputDecoration(
+                hintText: "Type to search...",
 
                 filled: true,
 
-                fillColor:
-                    Colors.white,
+                fillColor: Colors.white,
 
-                contentPadding:
-                    const EdgeInsets
-                        .symmetric(
-                  horizontal: 14,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 14),
+
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+
+                  borderSide: const BorderSide(color: Color(0xffdbe2ea)),
                 ),
 
-                border:
-                    OutlineInputBorder(
-                  borderRadius:
-                      BorderRadius.circular(
-                    10,
-                  ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
 
-                  borderSide:
-                      const BorderSide(
-                    color:
-                        Color(
-                      0xffdbe2ea,
-                    ),
-                  ),
+                  borderSide: const BorderSide(color: Color(0xffdbe2ea)),
                 ),
 
-                enabledBorder:
-                    OutlineInputBorder(
-                  borderRadius:
-                      BorderRadius.circular(
-                    10,
-                  ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
 
-                  borderSide:
-                      const BorderSide(
-                    color:
-                        Color(
-                      0xffdbe2ea,
-                    ),
-                  ),
-                ),
-
-                focusedBorder:
-                    OutlineInputBorder(
-                  borderRadius:
-                      BorderRadius.circular(
-                    10,
-                  ),
-
-                  borderSide:
-                      const BorderSide(
-                    color:
-                        Color(
-                      0xff2161b5,
-                    ),
-                  ),
+                  borderSide: const BorderSide(color: Color(0xff2161b5)),
                 ),
               ),
             ),
@@ -1131,77 +762,38 @@ class _QrMovementScreenState
           // ===================================================
           // DRIVER SEARCH
           // ===================================================
-
           SizedBox(
             width: 245,
             height: 40,
 
             child: TextField(
-              controller:
-                  driverController,
+              controller: driverController,
 
-              decoration:
-                  InputDecoration(
-                hintText:
-                    "Search driver...",
+              decoration: InputDecoration(
+                hintText: "Search driver...",
 
                 filled: true,
 
-                fillColor:
-                    Colors.white,
+                fillColor: Colors.white,
 
-                contentPadding:
-                    const EdgeInsets
-                        .symmetric(
-                  horizontal: 14,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 14),
+
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+
+                  borderSide: const BorderSide(color: Color(0xffdbe2ea)),
                 ),
 
-                border:
-                    OutlineInputBorder(
-                  borderRadius:
-                      BorderRadius.circular(
-                    10,
-                  ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
 
-                  borderSide:
-                      const BorderSide(
-                    color:
-                        Color(
-                      0xffdbe2ea,
-                    ),
-                  ),
+                  borderSide: const BorderSide(color: Color(0xffdbe2ea)),
                 ),
 
-                enabledBorder:
-                    OutlineInputBorder(
-                  borderRadius:
-                      BorderRadius.circular(
-                    10,
-                  ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
 
-                  borderSide:
-                      const BorderSide(
-                    color:
-                        Color(
-                      0xffdbe2ea,
-                    ),
-                  ),
-                ),
-
-                focusedBorder:
-                    OutlineInputBorder(
-                  borderRadius:
-                      BorderRadius.circular(
-                    10,
-                  ),
-
-                  borderSide:
-                      const BorderSide(
-                    color:
-                        Color(
-                      0xff2161b5,
-                    ),
-                  ),
+                  borderSide: const BorderSide(color: Color(0xff2161b5)),
                 ),
               ),
             ),
@@ -1210,77 +802,47 @@ class _QrMovementScreenState
           // ===================================================
           // FROM DATE
           // ===================================================
-
           buildDateBox(
-            title:
-                formatDate(
-              fromDate,
-            ),
+            title: formatDate(fromDate),
 
-            onTap: () =>
-                selectDate(
-              isFromDate: true,
-            ),
+            onTap: () => selectDate(isFromDate: true),
           ),
 
           // ===================================================
           // TO DATE
           // ===================================================
-
           buildDateBox(
-            title:
-                formatDate(
-              toDate,
-            ),
+            title: formatDate(toDate),
 
-            onTap: () =>
-                selectDate(
-              isFromDate: false,
-            ),
+            onTap: () => selectDate(isFromDate: false),
           ),
 
           // ===================================================
           // FILTER
           // ===================================================
-
           SizedBox(
             height: 40,
 
-            child:
-                ElevatedButton(
-              onPressed:
-                  applyFilters,
+            child: ElevatedButton(
+              onPressed: applyFilters,
 
-              style:
-                  ElevatedButton
-                      .styleFrom(
+              style: ElevatedButton.styleFrom(
                 elevation: 0,
 
-                backgroundColor:
-                    const Color(
-                  0xff2161b5,
-                ),
+                backgroundColor: const Color(0xff2161b5),
 
-                shape:
-                    RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(
-                    10,
-                  ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
 
-              child:
-                  const Text(
+              child: const Text(
                 "Filter",
 
-                style:
-                    TextStyle(
-                  color:
-                      Colors.white,
+                style: TextStyle(
+                  color: Colors.white,
 
-                  fontWeight:
-                      FontWeight.w700,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ),
@@ -1289,47 +851,25 @@ class _QrMovementScreenState
           // ===================================================
           // RESET
           // ===================================================
-
           SizedBox(
             height: 40,
 
-            child:
-                OutlinedButton(
-              onPressed:
-                  resetFilters,
+            child: OutlinedButton(
+              onPressed: resetFilters,
 
-              style:
-                  OutlinedButton
-                      .styleFrom(
-                foregroundColor:
-                    const Color(
-                  0xff475569,
-                ),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: const Color(0xff475569),
 
-                backgroundColor:
-                    Colors.white,
+                backgroundColor: Colors.white,
 
-                side:
-                    const BorderSide(
-                  color:
-                      Color(
-                    0xffd5dde7,
-                  ),
-                ),
+                side: const BorderSide(color: Color(0xffd5dde7)),
 
-                shape:
-                    RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(
-                    10,
-                  ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
 
-              child:
-                  const Text(
-                "Reset",
-              ),
+              child: const Text("Reset"),
             ),
           ),
         ],
@@ -1341,77 +881,46 @@ class _QrMovementScreenState
   // DATE BOX
   // =========================================================
 
-  Widget buildDateBox({
-    required String title,
-    required VoidCallback onTap,
-  }) {
-
+  Widget buildDateBox({required String title, required VoidCallback onTap}) {
     return InkWell(
       onTap: onTap,
 
-      borderRadius:
-          BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(10),
 
       child: Container(
         width: 172,
         height: 40,
 
-        padding:
-            const EdgeInsets.symmetric(
-          horizontal: 12,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
 
-        decoration:
-            BoxDecoration(
-          color:
-              Colors.white,
+        decoration: BoxDecoration(
+          color: Colors.white,
 
-          borderRadius:
-              BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(10),
 
-          border:
-              Border.all(
-            color:
-                const Color(
-              0xffdbe2ea,
-            ),
-          ),
+          border: Border.all(color: const Color(0xffdbe2ea)),
         ),
 
         child: Row(
           children: [
-
             Expanded(
               child: Text(
                 title,
 
                 maxLines: 1,
 
-                overflow:
-                    TextOverflow.ellipsis,
+                overflow: TextOverflow.ellipsis,
 
-                style:
-                    const TextStyle(
-                  color:
-                      Color(
-                    0xff64748b,
-                  ),
-
-                  fontSize: 14,
-                ),
+                style: const TextStyle(color: Color(0xff64748b), fontSize: 14),
               ),
             ),
 
             const Icon(
-              Icons
-                  .calendar_today_outlined,
+              Icons.calendar_today_outlined,
 
               size: 17,
 
-              color:
-                  Color(
-                0xff334155,
-              ),
+              color: Color(0xff334155),
             ),
           ],
         ),
@@ -1424,16 +933,12 @@ class _QrMovementScreenState
   // =========================================================
 
   Widget buildMovementTable() {
-
     if (isLoading) {
-
       return const Center(
         child: Padding(
-          padding:
-              EdgeInsets.all(50),
+          padding: EdgeInsets.all(50),
 
-          child:
-              CircularProgressIndicator(),
+          child: CircularProgressIndicator(),
         ),
       );
     }
@@ -1443,53 +948,32 @@ class _QrMovementScreenState
     // =======================================================
 
     if (errorMessage != null) {
-
       return Center(
         child: Padding(
-          padding:
-              const EdgeInsets.all(30),
+          padding: const EdgeInsets.all(30),
 
           child: Column(
-            mainAxisSize:
-                MainAxisSize.min,
+            mainAxisSize: MainAxisSize.min,
 
             children: [
+              const Icon(Icons.error_outline, size: 50, color: Colors.red),
 
-              const Icon(
-                Icons.error_outline,
-                size: 50,
-                color: Colors.red,
-              ),
-
-              const SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 10),
 
               Text(
                 errorMessage!,
 
-                textAlign:
-                    TextAlign.center,
+                textAlign: TextAlign.center,
 
-                style:
-                    const TextStyle(
-                  color:
-                      Colors.red,
-                ),
+                style: const TextStyle(color: Colors.red),
               ),
 
-              const SizedBox(
-                height: 15,
-              ),
+              const SizedBox(height: 15),
 
               ElevatedButton(
-                onPressed:
-                    loadMovements,
+                onPressed: loadMovements,
 
-                child:
-                    const Text(
-                  "Retry",
-                ),
+                child: const Text("Retry"),
               ),
             ],
           ),
@@ -1502,24 +986,14 @@ class _QrMovementScreenState
     // =======================================================
 
     if (filteredMovements.isEmpty) {
-
       return const Center(
         child: Padding(
-          padding:
-              EdgeInsets.all(50),
+          padding: EdgeInsets.all(50),
 
           child: Text(
             "No movement records found",
 
-            style:
-                TextStyle(
-              fontSize: 16,
-
-              color:
-                  Color(
-                0xff64748b,
-              ),
-            ),
+            style: TextStyle(fontSize: 16, color: Color(0xff64748b)),
           ),
         ),
       );
@@ -1532,357 +1006,203 @@ class _QrMovementScreenState
     return Container(
       width: double.infinity,
 
-      decoration:
-          BoxDecoration(
-        color:
-            Colors.white,
+      decoration: BoxDecoration(
+        color: Colors.white,
 
-        borderRadius:
-            BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16),
 
-        border:
-            Border.all(
-          color:
-              const Color(
-            0xffe2e8f0,
-          ),
-        ),
+        border: Border.all(color: const Color(0xffe2e8f0)),
       ),
 
       child: ClipRRect(
-        borderRadius:
-            BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16),
 
-        child:
-            SingleChildScrollView(
-          scrollDirection:
-              Axis.horizontal,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
 
-          child:
-              DataTable(
+          child: DataTable(
             columnSpacing: 28,
 
-            horizontalMargin:
-                18,
+            horizontalMargin: 18,
 
-            headingRowHeight:
-                48,
+            headingRowHeight: 48,
 
-            dataRowMinHeight:
-                62,
+            dataRowMinHeight: 62,
 
-            dataRowMaxHeight:
-                80,
+            dataRowMaxHeight: 80,
 
-            columns:
-                const [
+            columns: const [
+              DataColumn(label: TableHeader("TIME")),
 
-              DataColumn(
-                label:
-                    TableHeader(
-                  "TIME",
-                ),
-              ),
+              DataColumn(label: TableHeader("VEHICLE")),
 
-              DataColumn(
-                label:
-                    TableHeader(
-                  "VEHICLE",
-                ),
-              ),
+              DataColumn(label: TableHeader("FROM")),
 
-              DataColumn(
-                label:
-                    TableHeader(
-                  "FROM",
-                ),
-              ),
+              DataColumn(label: TableHeader("TO")),
 
-              DataColumn(
-                label:
-                    TableHeader(
-                  "TO",
-                ),
-              ),
+              DataColumn(label: TableHeader("DIRECTION")),
 
-              DataColumn(
-                label:
-                    TableHeader(
-                  "DIRECTION",
-                ),
-              ),
+              DataColumn(label: TableHeader("TYPE")),
 
-              DataColumn(
-                label:
-                    TableHeader(
-                  "TYPE",
-                ),
-              ),
+              DataColumn(label: TableHeader("ODOMETER")),
 
-              DataColumn(
-                label:
-                    TableHeader(
-                  "ODOMETER",
-                ),
-              ),
+              DataColumn(label: TableHeader("DRIVER")),
 
-              DataColumn(
-                label:
-                    TableHeader(
-                  "DRIVER",
-                ),
-              ),
+              DataColumn(label: TableHeader("PURPOSE")),
 
-              DataColumn(
-                label:
-                    TableHeader(
-                  "PURPOSE",
-                ),
-              ),
-
-              DataColumn(
-                label:
-                    TableHeader(
-                  "CUSTOMER",
-                ),
-              ),
+              DataColumn(label: TableHeader("CUSTOMER")),
             ],
 
-            rows:
-                filteredMovements
-                    .map<DataRow>(
-              (item) {
+            rows: filteredMovements.map<DataRow>((item) {
+              final Map<String, dynamic> data = Map<String, dynamic>.from(item);
 
-                final Map<String,
-                        dynamic>
-                    data =
-                    Map<String,
-                        dynamic>.from(
-                  item,
-                );
+              return DataRow(
+                cells: [
+                  // =========================================
+                  // TIME
+                  // =========================================
+                  DataCell(
+                    Text(
+                      formatMovementTime(data["MovementTime"]),
 
-                return DataRow(
-                  cells: [
-
-                    // =========================================
-                    // TIME
-                    // =========================================
-
-                    DataCell(
-                      Text(
-                        formatMovementTime(
-                          data[
-                              "MovementTime"],
-                        ),
-
-                        style:
-                            const TextStyle(
-                          fontSize: 13,
-                          color:
-                              Color(
-                            0xff334155,
-                          ),
-                        ),
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: Color(0xff334155),
                       ),
                     ),
+                  ),
 
-                    // =========================================
-                    // VEHICLE
-                    // =========================================
+                  // =========================================
+                  // VEHICLE
+                  // =========================================
+                  DataCell(
+                    Text(
+                      data["RegistrationNo"]?.toString() ?? "-",
 
-                    DataCell(
-                      Text(
-                        data[
-                                    "RegistrationNo"]
-                                ?.toString() ??
-                            "-",
+                      style: const TextStyle(
+                        fontSize: 14,
 
-                        style:
-                            const TextStyle(
+                        fontWeight: FontWeight.w800,
+
+                        color: Color(0xff1e293b),
+                      ),
+                    ),
+                  ),
+
+                  // =========================================
+                  // FROM
+                  // =========================================
+                  DataCell(
+                    SizedBox(
+                      width: 190,
+
+                      child: Text(
+                        getFromLocation(data),
+
+                        maxLines: 2,
+
+                        overflow: TextOverflow.ellipsis,
+
+                        style: const TextStyle(
                           fontSize: 14,
 
-                          fontWeight:
-                              FontWeight.w800,
+                          fontWeight: FontWeight.w700,
 
-                          color:
-                              Color(
-                            0xff1e293b,
-                          ),
+                          color: Color(0xff1e293b),
                         ),
                       ),
                     ),
+                  ),
 
-                    // =========================================
-                    // FROM
-                    // =========================================
+                  // =========================================
+                  // TO
+                  // =========================================
+                  DataCell(
+                    SizedBox(
+                      width: 190,
 
-                    DataCell(
-                      SizedBox(
-                        width: 190,
+                      child: Text(
+                        getToLocation(data),
 
-                        child: Text(
-                          getFromLocation(
-                            data,
-                          ),
+                        maxLines: 2,
 
-                          maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
 
-                          overflow:
-                              TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 14,
 
-                          style:
-                              const TextStyle(
-                            fontSize: 14,
+                          fontWeight: FontWeight.w700,
 
-                            fontWeight:
-                                FontWeight.w700,
-
-                            color:
-                                Color(
-                              0xff1e293b,
-                            ),
-                          ),
+                          color: Color(0xff1e293b),
                         ),
                       ),
                     ),
+                  ),
 
-                    // =========================================
-                    // TO
-                    // =========================================
+                  // =========================================
+                  // DIRECTION
+                  // =========================================
+                  DataCell(
+                    directionBadge(data["Direction"]?.toString() ?? "-"),
+                  ),
 
-                    DataCell(
-                      SizedBox(
-                        width: 190,
+                  // =========================================
+                  // TYPE
+                  // =========================================
+                  DataCell(
+                    Text(
+                      data["MovementType"]?.toString() ?? "-",
 
-                        child: Text(
-                          getToLocation(
-                            data,
-                          ),
-
-                          maxLines: 2,
-
-                          overflow:
-                              TextOverflow.ellipsis,
-
-                          style:
-                              const TextStyle(
-                            fontSize: 14,
-
-                            fontWeight:
-                                FontWeight.w700,
-
-                            color:
-                                Color(
-                              0xff1e293b,
-                            ),
-                          ),
-                        ),
-                      ),
+                      style: const TextStyle(fontSize: 13),
                     ),
+                  ),
 
-                    // =========================================
-                    // DIRECTION
-                    // =========================================
+                  // =========================================
+                  // ODOMETER
+                  // =========================================
+                  DataCell(
+                    Text(
+                      "${data["Odometer"] ?? "-"} km",
 
-                    DataCell(
-                      directionBadge(
-                        data[
-                                    "Direction"]
-                                ?.toString() ??
-                            "-",
-                      ),
+                      style: const TextStyle(fontSize: 13),
                     ),
+                  ),
 
-                    // =========================================
-                    // TYPE
-                    // =========================================
+                  // =========================================
+                  // DRIVER
+                  // =========================================
+                  DataCell(
+                    Text(
+                      data["DriverName"]?.toString() ?? "-",
 
-                    DataCell(
-                      Text(
-                        data[
-                                    "MovementType"]
-                                ?.toString() ??
-                            "-",
-
-                        style:
-                            const TextStyle(
-                          fontSize: 13,
-                        ),
-                      ),
+                      style: const TextStyle(fontSize: 13),
                     ),
+                  ),
 
-                    // =========================================
-                    // ODOMETER
-                    // =========================================
+                  // =========================================
+                  // PURPOSE
+                  // =========================================
+                  DataCell(
+                    Text(
+                      data["Purpose"]?.toString() ?? "-",
 
-                    DataCell(
-                      Text(
-                        "${data["Odometer"] ?? "-"} km",
-
-                        style:
-                            const TextStyle(
-                          fontSize: 13,
-                        ),
-                      ),
+                      style: const TextStyle(fontSize: 13),
                     ),
+                  ),
 
-                    // =========================================
-                    // DRIVER
-                    // =========================================
+                  // =========================================
+                  // CUSTOMER
+                  // =========================================
+                  DataCell(
+                    Text(
+                      data["CustomerName"]?.toString() ?? "-",
 
-                    DataCell(
-                      Text(
-                        data[
-                                    "DriverName"]
-                                ?.toString() ??
-                            "-",
-
-                        style:
-                            const TextStyle(
-                          fontSize: 13,
-                        ),
-                      ),
+                      style: const TextStyle(fontSize: 13),
                     ),
-
-                    // =========================================
-                    // PURPOSE
-                    // =========================================
-
-                    DataCell(
-                      Text(
-                        data[
-                                    "Purpose"]
-                                ?.toString() ??
-                            "-",
-
-                        style:
-                            const TextStyle(
-                          fontSize: 13,
-                        ),
-                      ),
-                    ),
-
-                    // =========================================
-                    // CUSTOMER
-                    // =========================================
-
-                    DataCell(
-                      Text(
-                        data[
-                                    "CustomerName"]
-                                ?.toString() ??
-                            "-",
-
-                        style:
-                            const TextStyle(
-                          fontSize: 13,
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ).toList(),
+                  ),
+                ],
+              );
+            }).toList(),
           ),
         ),
       ),
@@ -1893,82 +1213,48 @@ class _QrMovementScreenState
   // DIRECTION BADGE
   // =========================================================
 
-  Widget directionBadge(
-    String direction,
-  ) {
-
-    final bool isEntry =
-        direction
-            .toLowerCase() ==
-            "entry";
+  Widget directionBadge(String direction) {
+    final bool isEntry = direction.toLowerCase() == "entry";
 
     return Container(
-      padding:
-          const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 6,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
 
-      decoration:
-          BoxDecoration(
-        color: isEntry
-            ? const Color(
-                0xffdcfce7,
-              )
-            : const Color(
-                0xfffff1c7,
-              ),
+      decoration: BoxDecoration(
+        color: isEntry ? const Color(0xffdcfce7) : const Color(0xfffff1c7),
 
-        borderRadius:
-            BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20),
       ),
 
       child: Row(
-        mainAxisSize:
-            MainAxisSize.min,
+        mainAxisSize: MainAxisSize.min,
 
         children: [
-
           Container(
             width: 8,
             height: 8,
 
-            decoration:
-                BoxDecoration(
+            decoration: BoxDecoration(
               color: isEntry
-                  ? const Color(
-                      0xff16a34a,
-                    )
-                  : const Color(
-                      0xfff59e0b,
-                    ),
+                  ? const Color(0xff16a34a)
+                  : const Color(0xfff59e0b),
 
-              shape:
-                  BoxShape.circle,
+              shape: BoxShape.circle,
             ),
           ),
 
-          const SizedBox(
-            width: 7,
-          ),
+          const SizedBox(width: 7),
 
           Text(
             direction,
 
-            style:
-                TextStyle(
+            style: TextStyle(
               fontSize: 13,
 
-              fontWeight:
-                  FontWeight.w700,
+              fontWeight: FontWeight.w700,
 
               color: isEntry
-                  ? const Color(
-                      0xff15803d,
-                    )
-                  : const Color(
-                      0xffb45309,
-                    ),
+                  ? const Color(0xff15803d)
+                  : const Color(0xffb45309),
             ),
           ),
         ],
@@ -1981,64 +1267,41 @@ class _QrMovementScreenState
   // =========================================================
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
-
+  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          const Color(
-        0xfff4f7fb,
-      ),
+      backgroundColor: const Color(0xfff4f7fb),
 
-      body:
-          SafeArea(
+      body: SafeArea(
         child: Column(
           children: [
-
             // =================================================
             // HEADER
             // =================================================
-
             buildHeader(),
 
             // =================================================
             // MAIN CONTENT
             // =================================================
-
             Expanded(
-              child:
-                  SingleChildScrollView(
-                padding:
-                    const EdgeInsets.all(
-                  18,
-                ),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(18),
 
-                child:
-                    Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment
-                          .start,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
 
                   children: [
-
                     // =========================================
                     // FILTER
                     // =========================================
-
                     buildFilterSection(),
 
-                    const SizedBox(
-                      height: 18,
-                    ),
+                    const SizedBox(height: 18),
 
                     // =========================================
                     // RECORD COUNT + REFRESH
                     // =========================================
-
                     Row(
                       children: [
-
                         Expanded(
                           child: Text(
                             "Movement Records: "
@@ -2046,48 +1309,33 @@ class _QrMovementScreenState
 
                             maxLines: 1,
 
-                            overflow:
-                                TextOverflow
-                                    .ellipsis,
+                            overflow: TextOverflow.ellipsis,
 
-                            style:
-                                const TextStyle(
+                            style: const TextStyle(
                               fontSize: 14,
 
-                              fontWeight:
-                                  FontWeight.w600,
+                              fontWeight: FontWeight.w600,
 
-                              color:
-                                  Color(
-                                0xff475569,
-                              ),
+                              color: Color(0xff475569),
                             ),
                           ),
                         ),
 
                         IconButton(
-                          tooltip:
-                              "Refresh",
+                          tooltip: "Refresh",
 
-                          onPressed:
-                              loadMovements,
+                          onPressed: loadMovements,
 
-                          icon:
-                              const Icon(
-                            Icons.refresh,
-                          ),
+                          icon: const Icon(Icons.refresh),
                         ),
                       ],
                     ),
 
-                    const SizedBox(
-                      height: 8,
-                    ),
+                    const SizedBox(height: 8),
 
                     // =========================================
                     // TABLE
                     // =========================================
-
                     buildMovementTable(),
                   ],
                 ),
@@ -2105,7 +1353,6 @@ class _QrMovementScreenState
 
   @override
   void dispose() {
-
     searchController.dispose();
 
     driverController.dispose();
@@ -2118,40 +1365,26 @@ class _QrMovementScreenState
 // TABLE HEADER
 // =============================================================
 
-class TableHeader
-    extends StatelessWidget {
-
+class TableHeader extends StatelessWidget {
   final String title;
 
-  const TableHeader(
-    this.title, {
-    super.key,
-  });
+  const TableHeader(this.title, {super.key});
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
-
+  Widget build(BuildContext context) {
     return Text(
       title,
 
       maxLines: 1,
 
-      style:
-          const TextStyle(
+      style: const TextStyle(
         fontSize: 12,
 
-        fontWeight:
-            FontWeight.w700,
+        fontWeight: FontWeight.w700,
 
-        color:
-            Color(
-          0xff94a3b8,
-        ),
+        color: Color(0xff94a3b8),
 
-        letterSpacing:
-            0.4,
+        letterSpacing: 0.4,
       ),
     );
   }

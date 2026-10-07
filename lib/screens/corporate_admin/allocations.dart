@@ -5,12 +5,10 @@ class AllocationsScreen extends StatefulWidget {
   const AllocationsScreen({super.key});
 
   @override
-  State<AllocationsScreen> createState() =>
-      _AllocationsScreenState();
+  State<AllocationsScreen> createState() => _AllocationsScreenState();
 }
 
-class _AllocationsScreenState
-    extends State<AllocationsScreen> {
+class _AllocationsScreenState extends State<AllocationsScreen> {
   // =========================================================
   // AUTH SERVICE
   // =========================================================
@@ -21,11 +19,9 @@ class _AllocationsScreenState
   // CONTROLLERS
   // =========================================================
 
-  final TextEditingController vehicleController =
-      TextEditingController();
+  final TextEditingController vehicleController = TextEditingController();
 
-  final TextEditingController employeeController =
-      TextEditingController();
+  final TextEditingController employeeController = TextEditingController();
 
   // =========================================================
   // API DATA
@@ -57,13 +53,9 @@ class _AllocationsScreenState
 
     loadAllocations();
 
-    vehicleController.addListener(
-      applyFilters,
-    );
+    vehicleController.addListener(applyFilters);
 
-    employeeController.addListener(
-      applyFilters,
-    );
+    employeeController.addListener(applyFilters);
   }
 
   // =========================================================
@@ -79,17 +71,14 @@ class _AllocationsScreenState
     });
 
     try {
-      final result =
-          await _authService.getmovement();
+      final result = await _authService.getmovement();
 
       if (!mounted) return;
 
       setState(() {
-        allAllocations =
-            List<dynamic>.from(result);
+        allAllocations = List<dynamic>.from(result);
 
-        filteredAllocations =
-            List<dynamic>.from(result);
+        filteredAllocations = List<dynamic>.from(result);
 
         isLoading = false;
       });
@@ -101,17 +90,14 @@ class _AllocationsScreenState
       setState(() {
         isLoading = false;
 
-        errorMessage =
-            e.toString();
+        errorMessage = e.toString();
 
         allAllocations = [];
 
         filteredAllocations = [];
       });
 
-      debugPrint(
-        "Allocation API Error: $e",
-      );
+      debugPrint("Allocation API Error: $e");
     }
   }
 
@@ -119,17 +105,13 @@ class _AllocationsScreenState
   // SAFE VALUE
   // =========================================================
 
-  String getValue(
-    Map<String, dynamic> data,
-    List<String> keys,
-  ) {
+  String getValue(Map<String, dynamic> data, List<String> keys) {
     for (final key in keys) {
       final value = data[key];
 
       if (value != null &&
           value.toString().trim().isNotEmpty &&
-          value.toString().toLowerCase() !=
-              "null") {
+          value.toString().toLowerCase() != "null") {
         return value.toString();
       }
     }
@@ -141,200 +123,118 @@ class _AllocationsScreenState
   // VEHICLE
   // =========================================================
 
-  String getVehicle(
-    Map<String, dynamic> data,
-  ) {
-    return getValue(
-      data,
-      [
-        "RegistrationNo",
-        "Vehicle",
-        "VehicleNo",
-        "VehicleNumber",
-        "VehicleName",
-      ],
-    );
+  String getVehicle(Map<String, dynamic> data) {
+    return getValue(data, [
+      "RegistrationNo",
+      "Vehicle",
+      "VehicleNo",
+      "VehicleNumber",
+      "VehicleName",
+    ]);
   }
 
   // =========================================================
   // LOCATION
   // =========================================================
 
-  String getLocation(
-    Map<String, dynamic> data,
-  ) {
-    return getValue(
-      data,
-      [
-        "Location",
-        "LocationName",
-        "GateLocation",
-        "GateLocationName",
-      ],
-    );
+  String getLocation(Map<String, dynamic> data) {
+    return getValue(data, [
+      "Location",
+      "LocationName",
+      "GateLocation",
+      "GateLocationName",
+    ]);
   }
 
   // =========================================================
   // EMPLOYEE
   // =========================================================
 
-  String getEmployee(
-    Map<String, dynamic> data,
-  ) {
-    return getValue(
-      data,
-      [
-        "EmployeeName",
-        "Employee",
-        "EmployeeFullName",
-        "EmpName",
-      ],
-    );
+  String getEmployee(Map<String, dynamic> data) {
+    return getValue(data, [
+      "EmployeeName",
+      "Employee",
+      "EmployeeFullName",
+      "EmpName",
+    ]);
   }
 
   // =========================================================
   // SALES EXECUTIVE
   // =========================================================
 
-  String getSalesExecutive(
-    Map<String, dynamic> data,
-  ) {
-    return getValue(
-      data,
-      [
-        "SalesExecutive",
-        "SalesExecutiveName",
-        "Sales_Executive",
-        "SalesPerson",
-      ],
-    );
+  String getSalesExecutive(Map<String, dynamic> data) {
+    return getValue(data, [
+      "SalesExecutive",
+      "SalesExecutiveName",
+      "Sales_Executive",
+      "SalesPerson",
+    ]);
   }
 
   // =========================================================
   // DRIVER
   // =========================================================
 
-  String getDriver(
-    Map<String, dynamic> data,
-  ) {
-    return getValue(
-      data,
-      [
-        "DriverName",
-        "Driver",
-        "DriverFullName",
-      ],
-    );
+  String getDriver(Map<String, dynamic> data) {
+    return getValue(data, ["DriverName", "Driver", "DriverFullName"]);
   }
 
   // =========================================================
   // FROM
   // =========================================================
 
-  String getFrom(
-    Map<String, dynamic> data,
-  ) {
-    final location = getValue(
-      data,
-      [
-        "FromLocationName",
-        "FromLocation",
-      ],
-    );
+  String getFrom(Map<String, dynamic> data) {
+    final location = getValue(data, ["FromLocationName", "FromLocation"]);
 
     if (location != "-") {
       return location;
     }
 
-    return getValue(
-      data,
-      [
-        "FromCityName",
-        "FromCity",
-      ],
-    );
+    return getValue(data, ["FromCityName", "FromCity"]);
   }
 
   // =========================================================
   // TO
   // =========================================================
 
-  String getTo(
-    Map<String, dynamic> data,
-  ) {
-    final location = getValue(
-      data,
-      [
-        "ToLocationName",
-        "ToLocation",
-      ],
-    );
+  String getTo(Map<String, dynamic> data) {
+    final location = getValue(data, ["ToLocationName", "ToLocation"]);
 
     if (location != "-") {
       return location;
     }
 
-    return getValue(
-      data,
-      [
-        "ToCityName",
-        "ToCity",
-      ],
-    );
+    return getValue(data, ["ToCityName", "ToCity"]);
   }
 
   // =========================================================
   // STATUS
   // =========================================================
 
-  String getStatus(
-    Map<String, dynamic> data,
-  ) {
-    return getValue(
-      data,
-      [
-        "Status",
-        "AllocationStatus",
-        "MovementStatus",
-      ],
-    );
+  String getStatus(Map<String, dynamic> data) {
+    return getValue(data, ["Status", "AllocationStatus", "MovementStatus"]);
   }
 
   // =========================================================
   // REMARKS
   // =========================================================
 
-  String getRemarks(
-    Map<String, dynamic> data,
-  ) {
-    return getValue(
-      data,
-      [
-        "Remarks",
-        "Remark",
-        "Comments",
-        "Comment",
-      ],
-    );
+  String getRemarks(Map<String, dynamic> data) {
+    return getValue(data, ["Remarks", "Remark", "Comments", "Comment"]);
   }
 
   // =========================================================
   // PARSE DATE
   // =========================================================
 
-  DateTime? parseApiDate(
-    dynamic value,
-  ) {
+  DateTime? parseApiDate(dynamic value) {
     if (value == null) {
       return null;
     }
 
     try {
-      return DateTime
-          .parse(
-            value.toString(),
-          )
-          .toLocal();
+      return DateTime.parse(value.toString()).toLocal();
     } catch (_) {
       return null;
     }
@@ -345,20 +245,11 @@ class _AllocationsScreenState
   // =========================================================
 
   void applyFilters() {
-    final vehicleSearch =
-        vehicleController.text
-            .trim()
-            .toLowerCase();
+    final vehicleSearch = vehicleController.text.trim().toLowerCase();
 
-    final employeeSearch =
-        employeeController.text
-            .trim()
-            .toLowerCase();
+    final employeeSearch = employeeController.text.trim().toLowerCase();
 
-    List<dynamic> result =
-        List<dynamic>.from(
-      allAllocations,
-    );
+    List<dynamic> result = List<dynamic>.from(allAllocations);
 
     // =======================================================
     // VEHICLE SEARCH
@@ -366,16 +257,9 @@ class _AllocationsScreenState
 
     if (vehicleSearch.isNotEmpty) {
       result = result.where((item) {
-        final data =
-            Map<String, dynamic>.from(
-          item,
-        );
+        final data = Map<String, dynamic>.from(item);
 
-        return getVehicle(data)
-            .toLowerCase()
-            .contains(
-              vehicleSearch,
-            );
+        return getVehicle(data).toLowerCase().contains(vehicleSearch);
       }).toList();
     }
 
@@ -385,32 +269,17 @@ class _AllocationsScreenState
 
     if (employeeSearch.isNotEmpty) {
       result = result.where((item) {
-        final data =
-            Map<String, dynamic>.from(
-          item,
-        );
+        final data = Map<String, dynamic>.from(item);
 
-        final employee =
-            getEmployee(data)
-                .toLowerCase();
+        final employee = getEmployee(data).toLowerCase();
 
-        final driver =
-            getDriver(data)
-                .toLowerCase();
+        final driver = getDriver(data).toLowerCase();
 
-        final salesExecutive =
-            getSalesExecutive(data)
-                .toLowerCase();
+        final salesExecutive = getSalesExecutive(data).toLowerCase();
 
-        return employee.contains(
-              employeeSearch,
-            ) ||
-            driver.contains(
-              employeeSearch,
-            ) ||
-            salesExecutive.contains(
-              employeeSearch,
-            );
+        return employee.contains(employeeSearch) ||
+            driver.contains(employeeSearch) ||
+            salesExecutive.contains(employeeSearch);
       }).toList();
     }
 
@@ -420,38 +289,23 @@ class _AllocationsScreenState
 
     if (fromDate != null) {
       result = result.where((item) {
-        final data =
-            Map<String, dynamic>.from(
-          item,
-        );
+        final data = Map<String, dynamic>.from(item);
 
-        final date =
-            parseApiDate(
-          data["MovementTime"],
-        );
+        final date = parseApiDate(data["MovementTime"]);
 
         if (date == null) {
           return false;
         }
 
-        final selectedFrom =
-            DateTime(
+        final selectedFrom = DateTime(
           fromDate!.year,
           fromDate!.month,
           fromDate!.day,
         );
 
-        final movementDate =
-            DateTime(
-          date.year,
-          date.month,
-          date.day,
-        );
+        final movementDate = DateTime(date.year, date.month, date.day);
 
-        return !movementDate
-            .isBefore(
-          selectedFrom,
-        );
+        return !movementDate.isBefore(selectedFrom);
       }).toList();
     }
 
@@ -461,38 +315,19 @@ class _AllocationsScreenState
 
     if (toDate != null) {
       result = result.where((item) {
-        final data =
-            Map<String, dynamic>.from(
-          item,
-        );
+        final data = Map<String, dynamic>.from(item);
 
-        final date =
-            parseApiDate(
-          data["MovementTime"],
-        );
+        final date = parseApiDate(data["MovementTime"]);
 
         if (date == null) {
           return false;
         }
 
-        final selectedTo =
-            DateTime(
-          toDate!.year,
-          toDate!.month,
-          toDate!.day,
-        );
+        final selectedTo = DateTime(toDate!.year, toDate!.month, toDate!.day);
 
-        final movementDate =
-            DateTime(
-          date.year,
-          date.month,
-          date.day,
-        );
+        final movementDate = DateTime(date.year, date.month, date.day);
 
-        return !movementDate
-            .isAfter(
-          selectedTo,
-        );
+        return !movementDate.isAfter(selectedTo);
       }).toList();
     }
 
@@ -519,10 +354,7 @@ class _AllocationsScreenState
 
       toDate = null;
 
-      filteredAllocations =
-          List<dynamic>.from(
-        allAllocations,
-      );
+      filteredAllocations = List<dynamic>.from(allAllocations);
     });
   }
 
@@ -530,50 +362,32 @@ class _AllocationsScreenState
   // DATE PICKER
   // =========================================================
 
-  Future<void> selectDate({
-    required bool isFromDate,
-  }) async {
-    DateTime initialDate =
-        DateTime.now();
+  Future<void> selectDate({required bool isFromDate}) async {
+    DateTime initialDate = DateTime.now();
 
-    if (isFromDate &&
-        fromDate != null) {
+    if (isFromDate && fromDate != null) {
       initialDate = fromDate!;
     }
 
-    if (!isFromDate &&
-        toDate != null) {
+    if (!isFromDate && toDate != null) {
       initialDate = toDate!;
     }
 
-    final picked =
-        await showDatePicker(
+    final picked = await showDatePicker(
       context: context,
 
       initialDate: initialDate,
 
-      firstDate:
-          DateTime(2020),
+      firstDate: DateTime(2020),
 
-      lastDate:
-          DateTime(2035),
+      lastDate: DateTime(2035),
 
-      builder:
-          (
-        context,
-        child,
-      ) {
+      builder: (context, child) {
         return Theme(
-          data:
-              Theme.of(context).copyWith(
-            colorScheme:
-                const ColorScheme.light(
-              primary:
-                  Color(0xff2161b5),
-            ),
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(primary: Color(0xff2161b5)),
           ),
-          child:
-              child!,
+          child: child!,
         );
       },
     );
@@ -599,15 +413,12 @@ class _AllocationsScreenState
   // FORMAT DATE
   // =========================================================
 
-  String formatDate(
-    DateTime? date,
-  ) {
+  String formatDate(DateTime? date) {
     if (date == null) {
       return "dd-mm-yyyy";
     }
 
-    return
-        "${date.day.toString().padLeft(2, '0')}-"
+    return "${date.day.toString().padLeft(2, '0')}-"
         "${date.month.toString().padLeft(2, '0')}-"
         "${date.year}";
   }
@@ -616,65 +427,34 @@ class _AllocationsScreenState
   // INPUT DECORATION
   // =========================================================
 
-  InputDecoration searchDecoration(
-    String hint,
-  ) {
+  InputDecoration searchDecoration(String hint) {
     return InputDecoration(
       hintText: hint,
 
-      hintStyle:
-          const TextStyle(
-        color:
-            Color(0xff64748b),
-        fontSize: 15,
-      ),
+      hintStyle: const TextStyle(color: Color(0xff64748b), fontSize: 15),
 
       filled: true,
 
-      fillColor:
-          Colors.white,
+      fillColor: Colors.white,
 
-      contentPadding:
-          const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 12,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+
+        borderSide: const BorderSide(color: Color(0xffdbe2ea)),
       ),
 
-      border:
-          OutlineInputBorder(
-        borderRadius:
-            BorderRadius.circular(10),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
 
-        borderSide:
-            const BorderSide(
-          color:
-              Color(0xffdbe2ea),
-        ),
+        borderSide: const BorderSide(color: Color(0xffdbe2ea)),
       ),
 
-      enabledBorder:
-          OutlineInputBorder(
-        borderRadius:
-            BorderRadius.circular(10),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
 
-        borderSide:
-            const BorderSide(
-          color:
-              Color(0xffdbe2ea),
-        ),
-      ),
-
-      focusedBorder:
-          OutlineInputBorder(
-        borderRadius:
-            BorderRadius.circular(10),
-
-        borderSide:
-            const BorderSide(
-          color:
-              Color(0xff2161b5),
-          width: 1.2,
-        ),
+        borderSide: const BorderSide(color: Color(0xff2161b5), width: 1.2),
       ),
     );
   }
@@ -687,117 +467,73 @@ class _AllocationsScreenState
     return Container(
       width: double.infinity,
 
-      padding:
-          const EdgeInsets.fromLTRB(
-        20,
-        18,
-        20,
-        18,
-      ),
+      padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
 
-      decoration:
-          BoxDecoration(
-        color:
-            const Color(0xfff1f4f8),
+      decoration: BoxDecoration(
+        color: const Color(0xfff1f4f8),
 
-        borderRadius:
-            BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16),
 
-        border:
-            Border.all(
-          color:
-              const Color(0xffe1e7ef),
-        ),
+        border: Border.all(color: const Color(0xffe1e7ef)),
 
         boxShadow: const [
           BoxShadow(
-            color:
-                Color(0x07000000),
+            color: Color(0x07000000),
             blurRadius: 6,
-            offset:
-                Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
 
       child: LayoutBuilder(
-        builder:
-            (
-          context,
-          constraints,
-        ) {
-          final isSmall =
-              constraints.maxWidth <
-                  900;
+        builder: (context, constraints) {
+          final isSmall = constraints.maxWidth < 900;
 
           if (isSmall) {
             return Wrap(
               spacing: 12,
               runSpacing: 12,
               children: [
-
                 // SEARCH VEHICLE
                 SizedBox(
-                  width:
-                      constraints.maxWidth >
-                              300
-                          ? 300
-                          : constraints.maxWidth,
+                  width: constraints.maxWidth > 300
+                      ? 300
+                      : constraints.maxWidth,
                   height: 44,
 
                   child: TextField(
-                    controller:
-                        vehicleController,
+                    controller: vehicleController,
 
-                    decoration:
-                        searchDecoration(
-                      "Type to search...",
-                    ),
+                    decoration: searchDecoration("Type to search..."),
                   ),
                 ),
 
                 // SEARCH EMPLOYEE
                 SizedBox(
-                  width:
-                      constraints.maxWidth >
-                              300
-                          ? 300
-                          : constraints.maxWidth,
+                  width: constraints.maxWidth > 300
+                      ? 300
+                      : constraints.maxWidth,
                   height: 44,
 
                   child: TextField(
-                    controller:
-                        employeeController,
+                    controller: employeeController,
 
-                    decoration:
-                        searchDecoration(
-                      "Type to search...",
-                    ),
+                    decoration: searchDecoration("Type to search..."),
                   ),
                 ),
 
                 // FROM
                 buildDateBox(
-                  title:
-                      "From  ${formatDate(fromDate)}",
+                  title: "From  ${formatDate(fromDate)}",
 
-                  onTap: () =>
-                      selectDate(
-                    isFromDate:
-                        true,
-                  ),
+                  onTap: () => selectDate(isFromDate: true),
                 ),
 
                 // TO
                 buildDateBox(
-                  title:
-                      "To  ${formatDate(toDate)}",
+                  title: "To  ${formatDate(toDate)}",
 
-                  onTap: () =>
-                      selectDate(
-                    isFromDate:
-                        false,
-                  ),
+                  onTap: () => selectDate(isFromDate: false),
                 ),
 
                 // RESET
@@ -812,26 +548,19 @@ class _AllocationsScreenState
 
           return Row(
             children: [
-
               // SEARCH 1
               SizedBox(
                 width: 270,
                 height: 44,
 
                 child: TextField(
-                  controller:
-                      vehicleController,
+                  controller: vehicleController,
 
-                  decoration:
-                      searchDecoration(
-                    "Type to search...",
-                  ),
+                  decoration: searchDecoration("Type to search..."),
                 ),
               ),
 
-              const SizedBox(
-                width: 14,
-              ),
+              const SizedBox(width: 14),
 
               // SEARCH 2
               SizedBox(
@@ -839,55 +568,35 @@ class _AllocationsScreenState
                 height: 44,
 
                 child: TextField(
-                  controller:
-                      employeeController,
+                  controller: employeeController,
 
-                  decoration:
-                      searchDecoration(
-                    "Type to search...",
-                  ),
+                  decoration: searchDecoration("Type to search..."),
                 ),
               ),
 
-              const SizedBox(
-                width: 14,
-              ),
+              const SizedBox(width: 14),
 
               // FROM DATE
               Expanded(
                 child: buildDateBox(
-                  title:
-                      "From  ${formatDate(fromDate)}",
+                  title: "From  ${formatDate(fromDate)}",
 
-                  onTap: () =>
-                      selectDate(
-                    isFromDate:
-                        true,
-                  ),
+                  onTap: () => selectDate(isFromDate: true),
                 ),
               ),
 
-              const SizedBox(
-                width: 14,
-              ),
+              const SizedBox(width: 14),
 
               // TO DATE
               Expanded(
                 child: buildDateBox(
-                  title:
-                      "To  ${formatDate(toDate)}",
+                  title: "To  ${formatDate(toDate)}",
 
-                  onTap: () =>
-                      selectDate(
-                    isFromDate:
-                        false,
-                  ),
+                  onTap: () => selectDate(isFromDate: false),
                 ),
               ),
 
-              const SizedBox(
-                width: 14,
-              ),
+              const SizedBox(width: 14),
 
               // RESET
               buildResetButton(),
@@ -902,107 +611,61 @@ class _AllocationsScreenState
   // DATE BOX
   // =========================================================
 
-  Widget buildDateBox({
-    required String title,
-    required VoidCallback onTap,
-  }) {
+  Widget buildDateBox({required String title, required VoidCallback onTap}) {
     return InkWell(
       onTap: onTap,
 
-      borderRadius:
-          BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(10),
 
       child: Container(
         height: 44,
 
-        padding:
-            const EdgeInsets.symmetric(
-          horizontal: 14,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 14),
 
-        decoration:
-            BoxDecoration(
-          color:
-              Colors.white,
+        decoration: BoxDecoration(
+          color: Colors.white,
 
-          borderRadius:
-              BorderRadius.circular(
-            10,
-          ),
+          borderRadius: BorderRadius.circular(10),
 
-          border:
-              Border.all(
-            color:
-                const Color(
-              0xffdbe2ea,
-            ),
-          ),
+          border: Border.all(color: const Color(0xffdbe2ea)),
         ),
 
         child: Row(
           children: [
-
             Expanded(
               child: RichText(
                 maxLines: 1,
 
-                overflow:
-                    TextOverflow.ellipsis,
+                overflow: TextOverflow.ellipsis,
 
-                text:
-                    TextSpan(
+                text: TextSpan(
                   children: [
-
-                    if (title
-                        .startsWith(
-                      "From",
-                    ))
+                    if (title.startsWith("From"))
                       const TextSpan(
                         text: "From  ",
-                        style:
-                            TextStyle(
+                        style: TextStyle(
                           fontSize: 15,
-                          color:
-                              Color(
-                            0xff8da0b9,
-                          ),
+                          color: Color(0xff8da0b9),
                         ),
                       ),
 
-                    if (title
-                        .startsWith(
-                      "To",
-                    ))
+                    if (title.startsWith("To"))
                       const TextSpan(
                         text: "To  ",
-                        style:
-                            TextStyle(
+                        style: TextStyle(
                           fontSize: 15,
-                          color:
-                              Color(
-                            0xff8da0b9,
-                          ),
+                          color: Color(0xff8da0b9),
                         ),
                       ),
 
                     TextSpan(
                       text: title
-                          .replaceFirst(
-                        "From  ",
-                        "",
-                      )
-                          .replaceFirst(
-                        "To  ",
-                        "",
-                      ),
+                          .replaceFirst("From  ", "")
+                          .replaceFirst("To  ", ""),
 
-                      style:
-                          const TextStyle(
+                      style: const TextStyle(
                         fontSize: 15,
-                        color:
-                            Color(
-                          0xff111827,
-                        ),
+                        color: Color(0xff111827),
                       ),
                     ),
                   ],
@@ -1011,11 +674,9 @@ class _AllocationsScreenState
             ),
 
             const Icon(
-              Icons
-                  .calendar_today_outlined,
+              Icons.calendar_today_outlined,
               size: 18,
-              color:
-                  Color(0xff111827),
+              color: Color(0xff111827),
             ),
           ],
         ),
@@ -1032,48 +693,26 @@ class _AllocationsScreenState
       height: 44,
 
       child: OutlinedButton(
-        onPressed:
-            resetFilters,
+        onPressed: resetFilters,
 
-        style:
-            OutlinedButton.styleFrom(
-          backgroundColor:
-              Colors.white,
+        style: OutlinedButton.styleFrom(
+          backgroundColor: Colors.white,
 
-          foregroundColor:
-              const Color(
-            0xff334155,
-          ),
+          foregroundColor: const Color(0xff334155),
 
-          padding:
-              const EdgeInsets.symmetric(
-            horizontal: 18,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 18),
 
-          side:
-              const BorderSide(
-            color:
-                Color(0xffd5dde7),
-          ),
+          side: const BorderSide(color: Color(0xffd5dde7)),
 
-          shape:
-              RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.circular(
-              10,
-            ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
           ),
         ),
 
         child: const Text(
           "Reset",
 
-          style:
-              TextStyle(
-            fontSize: 14,
-            fontWeight:
-                FontWeight.w600,
-          ),
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
         ),
       ),
     );
@@ -1083,29 +722,22 @@ class _AllocationsScreenState
   // TABLE HEADER
   // =========================================================
 
-  Widget buildTableHeader(
-    String title,
-  ) {
+  Widget buildTableHeader(String title) {
     return Text(
       title,
 
       maxLines: 1,
 
-      overflow:
-          TextOverflow.ellipsis,
+      overflow: TextOverflow.ellipsis,
 
-      style:
-          const TextStyle(
+      style: const TextStyle(
         fontSize: 12,
 
-        fontWeight:
-            FontWeight.w700,
+        fontWeight: FontWeight.w700,
 
-        letterSpacing:
-            0.4,
+        letterSpacing: 0.4,
 
-        color:
-            Color(0xff8da0b9),
+        color: Color(0xff8da0b9),
       ),
     );
   }
@@ -1125,30 +757,15 @@ class _AllocationsScreenState
 
         height: 160,
 
-        decoration:
-            BoxDecoration(
-          color:
-              Colors.white,
+        decoration: BoxDecoration(
+          color: Colors.white,
 
-          borderRadius:
-              BorderRadius.circular(
-            16,
-          ),
+          borderRadius: BorderRadius.circular(16),
 
-          border:
-              Border.all(
-            color:
-                const Color(
-              0xffe2e8f0,
-            ),
-          ),
+          border: Border.all(color: const Color(0xffe2e8f0)),
         ),
 
-        child:
-            const Center(
-          child:
-              CircularProgressIndicator(),
-        ),
+        child: const Center(child: CircularProgressIndicator()),
       );
     }
 
@@ -1160,71 +777,37 @@ class _AllocationsScreenState
       return Container(
         width: double.infinity,
 
-        padding:
-            const EdgeInsets.all(40),
+        padding: const EdgeInsets.all(40),
 
-        decoration:
-            BoxDecoration(
-          color:
-              Colors.white,
+        decoration: BoxDecoration(
+          color: Colors.white,
 
-          borderRadius:
-              BorderRadius.circular(
-            16,
-          ),
+          borderRadius: BorderRadius.circular(16),
 
-          border:
-              Border.all(
-            color:
-                const Color(
-              0xffe2e8f0,
-            ),
-          ),
+          border: Border.all(color: const Color(0xffe2e8f0)),
         ),
 
-        child:
-            Column(
-          mainAxisSize:
-              MainAxisSize.min,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
 
           children: [
+            const Icon(Icons.error_outline, color: Colors.red, size: 45),
 
-            const Icon(
-              Icons.error_outline,
-              color:
-                  Colors.red,
-              size: 45,
-            ),
-
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
 
             Text(
               errorMessage!,
-              textAlign:
-                  TextAlign.center,
+              textAlign: TextAlign.center,
 
-              style:
-                  const TextStyle(
-                color:
-                    Colors.red,
-                fontSize: 14,
-              ),
+              style: const TextStyle(color: Colors.red, fontSize: 14),
             ),
 
-            const SizedBox(
-              height: 15,
-            ),
+            const SizedBox(height: 15),
 
             ElevatedButton(
-              onPressed:
-                  loadAllocations,
+              onPressed: loadAllocations,
 
-              child:
-                  const Text(
-                "Retry",
-              ),
+              child: const Text("Retry"),
             ),
           ],
         ),
@@ -1235,137 +818,69 @@ class _AllocationsScreenState
     // EMPTY
     // =======================================================
 
-    if (filteredAllocations
-        .isEmpty) {
+    if (filteredAllocations.isEmpty) {
       return Container(
         width: double.infinity,
 
         height: 162,
 
-        decoration:
-            BoxDecoration(
-          color:
-              Colors.white,
+        decoration: BoxDecoration(
+          color: Colors.white,
 
-          borderRadius:
-              BorderRadius.circular(
-            16,
-          ),
+          borderRadius: BorderRadius.circular(16),
 
-          border:
-              Border.all(
-            color:
-                const Color(
-              0xffe2e8f0,
-            ),
-          ),
+          border: Border.all(color: const Color(0xffe2e8f0)),
 
           boxShadow: const [
             BoxShadow(
-              color:
-                  Color(0x06000000),
+              color: Color(0x06000000),
               blurRadius: 6,
-              offset:
-                  Offset(0, 2),
+              offset: Offset(0, 2),
             ),
           ],
         ),
 
-        child:
-            Column(
+        child: Column(
           children: [
-
             // TABLE HEADER
             Container(
               height: 48,
 
-              padding:
-                  const EdgeInsets.symmetric(
-                horizontal: 18,
+              padding: const EdgeInsets.symmetric(horizontal: 18),
+
+              decoration: const BoxDecoration(
+                border: Border(bottom: BorderSide(color: Color(0xffe2e8f0))),
               ),
 
-              decoration:
-                  const BoxDecoration(
-                border:
-                    Border(
-                  bottom:
-                      BorderSide(
-                    color:
-                        Color(
-                      0xffe2e8f0,
-                    ),
-                  ),
-                ),
-              ),
-
-              child:
-                  Row(
+              child: Row(
                 children: [
+                  _headerCell("VEHICLE", 170),
 
-                  _headerCell(
-                    "VEHICLE",
-                    170,
-                  ),
+                  _headerCell("LOCATION", 190),
 
-                  _headerCell(
-                    "LOCATION",
-                    190,
-                  ),
+                  _headerCell("EMPLOYEE", 190),
 
-                  _headerCell(
-                    "EMPLOYEE",
-                    190,
-                  ),
+                  _headerCell("SALES EXECUTIVE", 220),
 
-                  _headerCell(
-                    "SALES EXECUTIVE",
-                    220,
-                  ),
+                  _headerCell("DRIVER", 170),
 
-                  _headerCell(
-                    "DRIVER",
-                    170,
-                  ),
+                  _headerCell("FROM", 160),
 
-                  _headerCell(
-                    "FROM",
-                    160,
-                  ),
+                  _headerCell("TO", 160),
 
-                  _headerCell(
-                    "TO",
-                    160,
-                  ),
+                  _headerCell("STATUS", 140),
 
-                  _headerCell(
-                    "STATUS",
-                    140,
-                  ),
-
-                  _headerCell(
-                    "REMARKS",
-                    180,
-                  ),
+                  _headerCell("REMARKS", 180),
                 ],
               ),
             ),
 
             const Expanded(
-              child:
-                  Center(
-                child:
-                    Text(
+              child: Center(
+                child: Text(
                   "No allocations yet",
 
-                  style:
-                      TextStyle(
-                    fontSize: 15,
-
-                    color:
-                        Color(
-                      0xff8da0b9,
-                    ),
-                  ),
+                  style: TextStyle(fontSize: 15, color: Color(0xff8da0b9)),
                 ),
               ),
             ),
@@ -1381,412 +896,241 @@ class _AllocationsScreenState
     return Container(
       width: double.infinity,
 
-      decoration:
-          BoxDecoration(
-        color:
-            Colors.white,
+      decoration: BoxDecoration(
+        color: Colors.white,
 
-        borderRadius:
-            BorderRadius.circular(
-          16,
-        ),
+        borderRadius: BorderRadius.circular(16),
 
-        border:
-            Border.all(
-          color:
-              const Color(
-            0xffe2e8f0,
-          ),
-        ),
+        border: Border.all(color: const Color(0xffe2e8f0)),
 
         boxShadow: const [
           BoxShadow(
-            color:
-                Color(0x06000000),
+            color: Color(0x06000000),
             blurRadius: 6,
-            offset:
-                Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
 
-      child:
-          ClipRRect(
-        borderRadius:
-            BorderRadius.circular(
-          16,
-        ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
 
-        child:
-            SingleChildScrollView(
-          scrollDirection:
-              Axis.horizontal,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
 
-          child:
-              DataTable(
-            horizontalMargin:
-                18,
+          child: DataTable(
+            horizontalMargin: 18,
 
-            columnSpacing:
-                30,
+            columnSpacing: 30,
 
-            headingRowHeight:
-                48,
+            headingRowHeight: 48,
 
-            dataRowMinHeight:
-                60,
+            dataRowMinHeight: 60,
 
-            dataRowMaxHeight:
-                76,
+            dataRowMaxHeight: 76,
 
             columns: const [
+              DataColumn(label: AllocationHeader("VEHICLE")),
 
-              DataColumn(
-                label:
-                    AllocationHeader(
-                  "VEHICLE",
-                ),
-              ),
+              DataColumn(label: AllocationHeader("LOCATION")),
 
-              DataColumn(
-                label:
-                    AllocationHeader(
-                  "LOCATION",
-                ),
-              ),
+              DataColumn(label: AllocationHeader("EMPLOYEE")),
 
-              DataColumn(
-                label:
-                    AllocationHeader(
-                  "EMPLOYEE",
-                ),
-              ),
+              DataColumn(label: AllocationHeader("SALES EXECUTIVE")),
 
-              DataColumn(
-                label:
-                    AllocationHeader(
-                  "SALES EXECUTIVE",
-                ),
-              ),
+              DataColumn(label: AllocationHeader("DRIVER")),
 
-              DataColumn(
-                label:
-                    AllocationHeader(
-                  "DRIVER",
-                ),
-              ),
+              DataColumn(label: AllocationHeader("FROM")),
 
-              DataColumn(
-                label:
-                    AllocationHeader(
-                  "FROM",
-                ),
-              ),
+              DataColumn(label: AllocationHeader("TO")),
 
-              DataColumn(
-                label:
-                    AllocationHeader(
-                  "TO",
-                ),
-              ),
+              DataColumn(label: AllocationHeader("STATUS")),
 
-              DataColumn(
-                label:
-                    AllocationHeader(
-                  "STATUS",
-                ),
-              ),
-
-              DataColumn(
-                label:
-                    AllocationHeader(
-                  "REMARKS",
-                ),
-              ),
+              DataColumn(label: AllocationHeader("REMARKS")),
             ],
 
-            rows:
-                filteredAllocations
-                    .map<DataRow>(
-              (item) {
+            rows: filteredAllocations.map<DataRow>((item) {
+              final data = Map<String, dynamic>.from(item);
 
-                final data =
-                    Map<String,
-                            dynamic>.from(
-                  item,
-                );
+              return DataRow(
+                cells: [
+                  // VEHICLE
+                  DataCell(
+                    SizedBox(
+                      width: 150,
 
-                return DataRow(
-                  cells: [
+                      child: Text(
+                        getVehicle(data),
 
-                    // VEHICLE
-                    DataCell(
-                      SizedBox(
-                        width: 150,
+                        maxLines: 1,
 
-                        child:
-                            Text(
-                          getVehicle(
-                            data,
-                          ),
+                        overflow: TextOverflow.ellipsis,
 
-                          maxLines:
-                              1,
+                        style: const TextStyle(
+                          fontSize: 14,
 
-                          overflow:
-                              TextOverflow
-                                  .ellipsis,
+                          fontWeight: FontWeight.w700,
 
-                          style:
-                              const TextStyle(
-                            fontSize: 14,
-
-                            fontWeight:
-                                FontWeight
-                                    .w700,
-
-                            color:
-                                Color(
-                              0xff111827,
-                            ),
-                          ),
+                          color: Color(0xff111827),
                         ),
                       ),
                     ),
+                  ),
 
-                    // LOCATION
-                    DataCell(
-                      SizedBox(
-                        width: 170,
+                  // LOCATION
+                  DataCell(
+                    SizedBox(
+                      width: 170,
 
-                        child:
-                            Text(
-                          getLocation(
-                            data,
-                          ),
+                      child: Text(
+                        getLocation(data),
 
-                          maxLines:
-                              1,
+                        maxLines: 1,
 
-                          overflow:
-                              TextOverflow
-                                  .ellipsis,
+                        overflow: TextOverflow.ellipsis,
 
-                          style:
-                              const TextStyle(
-                            fontSize: 14,
+                        style: const TextStyle(
+                          fontSize: 14,
 
-                            color:
-                                Color(
-                              0xff111827,
-                            ),
-                          ),
+                          color: Color(0xff111827),
                         ),
                       ),
                     ),
+                  ),
 
-                    // EMPLOYEE
-                    DataCell(
-                      SizedBox(
-                        width: 170,
+                  // EMPLOYEE
+                  DataCell(
+                    SizedBox(
+                      width: 170,
 
-                        child:
-                            Text(
-                          getEmployee(
-                            data,
-                          ),
+                      child: Text(
+                        getEmployee(data),
 
-                          maxLines:
-                              1,
+                        maxLines: 1,
 
-                          overflow:
-                              TextOverflow
-                                  .ellipsis,
+                        overflow: TextOverflow.ellipsis,
 
-                          style:
-                              const TextStyle(
-                            fontSize: 14,
+                        style: const TextStyle(
+                          fontSize: 14,
 
-                            fontWeight:
-                                FontWeight
-                                    .w600,
+                          fontWeight: FontWeight.w600,
 
-                            color:
-                                Color(
-                              0xff111827,
-                            ),
-                          ),
+                          color: Color(0xff111827),
                         ),
                       ),
                     ),
+                  ),
 
-                    // SALES EXECUTIVE
-                    DataCell(
-                      SizedBox(
-                        width: 200,
+                  // SALES EXECUTIVE
+                  DataCell(
+                    SizedBox(
+                      width: 200,
 
-                        child:
-                            Text(
-                          getSalesExecutive(
-                            data,
-                          ),
+                      child: Text(
+                        getSalesExecutive(data),
 
-                          maxLines:
-                              1,
+                        maxLines: 1,
 
-                          overflow:
-                              TextOverflow
-                                  .ellipsis,
+                        overflow: TextOverflow.ellipsis,
 
-                          style:
-                              const TextStyle(
-                            fontSize: 14,
+                        style: const TextStyle(
+                          fontSize: 14,
 
-                            color:
-                                Color(
-                              0xff111827,
-                            ),
-                          ),
+                          color: Color(0xff111827),
                         ),
                       ),
                     ),
+                  ),
 
-                    // DRIVER
-                    DataCell(
-                      SizedBox(
-                        width: 150,
+                  // DRIVER
+                  DataCell(
+                    SizedBox(
+                      width: 150,
 
-                        child:
-                            Text(
-                          getDriver(
-                            data,
-                          ),
+                      child: Text(
+                        getDriver(data),
 
-                          maxLines:
-                              1,
+                        maxLines: 1,
 
-                          overflow:
-                              TextOverflow
-                                  .ellipsis,
+                        overflow: TextOverflow.ellipsis,
 
-                          style:
-                              const TextStyle(
-                            fontSize: 14,
+                        style: const TextStyle(
+                          fontSize: 14,
 
-                            color:
-                                Color(
-                              0xff111827,
-                            ),
-                          ),
+                          color: Color(0xff111827),
                         ),
                       ),
                     ),
+                  ),
 
-                    // FROM
-                    DataCell(
-                      SizedBox(
-                        width: 150,
+                  // FROM
+                  DataCell(
+                    SizedBox(
+                      width: 150,
 
-                        child:
-                            Text(
-                          getFrom(
-                            data,
-                          ),
+                      child: Text(
+                        getFrom(data),
 
-                          maxLines:
-                              1,
+                        maxLines: 1,
 
-                          overflow:
-                              TextOverflow
-                                  .ellipsis,
+                        overflow: TextOverflow.ellipsis,
 
-                          style:
-                              const TextStyle(
-                            fontSize: 14,
+                        style: const TextStyle(
+                          fontSize: 14,
 
-                            color:
-                                Color(
-                              0xff111827,
-                            ),
-                          ),
+                          color: Color(0xff111827),
                         ),
                       ),
                     ),
+                  ),
 
-                    // TO
-                    DataCell(
-                      SizedBox(
-                        width: 150,
+                  // TO
+                  DataCell(
+                    SizedBox(
+                      width: 150,
 
-                        child:
-                            Text(
-                          getTo(
-                            data,
-                          ),
+                      child: Text(
+                        getTo(data),
 
-                          maxLines:
-                              1,
+                        maxLines: 1,
 
-                          overflow:
-                              TextOverflow
-                                  .ellipsis,
+                        overflow: TextOverflow.ellipsis,
 
-                          style:
-                              const TextStyle(
-                            fontSize: 14,
+                        style: const TextStyle(
+                          fontSize: 14,
 
-                            color:
-                                Color(
-                              0xff111827,
-                            ),
-                          ),
+                          color: Color(0xff111827),
                         ),
                       ),
                     ),
+                  ),
 
-                    // STATUS
-                    DataCell(
-                      statusBadge(
-                        getStatus(
-                          data,
+                  // STATUS
+                  DataCell(statusBadge(getStatus(data))),
+
+                  // REMARKS
+                  DataCell(
+                    SizedBox(
+                      width: 170,
+
+                      child: Text(
+                        getRemarks(data),
+
+                        maxLines: 1,
+
+                        overflow: TextOverflow.ellipsis,
+
+                        style: const TextStyle(
+                          fontSize: 14,
+
+                          color: Color(0xff64748b),
                         ),
                       ),
                     ),
-
-                    // REMARKS
-                    DataCell(
-                      SizedBox(
-                        width: 170,
-
-                        child:
-                            Text(
-                          getRemarks(
-                            data,
-                          ),
-
-                          maxLines:
-                              1,
-
-                          overflow:
-                              TextOverflow
-                                  .ellipsis,
-
-                          style:
-                              const TextStyle(
-                            fontSize: 14,
-
-                            color:
-                                Color(
-                              0xff64748b,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ).toList(),
+                  ),
+                ],
+              );
+            }).toList(),
           ),
         ),
       ),
@@ -1797,34 +1141,25 @@ class _AllocationsScreenState
   // EMPTY HEADER CELL
   // =========================================================
 
-  Widget _headerCell(
-    String title,
-    double width,
-  ) {
+  Widget _headerCell(String title, double width) {
     return SizedBox(
       width: width,
 
-      child:
-          Text(
+      child: Text(
         title,
 
         maxLines: 1,
 
-        overflow:
-            TextOverflow.ellipsis,
+        overflow: TextOverflow.ellipsis,
 
-        style:
-            const TextStyle(
+        style: const TextStyle(
           fontSize: 12,
 
-          fontWeight:
-              FontWeight.w700,
+          fontWeight: FontWeight.w700,
 
-          letterSpacing:
-              0.4,
+          letterSpacing: 0.4,
 
-          color:
-              Color(0xff8da0b9),
+          color: Color(0xff8da0b9),
         ),
       ),
     );
@@ -1834,11 +1169,8 @@ class _AllocationsScreenState
   // STATUS BADGE
   // =========================================================
 
-  Widget statusBadge(
-    String status,
-  ) {
-    final value =
-        status.toLowerCase();
+  Widget statusBadge(String status) {
+    final value = status.toLowerCase();
 
     Color background;
     Color foreground;
@@ -1847,83 +1179,41 @@ class _AllocationsScreenState
         value == "allocated" ||
         value == "approved" ||
         value == "completed") {
-      background =
-          const Color(
-        0xffdcfce7,
-      );
+      background = const Color(0xffdcfce7);
 
-      foreground =
-          const Color(
-        0xff15803d,
-      );
-    } else if (value ==
-            "pending" ||
-        value == "in progress") {
-      background =
-          const Color(
-        0xfffff1c7,
-      );
+      foreground = const Color(0xff15803d);
+    } else if (value == "pending" || value == "in progress") {
+      background = const Color(0xfffff1c7);
 
-      foreground =
-          const Color(
-        0xffb45309,
-      );
-    } else if (value ==
-            "cancelled" ||
-        value == "rejected") {
-      background =
-          const Color(
-        0xffffe4e6,
-      );
+      foreground = const Color(0xffb45309);
+    } else if (value == "cancelled" || value == "rejected") {
+      background = const Color(0xffffe4e6);
 
-      foreground =
-          const Color(
-        0xffbe123c,
-      );
+      foreground = const Color(0xffbe123c);
     } else {
-      background =
-          const Color(
-        0xfff1f5f9,
-      );
+      background = const Color(0xfff1f5f9);
 
-      foreground =
-          const Color(
-        0xff475569,
-      );
+      foreground = const Color(0xff475569);
     }
 
     return Container(
-      padding:
-          const EdgeInsets.symmetric(
-        horizontal: 11,
-        vertical: 6,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
 
-      decoration:
-          BoxDecoration(
+      decoration: BoxDecoration(
         color: background,
 
-        borderRadius:
-            BorderRadius.circular(
-          20,
-        ),
+        borderRadius: BorderRadius.circular(20),
       ),
 
-      child:
-          Text(
-        status == "-"
-            ? "Pending"
-            : status,
+      child: Text(
+        status == "-" ? "Pending" : status,
 
-        style:
-            TextStyle(
+        style: TextStyle(
           fontSize: 12,
 
-          fontWeight:
-              FontWeight.w700,
+          fontWeight: FontWeight.w700,
 
-          color:
-              foreground,
+          color: foreground,
         ),
       ),
     );
@@ -1934,45 +1224,26 @@ class _AllocationsScreenState
   // =========================================================
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          const Color(
-        0xfff4f7fb,
-      ),
+      backgroundColor: const Color(0xfff4f7fb),
 
-      body:
-          SafeArea(
-        child:
-            SingleChildScrollView(
-          padding:
-              const EdgeInsets.fromLTRB(
-            18,
-            4,
-            18,
-            20,
-          ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(18, 4, 18, 20),
 
-          child:
-              Column(
+          child: Column(
             children: [
-
               // =================================================
               // FILTER
               // =================================================
-
               buildFilterSection(),
 
-              const SizedBox(
-                height: 20,
-              ),
+              const SizedBox(height: 20),
 
               // =================================================
               // TABLE
               // =================================================
-
               buildAllocationTable(),
             ],
           ),
@@ -1999,39 +1270,28 @@ class _AllocationsScreenState
 // TABLE HEADER
 // =============================================================
 
-class AllocationHeader
-    extends StatelessWidget {
+class AllocationHeader extends StatelessWidget {
   final String title;
 
-  const AllocationHeader(
-    this.title, {
-    super.key,
-  });
+  const AllocationHeader(this.title, {super.key});
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return Text(
       title,
 
       maxLines: 1,
 
-      overflow:
-          TextOverflow.ellipsis,
+      overflow: TextOverflow.ellipsis,
 
-      style:
-          const TextStyle(
+      style: const TextStyle(
         fontSize: 12,
 
-        fontWeight:
-            FontWeight.w700,
+        fontWeight: FontWeight.w700,
 
-        letterSpacing:
-            0.4,
+        letterSpacing: 0.4,
 
-        color:
-            Color(0xff8da0b9),
+        color: Color(0xff8da0b9),
       ),
     );
   }

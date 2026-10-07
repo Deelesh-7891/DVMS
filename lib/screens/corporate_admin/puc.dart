@@ -15,11 +15,9 @@ class _PucScreenState extends State<PucScreen> {
   // CONTROLLERS
   // =========================================================
 
-  final TextEditingController vehicleController =
-      TextEditingController();
+  final TextEditingController vehicleController = TextEditingController();
 
-  final TextEditingController certificateController =
-      TextEditingController();
+  final TextEditingController certificateController = TextEditingController();
 
   // =========================================================
   // DATA
@@ -89,10 +87,7 @@ class _PucScreenState extends State<PucScreen> {
   // SAFE VALUE
   // =========================================================
 
-  String getValue(
-    Map<String, dynamic> item,
-    List<String> keys,
-  ) {
+  String getValue(Map<String, dynamic> item, List<String> keys) {
     for (final key in keys) {
       final value = item[key];
 
@@ -192,11 +187,7 @@ class _PucScreenState extends State<PucScreen> {
         final month = int.parse(parts[1]);
         final year = int.parse(parts[2]);
 
-        return DateTime(
-          year,
-          month,
-          day,
-        );
+        return DateTime(year, month, day);
       }
     } catch (_) {}
 
@@ -209,11 +200,7 @@ class _PucScreenState extends State<PucScreen> {
         final month = int.parse(parts[1]);
         final year = int.parse(parts[2]);
 
-        return DateTime(
-          year,
-          month,
-          day,
-        );
+        return DateTime(year, month, day);
       }
     } catch (_) {}
 
@@ -247,21 +234,11 @@ class _PucScreenState extends State<PucScreen> {
 
     final now = DateTime.now();
 
-    final today = DateTime(
-      now.year,
-      now.month,
-      now.day,
-    );
+    final today = DateTime(now.year, now.month, now.day);
 
-    final expiryDay = DateTime(
-      date.year,
-      date.month,
-      date.day,
-    );
+    final expiryDay = DateTime(date.year, date.month, date.day);
 
-    return expiryDay
-        .difference(today)
-        .inDays;
+    return expiryDay.difference(today).inDays;
   }
 
   // =========================================================
@@ -269,48 +246,31 @@ class _PucScreenState extends State<PucScreen> {
   // =========================================================
 
   void applyFilters() {
-    final vehicleSearch =
-        vehicleController.text
-            .trim()
-            .toLowerCase();
+    final vehicleSearch = vehicleController.text.trim().toLowerCase();
 
-    final certificateSearch =
-        certificateController.text
-            .trim()
-            .toLowerCase();
+    final certificateSearch = certificateController.text.trim().toLowerCase();
 
-    List<dynamic> result =
-        List<dynamic>.from(allPuc);
+    List<dynamic> result = List<dynamic>.from(allPuc);
 
     // VEHICLE SEARCH
     if (vehicleSearch.isNotEmpty) {
       result = result.where((item) {
-        final data =
-            Map<String, dynamic>.from(item);
+        final data = Map<String, dynamic>.from(item);
 
-        final vehicle =
-            getVehicle(data).toLowerCase();
+        final vehicle = getVehicle(data).toLowerCase();
 
-        return vehicle.contains(
-          vehicleSearch,
-        );
+        return vehicle.contains(vehicleSearch);
       }).toList();
     }
 
     // CERTIFICATE SEARCH
     if (certificateSearch.isNotEmpty) {
       result = result.where((item) {
-        final data =
-            Map<String, dynamic>.from(item);
+        final data = Map<String, dynamic>.from(item);
 
-        final certificate =
-            getCertificateNo(
-          data,
-        ).toLowerCase();
+        final certificate = getCertificateNo(data).toLowerCase();
 
-        return certificate.contains(
-          certificateSearch,
-        );
+        return certificate.contains(certificateSearch);
       }).toList();
     }
 
@@ -330,8 +290,7 @@ class _PucScreenState extends State<PucScreen> {
     certificateController.clear();
 
     setState(() {
-      filteredPuc =
-          List<dynamic>.from(allPuc);
+      filteredPuc = List<dynamic>.from(allPuc);
     });
   }
 
@@ -351,40 +310,24 @@ class _PucScreenState extends State<PucScreen> {
         controller: controller,
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: const TextStyle(
-            color: Color(0xff7c7c7c),
-            fontSize: 16,
-          ),
+          hintStyle: const TextStyle(color: Color(0xff7c7c7c), fontSize: 16),
           filled: true,
           fillColor: Colors.white,
-          contentPadding:
-              const EdgeInsets.symmetric(
+          contentPadding: const EdgeInsets.symmetric(
             horizontal: 15,
             vertical: 10,
           ),
           border: OutlineInputBorder(
-            borderRadius:
-                BorderRadius.circular(10),
-            borderSide: const BorderSide(
-              color: Color(0xffdbe2ea),
-            ),
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: Color(0xffdbe2ea)),
           ),
-          enabledBorder:
-              OutlineInputBorder(
-            borderRadius:
-                BorderRadius.circular(10),
-            borderSide: const BorderSide(
-              color: Color(0xffdbe2ea),
-            ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: Color(0xffdbe2ea)),
           ),
-          focusedBorder:
-              OutlineInputBorder(
-            borderRadius:
-                BorderRadius.circular(10),
-            borderSide: const BorderSide(
-              color: Color(0xff2161b5),
-              width: 1.5,
-            ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: Color(0xff2161b5), width: 1.5),
           ),
         ),
       ),
@@ -401,11 +344,8 @@ class _PucScreenState extends State<PucScreen> {
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: const Color(0xfff1f4f8),
-        borderRadius:
-            BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xffe0e5eb),
-        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xffe0e5eb)),
         boxShadow: const [
           BoxShadow(
             color: Color(0x08000000),
@@ -417,8 +357,7 @@ class _PucScreenState extends State<PucScreen> {
       child: Wrap(
         spacing: 14,
         runSpacing: 12,
-        crossAxisAlignment:
-            WrapCrossAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
         children: [
           searchBox(
             controller: vehicleController,
@@ -427,10 +366,8 @@ class _PucScreenState extends State<PucScreen> {
           ),
 
           searchBox(
-            controller:
-                certificateController,
-            hintText:
-                "Search certificate no...",
+            controller: certificateController,
+            hintText: "Search certificate no...",
             width: 270,
           ),
 
@@ -438,19 +375,12 @@ class _PucScreenState extends State<PucScreen> {
             height: 40,
             child: ElevatedButton(
               onPressed: applyFilters,
-              style:
-                  ElevatedButton.styleFrom(
+              style: ElevatedButton.styleFrom(
                 elevation: 0,
-                backgroundColor:
-                    const Color(0xff2161b5),
-                padding:
-                    const EdgeInsets.symmetric(
-                  horizontal: 18,
-                ),
-                shape:
-                    RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(10),
+                backgroundColor: const Color(0xff2161b5),
+                padding: const EdgeInsets.symmetric(horizontal: 18),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
               child: const Text(
@@ -458,8 +388,7 @@ class _PucScreenState extends State<PucScreen> {
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 15,
-                  fontWeight:
-                      FontWeight.w700,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ),
@@ -469,32 +398,18 @@ class _PucScreenState extends State<PucScreen> {
             height: 40,
             child: OutlinedButton(
               onPressed: resetFilters,
-              style:
-                  OutlinedButton.styleFrom(
-                backgroundColor:
-                    Colors.white,
-                foregroundColor:
-                    const Color(0xff475569),
-                padding:
-                    const EdgeInsets.symmetric(
-                  horizontal: 18,
-                ),
-                side:
-                    const BorderSide(
-                  color: Color(0xffd5dde7),
-                ),
-                shape:
-                    RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(10),
+              style: OutlinedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color(0xff475569),
+                padding: const EdgeInsets.symmetric(horizontal: 18),
+                side: const BorderSide(color: Color(0xffd5dde7)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
               child: const Text(
                 "Reset",
-                style: TextStyle(
-                  fontWeight:
-                      FontWeight.w600,
-                ),
+                style: TextStyle(fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -510,22 +425,16 @@ class _PucScreenState extends State<PucScreen> {
   Widget stateBadge(int? daysLeft) {
     if (daysLeft == null) {
       return Container(
-        padding:
-            const EdgeInsets.symmetric(
-          horizontal: 12,
-          vertical: 6,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           color: const Color(0xfff1f5f9),
-          borderRadius:
-              BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20),
         ),
         child: const Text(
           "Unknown",
           style: TextStyle(
             color: Color(0xff64748b),
-            fontWeight:
-                FontWeight.w700,
+            fontWeight: FontWeight.w700,
             fontSize: 13,
           ),
         ),
@@ -534,25 +443,18 @@ class _PucScreenState extends State<PucScreen> {
 
     if (daysLeft < 0) {
       return Container(
-        padding:
-            const EdgeInsets.symmetric(
-          horizontal: 12,
-          vertical: 6,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           color: const Color(0xffffdddd),
-          borderRadius:
-              BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
-          mainAxisSize:
-              MainAxisSize.min,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               width: 8,
               height: 8,
-              decoration:
-                  const BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Color(0xffef233c),
                 shape: BoxShape.circle,
               ),
@@ -562,8 +464,7 @@ class _PucScreenState extends State<PucScreen> {
               "Expired",
               style: TextStyle(
                 color: Color(0xffef233c),
-                fontWeight:
-                    FontWeight.w700,
+                fontWeight: FontWeight.w700,
                 fontSize: 13,
               ),
             ),
@@ -574,25 +475,18 @@ class _PucScreenState extends State<PucScreen> {
 
     if (daysLeft <= 30) {
       return Container(
-        padding:
-            const EdgeInsets.symmetric(
-          horizontal: 12,
-          vertical: 6,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           color: const Color(0xfffff4d6),
-          borderRadius:
-              BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
-          mainAxisSize:
-              MainAxisSize.min,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               width: 8,
               height: 8,
-              decoration:
-                  const BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Color(0xfff59e0b),
                 shape: BoxShape.circle,
               ),
@@ -602,8 +496,7 @@ class _PucScreenState extends State<PucScreen> {
               "Expiring Soon",
               style: TextStyle(
                 color: Color(0xffb45309),
-                fontWeight:
-                    FontWeight.w700,
+                fontWeight: FontWeight.w700,
                 fontSize: 13,
               ),
             ),
@@ -613,25 +506,18 @@ class _PucScreenState extends State<PucScreen> {
     }
 
     return Container(
-      padding:
-          const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 6,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: const Color(0xffdcfce7),
-        borderRadius:
-            BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
-        mainAxisSize:
-            MainAxisSize.min,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
             width: 8,
             height: 8,
-            decoration:
-                const BoxDecoration(
+            decoration: const BoxDecoration(
               color: Color(0xff16a34a),
               shape: BoxShape.circle,
             ),
@@ -641,8 +527,7 @@ class _PucScreenState extends State<PucScreen> {
             "Valid",
             style: TextStyle(
               color: Color(0xff15803d),
-              fontWeight:
-                  FontWeight.w700,
+              fontWeight: FontWeight.w700,
               fontSize: 13,
             ),
           ),
@@ -661,8 +546,7 @@ class _PucScreenState extends State<PucScreen> {
       maxLines: 1,
       style: const TextStyle(
         fontSize: 12,
-        fontWeight:
-            FontWeight.w700,
+        fontWeight: FontWeight.w700,
         color: Color(0xff94a3b8),
         letterSpacing: 0.4,
       ),
@@ -678,8 +562,7 @@ class _PucScreenState extends State<PucScreen> {
       return const Center(
         child: Padding(
           padding: EdgeInsets.all(50),
-          child:
-              CircularProgressIndicator(),
+          child: CircularProgressIndicator(),
         ),
       );
     }
@@ -687,32 +570,19 @@ class _PucScreenState extends State<PucScreen> {
     if (errorMessage != null) {
       return Center(
         child: Padding(
-          padding:
-              const EdgeInsets.all(30),
+          padding: const EdgeInsets.all(30),
           child: Column(
-            mainAxisSize:
-                MainAxisSize.min,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
-                Icons.error_outline,
-                size: 50,
-                color: Colors.red,
-              ),
+              const Icon(Icons.error_outline, size: 50, color: Colors.red),
               const SizedBox(height: 10),
               Text(
                 errorMessage!,
-                textAlign:
-                    TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.red,
-                ),
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.red),
               ),
               const SizedBox(height: 15),
-              ElevatedButton(
-                onPressed: loadPuc,
-                child:
-                    const Text("Retry"),
-              ),
+              ElevatedButton(onPressed: loadPuc, child: const Text("Retry")),
             ],
           ),
         ),
@@ -725,10 +595,7 @@ class _PucScreenState extends State<PucScreen> {
           padding: EdgeInsets.all(50),
           child: Text(
             "No PUC records found",
-            style: TextStyle(
-              fontSize: 16,
-              color: Color(0xff64748b),
-            ),
+            style: TextStyle(fontSize: 16, color: Color(0xff64748b)),
           ),
         ),
       );
@@ -738,19 +605,13 @@ class _PucScreenState extends State<PucScreen> {
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius:
-            BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xffe0e5eb),
-        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xffe0e5eb)),
       ),
       child: ClipRRect(
-        borderRadius:
-            BorderRadius.circular(16),
-        child:
-            SingleChildScrollView(
-          scrollDirection:
-              Axis.horizontal,
+        borderRadius: BorderRadius.circular(16),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
           child: DataTable(
             columnSpacing: 80,
             horizontalMargin: 18,
@@ -760,49 +621,23 @@ class _PucScreenState extends State<PucScreen> {
             dividerThickness: 1,
 
             columns: [
-              DataColumn(
-                label:
-                    tableHeader("VEHICLE"),
-              ),
-              DataColumn(
-                label: tableHeader(
-                  "CERTIFICATE NO.",
-                ),
-              ),
-              DataColumn(
-                label:
-                    tableHeader("EXPIRY"),
-              ),
-              DataColumn(
-                label:
-                    tableHeader("DAYS LEFT"),
-              ),
-              DataColumn(
-                label:
-                    tableHeader("STATE"),
-              ),
+              DataColumn(label: tableHeader("VEHICLE")),
+              DataColumn(label: tableHeader("CERTIFICATE NO.")),
+              DataColumn(label: tableHeader("EXPIRY")),
+              DataColumn(label: tableHeader("DAYS LEFT")),
+              DataColumn(label: tableHeader("STATE")),
             ],
 
-            rows: filteredPuc
-                .map<DataRow>((item) {
-              final data =
-                  Map<String, dynamic>.from(
-                item,
-              );
+            rows: filteredPuc.map<DataRow>((item) {
+              final data = Map<String, dynamic>.from(item);
 
-              final vehicle =
-                  getVehicle(data);
+              final vehicle = getVehicle(data);
 
-              final certificate =
-                  getCertificateNo(
-                data,
-              );
+              final certificate = getCertificateNo(data);
 
-              final expiry =
-                  getExpiry(data);
+              final expiry = getExpiry(data);
 
-              final daysLeft =
-                  getDaysLeft(expiry);
+              final daysLeft = getDaysLeft(expiry);
 
               return DataRow(
                 cells: [
@@ -812,13 +647,10 @@ class _PucScreenState extends State<PucScreen> {
                       width: 220,
                       child: Text(
                         vehicle,
-                        style:
-                            const TextStyle(
+                        style: const TextStyle(
                           fontSize: 14,
-                          fontWeight:
-                              FontWeight.w800,
-                          color:
-                              Color(0xff111827),
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xff111827),
                         ),
                       ),
                     ),
@@ -830,11 +662,9 @@ class _PucScreenState extends State<PucScreen> {
                       width: 300,
                       child: Text(
                         certificate,
-                        style:
-                            const TextStyle(
+                        style: const TextStyle(
                           fontSize: 14,
-                          color:
-                              Color(0xff1e293b),
+                          color: Color(0xff1e293b),
                         ),
                       ),
                     ),
@@ -845,14 +675,10 @@ class _PucScreenState extends State<PucScreen> {
                     SizedBox(
                       width: 170,
                       child: Text(
-                        formatExpiry(
-                          expiry,
-                        ),
-                        style:
-                            const TextStyle(
+                        formatExpiry(expiry),
+                        style: const TextStyle(
                           fontSize: 14,
-                          color:
-                              Color(0xff111827),
+                          color: Color(0xff111827),
                         ),
                       ),
                     ),
@@ -863,32 +689,19 @@ class _PucScreenState extends State<PucScreen> {
                     SizedBox(
                       width: 150,
                       child: Text(
-                        daysLeft == null
-                            ? "-"
-                            : "$daysLeft days",
-                        style:
-                            TextStyle(
+                        daysLeft == null ? "-" : "$daysLeft days",
+                        style: TextStyle(
                           fontSize: 14,
-                          color: daysLeft !=
-                                      null &&
-                                  daysLeft < 0
-                              ? const Color(
-                                  0xff111827,
-                                )
-                              : const Color(
-                                  0xff111827,
-                                ),
+                          color: daysLeft != null && daysLeft < 0
+                              ? const Color(0xff111827)
+                              : const Color(0xff111827),
                         ),
                       ),
                     ),
                   ),
 
                   // STATE
-                  DataCell(
-                    stateBadge(
-                      daysLeft,
-                    ),
-                  ),
+                  DataCell(stateBadge(daysLeft)),
                 ],
               );
             }).toList(),
@@ -905,54 +718,36 @@ class _PucScreenState extends State<PucScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          const Color(0xfff4f7fb),
+      backgroundColor: const Color(0xfff4f7fb),
       body: SafeArea(
         child: Column(
           children: [
             // =============================================
             // HEADER
             // =============================================
-
             Container(
               width: double.infinity,
-              padding:
-                  const EdgeInsets.fromLTRB(
-                20,
-                18,
-                20,
-                15,
-              ),
+              padding: const EdgeInsets.fromLTRB(20, 18, 20, 15),
               child: Row(
                 children: [
                   const Expanded(
                     child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment
-                              .start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           "PUC",
-                          style:
-                              TextStyle(
+                          style: TextStyle(
                             fontSize: 25,
-                            fontWeight:
-                                FontWeight
-                                    .w800,
-                            color:
-                                Colors.black,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.black,
                           ),
                         ),
                         SizedBox(height: 4),
                         Text(
                           "Pollution Under Control certificate",
-                          style:
-                              TextStyle(
+                          style: TextStyle(
                             fontSize: 14,
-                            color:
-                                Color(
-                              0xff64748b,
-                            ),
+                            color: Color(0xff64748b),
                           ),
                         ),
                       ],
@@ -962,10 +757,7 @@ class _PucScreenState extends State<PucScreen> {
                   IconButton(
                     tooltip: "Refresh",
                     onPressed: loadPuc,
-                    icon:
-                        const Icon(
-                      Icons.refresh,
-                    ),
+                    icon: const Icon(Icons.refresh),
                   ),
                 ],
               ),
@@ -974,49 +766,32 @@ class _PucScreenState extends State<PucScreen> {
             // =============================================
             // CONTENT
             // =============================================
-
             Expanded(
-              child:
-                  SingleChildScrollView(
-                padding:
-                    const EdgeInsets.all(
-                  18,
-                ),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(18),
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment
-                          .start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     buildFilterSection(),
 
-                    const SizedBox(
-                      height: 18,
-                    ),
+                    const SizedBox(height: 18),
 
                     Row(
                       children: [
                         Expanded(
                           child: Text(
                             "PUC Records: ${filteredPuc.length}",
-                            style:
-                                const TextStyle(
+                            style: const TextStyle(
                               fontSize: 14,
-                              fontWeight:
-                                  FontWeight
-                                      .w600,
-                              color:
-                                  Color(
-                                0xff475569,
-                              ),
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xff475569),
                             ),
                           ),
                         ),
                       ],
                     ),
 
-                    const SizedBox(
-                      height: 8,
-                    ),
+                    const SizedBox(height: 8),
 
                     buildPucTable(),
                   ],

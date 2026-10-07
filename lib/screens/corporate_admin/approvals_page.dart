@@ -9,44 +9,37 @@ class ApprovalsPage extends StatefulWidget {
   State<ApprovalsPage> createState() => _ApprovalsPageState();
 }
 
-
 class _ApprovalsPageState extends State<ApprovalsPage> {
-
   final AuthService _authService = AuthService();
 
   List<dynamic> expenseList = [];
 
   bool isLoading = true;
 
+  Future<void> loadExpenses() async {
+    try {
+      final data = await _authService.expenses();
 
-Future<void> loadExpenses() async {
-  try {
+      setState(() {
+        expenseList = data["data"] ?? [];
+        isLoading = false;
+      });
 
-    final data = await _authService.expenses();
+      print(expenseList);
+    } catch (e) {
+      print(e);
 
-    setState(() {
-      expenseList = data["data"] ?? [];
-      isLoading = false;
-    });
-
-    print(expenseList);
-
-  } catch (e) {
-
-    print(e);
-
-    setState(() {
-      isLoading = false;
-    });
-
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
-}
 
   @override
-void initState() {
-  super.initState();
-  loadExpenses();
-}
+  void initState() {
+    super.initState();
+    loadExpenses();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +49,6 @@ void initState() {
       body: SafeArea(
         child: Column(
           children: [
-
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
@@ -65,7 +57,6 @@ void initState() {
               child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   Text(
                     "✓ Approvals",
                     style: TextStyle(
@@ -79,37 +70,30 @@ void initState() {
 
                   Text(
                     "7 bills awaiting verification",
-                    style: TextStyle(
-                      color: Colors.white70,
-                    ),
+                    style: TextStyle(color: Colors.white70),
                   ),
                 ],
               ),
             ),
 
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: expenseList.length,
+                itemBuilder: (context, index) {
+                  final item = expenseList[index];
 
-Expanded(
-  child: ListView.builder(
-    padding: const EdgeInsets.all(16),
-    itemCount: expenseList.length,
-    itemBuilder: (context, index) {
-
-      final item = expenseList[index];
-
-      return approvalTile(
-        Icons.build,
-        item["RegistrationNo"] ?? "",
-        item["TypeName"] ?? "",
-        item["Vendor"] ?? "",
-        "₹${item["Amount"] ?? 0}",
-        item["ApprovalStatus"] ?? "Pending",
-      );
-
-    },
-  ),
-),
-
-
+                  return approvalTile(
+                    Icons.build,
+                    item["RegistrationNo"] ?? "",
+                    item["TypeName"] ?? "",
+                    item["Vendor"] ?? "",
+                    "₹${item["Amount"] ?? 0}",
+                    item["ApprovalStatus"] ?? "Pending",
+                  );
+                },
+              ),
+            ),
           ],
         ),
       ),
@@ -117,12 +101,13 @@ Expanded(
   }
 
   Widget approvalTile(
-      IconData icon,
-      String vehicle,
-      String type,
-      String vendor,
-      String amount,
-      String approvalStatus) {
+    IconData icon,
+    String vehicle,
+    String type,
+    String vendor,
+    String amount,
+    String approvalStatus,
+  ) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       child: ListTile(
@@ -141,69 +126,67 @@ Expanded(
             ? Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  CircleAvatar(
+                    radius: 18,
+                    backgroundColor: Colors.green.shade100,
+                    child: IconButton(
+                      padding: EdgeInsets.zero,
+                      icon: const Icon(
+                        Icons.check,
+                        color: Colors.green,
+                        size: 18,
+                      ),
+                      onPressed: () {
+                        // Approve API
+                      },
+                    ),
+                  ),
 
-          CircleAvatar(
-            radius: 18,
-            backgroundColor: Colors.green.shade100,
-            child: IconButton(
-              padding: EdgeInsets.zero,
-              icon: const Icon(
-                Icons.check,
-                color: Colors.green,
-                size: 18,
+                  const SizedBox(width: 8),
+
+                  CircleAvatar(
+                    radius: 18,
+                    backgroundColor: Colors.red.shade100,
+                    child: IconButton(
+                      padding: EdgeInsets.zero,
+                      icon: const Icon(
+                        Icons.close,
+                        color: Colors.red,
+                        size: 18,
+                      ),
+                      onPressed: () {
+                        // Reject API
+                      },
+                    ),
+                  ),
+                ],
+              )
+            : Chip(
+                backgroundColor: approvalStatus == "Approved"
+                    ? Colors.green.shade100
+                    : Colors.red.shade100,
+                label: Text(
+                  approvalStatus,
+                  style: TextStyle(
+                    color: approvalStatus == "Approved"
+                        ? Colors.green
+                        : Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
-              onPressed: () {
-                // Approve API
-              },
-            ),
-          ),
-
-          const SizedBox(width: 8),
-
-          CircleAvatar(
-            radius: 18,
-            backgroundColor: Colors.red.shade100,
-            child: IconButton(
-              padding: EdgeInsets.zero,
-              icon: const Icon(
-                Icons.close,
-                color: Colors.red,
-                size: 18,
-              ),
-              onPressed: () {
-                // Reject API
-              },
-            ),
-          ),
-        ],
-      )
-    : Chip(
-        backgroundColor:
-            approvalStatus == "Approved"
-                ? Colors.green.shade100
-                : Colors.red.shade100,
-        label: Text(
-          approvalStatus,
-          style: TextStyle(
-            color: approvalStatus == "Approved"
-                ? Colors.green
-                : Colors.red,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
       ),
-    ),
-  );
+    );
   }
 
   Widget approvalTileApproved(
-      IconData icon,
-      String vehicle,
-      String type,
-      String vendor,
-      String amount,
-      String approvalStatus,
-      ) {
+    IconData icon,
+    String vehicle,
+    String type,
+    String vendor,
+    String amount,
+    String approvalStatus,
+  ) {
     return Card(
       child: ListTile(
         leading: CircleAvatar(

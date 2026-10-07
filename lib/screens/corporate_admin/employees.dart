@@ -5,12 +5,10 @@ class EmployeesScreen extends StatefulWidget {
   const EmployeesScreen({super.key});
 
   @override
-  State<EmployeesScreen> createState() =>
-      _EmployeesScreenState();
+  State<EmployeesScreen> createState() => _EmployeesScreenState();
 }
 
-class _EmployeesScreenState
-    extends State<EmployeesScreen> {
+class _EmployeesScreenState extends State<EmployeesScreen> {
   // =========================================================
   // AUTH SERVICE
   // =========================================================
@@ -21,14 +19,11 @@ class _EmployeesScreenState
   // CONTROLLERS
   // =========================================================
 
-  final TextEditingController nameController =
-      TextEditingController();
+  final TextEditingController nameController = TextEditingController();
 
-  final TextEditingController codeController =
-      TextEditingController();
+  final TextEditingController codeController = TextEditingController();
 
-  final TextEditingController departmentController =
-      TextEditingController();
+  final TextEditingController departmentController = TextEditingController();
 
   // =========================================================
   // API DATA
@@ -52,17 +47,11 @@ class _EmployeesScreenState
 
     loadEmployees();
 
-    nameController.addListener(
-      applyFilters,
-    );
+    nameController.addListener(applyFilters);
 
-    codeController.addListener(
-      applyFilters,
-    );
+    codeController.addListener(applyFilters);
 
-    departmentController.addListener(
-      applyFilters,
-    );
+    departmentController.addListener(applyFilters);
   }
 
   // =========================================================
@@ -78,17 +67,14 @@ class _EmployeesScreenState
     });
 
     try {
-      final result =
-          await _authService.getemployees();
+      final result = await _authService.getemployees();
 
       if (!mounted) return;
 
       setState(() {
-        allEmployees =
-            List<dynamic>.from(result);
+        allEmployees = List<dynamic>.from(result);
 
-        filteredEmployees =
-            List<dynamic>.from(result);
+        filteredEmployees = List<dynamic>.from(result);
 
         isLoading = false;
       });
@@ -98,17 +84,14 @@ class _EmployeesScreenState
       setState(() {
         isLoading = false;
 
-        errorMessage =
-            e.toString();
+        errorMessage = e.toString();
 
         allEmployees = [];
 
         filteredEmployees = [];
       });
 
-      debugPrint(
-        "Employees API Error: $e",
-      );
+      debugPrint("Employees API Error: $e");
     }
   }
 
@@ -116,17 +99,13 @@ class _EmployeesScreenState
   // GET VALUE HELPER
   // =========================================================
 
-  String getValue(
-    Map<String, dynamic> data,
-    List<String> keys,
-  ) {
+  String getValue(Map<String, dynamic> data, List<String> keys) {
     for (final key in keys) {
       final value = data[key];
 
       if (value != null &&
           value.toString().trim().isNotEmpty &&
-          value.toString().toLowerCase() !=
-              "null") {
+          value.toString().toLowerCase() != "null") {
         return value.toString();
       }
     }
@@ -138,119 +117,89 @@ class _EmployeesScreenState
   // NAME
   // =========================================================
 
-  String getEmployeeName(
-    Map<String, dynamic> data,
-  ) {
-    return getValue(
-      data,
-      [
-        "Name",
-        "EmployeeName",
-        "Employee_Name",
-        "FullName",
-        "Full_Name",
-        "UserName",
-        "Username",
-      ],
-    );
+  String getEmployeeName(Map<String, dynamic> data) {
+    return getValue(data, [
+      "Name",
+      "EmployeeName",
+      "Employee_Name",
+      "FullName",
+      "Full_Name",
+      "UserName",
+      "Username",
+    ]);
   }
 
   // =========================================================
   // CODE
   // =========================================================
 
-  String getEmployeeCode(
-    Map<String, dynamic> data,
-  ) {
-    return getValue(
-      data,
-      [
-        "Code",
-        "EmployeeCode",
-        "Employee_Code",
-        "EmpCode",
-        "Emp_Code",
-      ],
-    );
+  String getEmployeeCode(Map<String, dynamic> data) {
+    return getValue(data, [
+      "Code",
+      "EmployeeCode",
+      "Employee_Code",
+      "EmpCode",
+      "Emp_Code",
+    ]);
   }
 
   // =========================================================
   // DEPARTMENT
   // =========================================================
 
-  String getDepartment(
-    Map<String, dynamic> data,
-  ) {
-    return getValue(
-      data,
-      [
-        "Department",
-        "DepartmentName",
-        "Department_Name",
-        "DeptName",
-        "Dept",
-      ],
-    );
+  String getDepartment(Map<String, dynamic> data) {
+    return getValue(data, [
+      "Department",
+      "DepartmentName",
+      "Department_Name",
+      "DeptName",
+      "Dept",
+    ]);
   }
 
   // =========================================================
   // LOCATION
   // =========================================================
 
-  String getLocation(
-    Map<String, dynamic> data,
-  ) {
-    return getValue(
-      data,
-      [
-        "Location",
-        "LocationName",
-        "Location_Name",
-        "EmployeeLocation",
-        "Address",
-      ],
-    );
+  String getLocation(Map<String, dynamic> data) {
+    return getValue(data, [
+      "Location",
+      "LocationName",
+      "Location_Name",
+      "EmployeeLocation",
+      "Address",
+    ]);
   }
 
   // =========================================================
   // CONTACT
   // =========================================================
 
-  String getContact(
-    Map<String, dynamic> data,
-  ) {
-    return getValue(
-      data,
-      [
-        "Contact",
-        "ContactNo",
-        "ContactNumber",
-        "Mobile",
-        "MobileNo",
-        "Phone",
-        "PhoneNumber",
-      ],
-    );
+  String getContact(Map<String, dynamic> data) {
+    return getValue(data, [
+      "Contact",
+      "ContactNo",
+      "ContactNumber",
+      "Mobile",
+      "MobileNo",
+      "Phone",
+      "PhoneNumber",
+    ]);
   }
 
   // =========================================================
   // FUEL USED
   // =========================================================
 
-  double getFuelUsed(
-    Map<String, dynamic> data,
-  ) {
-    final value = getValue(
-      data,
-      [
-        "FuelUsed",
-        "Fuel_Used",
-        "FuelUsage",
-        "FuelUsageThisMonth",
-        "MonthlyFuelUsed",
-        "UsedFuel",
-      ],
-    );
+  double getFuelUsed(Map<String, dynamic> data) {
+    final value = getValue(data, [
+      "FuelUsed",
+      "Fuel_Used",
+      "FuelUsage",
+      "FuelUsageThisMonth",
+      "MonthlyFuelUsed",
+      "UsedFuel",
+    ]);
 
     return double.tryParse(value) ?? 0;
   }
@@ -259,20 +208,15 @@ class _EmployeesScreenState
   // FUEL LIMIT
   // =========================================================
 
-  double getFuelLimit(
-    Map<String, dynamic> data,
-  ) {
-    final value = getValue(
-      data,
-      [
-        "FuelLimit",
-        "Fuel_Limit",
-        "MonthlyFuelLimit",
-        "FuelQuota",
-        "FuelLimitThisMonth",
-        "Limit",
-      ],
-    );
+  double getFuelLimit(Map<String, dynamic> data) {
+    final value = getValue(data, [
+      "FuelLimit",
+      "Fuel_Limit",
+      "MonthlyFuelLimit",
+      "FuelQuota",
+      "FuelLimitThisMonth",
+      "Limit",
+    ]);
 
     return double.tryParse(value) ?? 0;
   }
@@ -282,25 +226,13 @@ class _EmployeesScreenState
   // =========================================================
 
   void applyFilters() {
-    final nameSearch =
-        nameController.text
-            .trim()
-            .toLowerCase();
+    final nameSearch = nameController.text.trim().toLowerCase();
 
-    final codeSearch =
-        codeController.text
-            .trim()
-            .toLowerCase();
+    final codeSearch = codeController.text.trim().toLowerCase();
 
-    final departmentSearch =
-        departmentController.text
-            .trim()
-            .toLowerCase();
+    final departmentSearch = departmentController.text.trim().toLowerCase();
 
-    List<dynamic> result =
-        List<dynamic>.from(
-      allEmployees,
-    );
+    List<dynamic> result = List<dynamic>.from(allEmployees);
 
     // =======================================================
     // NAME FILTER
@@ -308,16 +240,11 @@ class _EmployeesScreenState
 
     if (nameSearch.isNotEmpty) {
       result = result.where((item) {
-        final data =
-            Map<String, dynamic>.from(item);
+        final data = Map<String, dynamic>.from(item);
 
-        final name =
-            getEmployeeName(data)
-                .toLowerCase();
+        final name = getEmployeeName(data).toLowerCase();
 
-        return name.contains(
-          nameSearch,
-        );
+        return name.contains(nameSearch);
       }).toList();
     }
 
@@ -327,16 +254,11 @@ class _EmployeesScreenState
 
     if (codeSearch.isNotEmpty) {
       result = result.where((item) {
-        final data =
-            Map<String, dynamic>.from(item);
+        final data = Map<String, dynamic>.from(item);
 
-        final code =
-            getEmployeeCode(data)
-                .toLowerCase();
+        final code = getEmployeeCode(data).toLowerCase();
 
-        return code.contains(
-          codeSearch,
-        );
+        return code.contains(codeSearch);
       }).toList();
     }
 
@@ -346,16 +268,11 @@ class _EmployeesScreenState
 
     if (departmentSearch.isNotEmpty) {
       result = result.where((item) {
-        final data =
-            Map<String, dynamic>.from(item);
+        final data = Map<String, dynamic>.from(item);
 
-        final department =
-            getDepartment(data)
-                .toLowerCase();
+        final department = getDepartment(data).toLowerCase();
 
-        return department.contains(
-          departmentSearch,
-        );
+        return department.contains(departmentSearch);
       }).toList();
     }
 
@@ -378,10 +295,7 @@ class _EmployeesScreenState
     if (!mounted) return;
 
     setState(() {
-      filteredEmployees =
-          List<dynamic>.from(
-        allEmployees,
-      );
+      filteredEmployees = List<dynamic>.from(allEmployees);
     });
   }
 
@@ -389,55 +303,34 @@ class _EmployeesScreenState
   // INPUT DECORATION
   // =========================================================
 
-  InputDecoration employeeInputDecoration(
-    String hint,
-  ) {
+  InputDecoration employeeInputDecoration(String hint) {
     return InputDecoration(
       hintText: hint,
 
-      hintStyle: const TextStyle(
-        color: Color(0xff64748b),
-        fontSize: 14,
-      ),
+      hintStyle: const TextStyle(color: Color(0xff64748b), fontSize: 14),
 
       filled: true,
 
       fillColor: Colors.white,
 
-      contentPadding:
-          const EdgeInsets.symmetric(
-        horizontal: 15,
-        vertical: 12,
-      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
 
       border: OutlineInputBorder(
-        borderRadius:
-            BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(10),
 
-        borderSide: const BorderSide(
-          color: Color(0xffdbe2ea),
-        ),
+        borderSide: const BorderSide(color: Color(0xffdbe2ea)),
       ),
 
-      enabledBorder:
-          OutlineInputBorder(
-        borderRadius:
-            BorderRadius.circular(10),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
 
-        borderSide: const BorderSide(
-          color: Color(0xffdbe2ea),
-        ),
+        borderSide: const BorderSide(color: Color(0xffdbe2ea)),
       ),
 
-      focusedBorder:
-          OutlineInputBorder(
-        borderRadius:
-            BorderRadius.circular(10),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
 
-        borderSide: const BorderSide(
-          color: Color(0xff2161b5),
-          width: 1.2,
-        ),
+        borderSide: const BorderSide(color: Color(0xff2161b5), width: 1.2),
       ),
     );
   }
@@ -450,22 +343,14 @@ class _EmployeesScreenState
     return Container(
       width: double.infinity,
 
-      padding: const EdgeInsets.fromLTRB(
-        20,
-        18,
-        20,
-        18,
-      ),
+      padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
 
       decoration: BoxDecoration(
         color: const Color(0xfff1f4f8),
 
-        borderRadius:
-            BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16),
 
-        border: Border.all(
-          color: const Color(0xffe1e7ef),
-        ),
+        border: Border.all(color: const Color(0xffe1e7ef)),
 
         boxShadow: const [
           BoxShadow(
@@ -480,15 +365,12 @@ class _EmployeesScreenState
         spacing: 14,
         runSpacing: 12,
 
-        crossAxisAlignment:
-            WrapCrossAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
 
         children: [
-
           // =================================================
           // SEARCH NAME
           // =================================================
-
           SizedBox(
             width: 270,
             height: 44,
@@ -496,17 +378,13 @@ class _EmployeesScreenState
             child: TextField(
               controller: nameController,
 
-              decoration:
-                  employeeInputDecoration(
-                "Search name...",
-              ),
+              decoration: employeeInputDecoration("Search name..."),
             ),
           ),
 
           // =================================================
           // SEARCH CODE
           // =================================================
-
           SizedBox(
             width: 270,
             height: 44,
@@ -514,65 +392,44 @@ class _EmployeesScreenState
             child: TextField(
               controller: codeController,
 
-              decoration:
-                  employeeInputDecoration(
-                "Search code...",
-              ),
+              decoration: employeeInputDecoration("Search code..."),
             ),
           ),
 
           // =================================================
           // DEPARTMENT
           // =================================================
-
           SizedBox(
             width: 270,
             height: 44,
 
             child: TextField(
-              controller:
-                  departmentController,
+              controller: departmentController,
 
-              decoration:
-                  employeeInputDecoration(
-                "Type to search...",
-              ),
+              decoration: employeeInputDecoration("Type to search..."),
             ),
           ),
 
           // =================================================
           // FILTER BUTTON
           // =================================================
-
           SizedBox(
             height: 44,
 
             child: ElevatedButton(
               onPressed: applyFilters,
 
-              style:
-                  ElevatedButton.styleFrom(
+              style: ElevatedButton.styleFrom(
                 elevation: 0,
 
-                backgroundColor:
-                    const Color(
-                  0xff2161b5,
-                ),
+                backgroundColor: const Color(0xff2161b5),
 
-                foregroundColor:
-                    Colors.white,
+                foregroundColor: Colors.white,
 
-                padding:
-                    const EdgeInsets.symmetric(
-                  horizontal: 20,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
 
-                shape:
-                    RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(
-                    10,
-                  ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
 
@@ -581,8 +438,7 @@ class _EmployeesScreenState
 
                 style: TextStyle(
                   color: Colors.white,
-                  fontWeight:
-                      FontWeight.w700,
+                  fontWeight: FontWeight.w700,
                   fontSize: 14,
                 ),
               ),
@@ -592,50 +448,30 @@ class _EmployeesScreenState
           // =================================================
           // RESET BUTTON
           // =================================================
-
           SizedBox(
             height: 44,
 
             child: OutlinedButton(
               onPressed: resetFilters,
 
-              style:
-                  OutlinedButton.styleFrom(
-                backgroundColor:
-                    Colors.white,
+              style: OutlinedButton.styleFrom(
+                backgroundColor: Colors.white,
 
-                foregroundColor:
-                    const Color(
-                  0xff475569,
-                ),
+                foregroundColor: const Color(0xff475569),
 
-                side: const BorderSide(
-                  color: Color(
-                    0xffd8e0e9,
-                  ),
-                ),
+                side: const BorderSide(color: Color(0xffd8e0e9)),
 
-                padding:
-                    const EdgeInsets.symmetric(
-                  horizontal: 18,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 18),
 
-                shape:
-                    RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(
-                    10,
-                  ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
 
               child: const Text(
                 "Reset",
 
-                style: TextStyle(
-                  fontWeight:
-                      FontWeight.w600,
-                ),
+                style: TextStyle(fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -657,25 +493,17 @@ class _EmployeesScreenState
       return Container(
         width: double.infinity,
 
-        padding:
-            const EdgeInsets.all(50),
+        padding: const EdgeInsets.all(50),
 
         decoration: BoxDecoration(
           color: Colors.white,
 
-          borderRadius:
-              BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16),
 
-          border: Border.all(
-            color:
-                const Color(0xffe2e8f0),
-          ),
+          border: Border.all(color: const Color(0xffe2e8f0)),
         ),
 
-        child: const Center(
-          child:
-              CircularProgressIndicator(),
-        ),
+        child: const Center(child: CircularProgressIndicator()),
       );
     }
 
@@ -687,61 +515,38 @@ class _EmployeesScreenState
       return Container(
         width: double.infinity,
 
-        padding:
-            const EdgeInsets.all(40),
+        padding: const EdgeInsets.all(40),
 
         decoration: BoxDecoration(
           color: Colors.white,
 
-          borderRadius:
-              BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16),
 
-          border: Border.all(
-            color:
-                const Color(0xffe2e8f0),
-          ),
+          border: Border.all(color: const Color(0xffe2e8f0)),
         ),
 
         child: Center(
           child: Column(
-            mainAxisSize:
-                MainAxisSize.min,
+            mainAxisSize: MainAxisSize.min,
 
             children: [
+              const Icon(Icons.error_outline, size: 50, color: Colors.red),
 
-              const Icon(
-                Icons.error_outline,
-                size: 50,
-                color: Colors.red,
-              ),
-
-              const SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 10),
 
               Text(
                 errorMessage!,
-                textAlign:
-                    TextAlign.center,
+                textAlign: TextAlign.center,
 
-                style:
-                    const TextStyle(
-                  color: Colors.red,
-                ),
+                style: const TextStyle(color: Colors.red),
               ),
 
-              const SizedBox(
-                height: 15,
-              ),
+              const SizedBox(height: 15),
 
               ElevatedButton(
-                onPressed:
-                    loadEmployees,
+                onPressed: loadEmployees,
 
-                child:
-                    const Text(
-                  "Retry",
-                ),
+                child: const Text("Retry"),
               ),
             ],
           ),
@@ -757,30 +562,21 @@ class _EmployeesScreenState
       return Container(
         width: double.infinity,
 
-        padding:
-            const EdgeInsets.all(50),
+        padding: const EdgeInsets.all(50),
 
         decoration: BoxDecoration(
           color: Colors.white,
 
-          borderRadius:
-              BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16),
 
-          border: Border.all(
-            color:
-                const Color(0xffe2e8f0),
-          ),
+          border: Border.all(color: const Color(0xffe2e8f0)),
         ),
 
         child: const Center(
           child: Text(
             "No employees found",
 
-            style: TextStyle(
-              fontSize: 15,
-              color:
-                  Color(0xff64748b),
-            ),
+            style: TextStyle(fontSize: 15, color: Color(0xff64748b)),
           ),
         ),
       );
@@ -796,13 +592,9 @@ class _EmployeesScreenState
       decoration: BoxDecoration(
         color: Colors.white,
 
-        borderRadius:
-            BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16),
 
-        border: Border.all(
-          color:
-              const Color(0xffe2e8f0),
-        ),
+        border: Border.all(color: const Color(0xffe2e8f0)),
 
         boxShadow: const [
           BoxShadow(
@@ -814,13 +606,10 @@ class _EmployeesScreenState
       ),
 
       child: ClipRRect(
-        borderRadius:
-            BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16),
 
-        child:
-            SingleChildScrollView(
-          scrollDirection:
-              Axis.horizontal,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
 
           child: DataTable(
             horizontalMargin: 18,
@@ -834,376 +623,239 @@ class _EmployeesScreenState
             dataRowMaxHeight: 82,
 
             columns: const [
-
               // NAME
-              DataColumn(
-                label:
-                    EmployeeHeader(
-                  "NAME",
-                ),
-              ),
+              DataColumn(label: EmployeeHeader("NAME")),
 
               // CODE
-              DataColumn(
-                label:
-                    EmployeeHeader(
-                  "CODE",
-                ),
-              ),
+              DataColumn(label: EmployeeHeader("CODE")),
 
               // DEPARTMENT
-              DataColumn(
-                label:
-                    EmployeeHeader(
-                  "DEPARTMENT",
-                ),
-              ),
+              DataColumn(label: EmployeeHeader("DEPARTMENT")),
 
               // LOCATION
-              DataColumn(
-                label:
-                    EmployeeHeader(
-                  "LOCATION",
-                ),
-              ),
+              DataColumn(label: EmployeeHeader("LOCATION")),
 
               // CONTACT
-              DataColumn(
-                label:
-                    EmployeeHeader(
-                  "CONTACT",
-                ),
-              ),
+              DataColumn(label: EmployeeHeader("CONTACT")),
 
               // FUEL
-              DataColumn(
-                label:
-                    EmployeeHeader(
-                  "THIS MONTH'S FUEL USAGE",
-                ),
-              ),
+              DataColumn(label: EmployeeHeader("THIS MONTH'S FUEL USAGE")),
             ],
 
-            rows:
-                filteredEmployees
-                    .map<DataRow>(
-              (item) {
+            rows: filteredEmployees.map<DataRow>((item) {
+              final Map<String, dynamic> data = Map<String, dynamic>.from(item);
 
-                final Map<String,
-                        dynamic>
-                    data =
-                    Map<String,
-                            dynamic>.from(
-                  item,
-                );
+              final name = getEmployeeName(data);
 
-                final name =
-                    getEmployeeName(
-                  data,
-                );
+              final code = getEmployeeCode(data);
 
-                final code =
-                    getEmployeeCode(
-                  data,
-                );
+              final department = getDepartment(data);
 
-                final department =
-                    getDepartment(
-                  data,
-                );
+              final location = getLocation(data);
 
-                final location =
-                    getLocation(
-                  data,
-                );
+              final contact = getContact(data);
 
-                final contact =
-                    getContact(
-                  data,
-                );
+              final fuelUsed = getFuelUsed(data);
 
-                final fuelUsed =
-                    getFuelUsed(
-                  data,
-                );
+              final fuelLimit = getFuelLimit(data);
 
-                final fuelLimit =
-                    getFuelLimit(
-                  data,
-                );
+              final bool hasLimit = fuelLimit > 0;
 
-                final bool hasLimit =
-                    fuelLimit > 0;
+              double progress = 0;
 
-                double progress = 0;
+              if (hasLimit) {
+                progress = fuelUsed / fuelLimit;
 
-                if (hasLimit) {
-                  progress =
-                      fuelUsed /
-                          fuelLimit;
-
-                  if (progress < 0) {
-                    progress = 0;
-                  }
-
-                  if (progress > 1) {
-                    progress = 1;
-                  }
+                if (progress < 0) {
+                  progress = 0;
                 }
 
-                return DataRow(
-                  cells: [
+                if (progress > 1) {
+                  progress = 1;
+                }
+              }
 
-                    // =================================================
-                    // NAME
-                    // =================================================
+              return DataRow(
+                cells: [
+                  // =================================================
+                  // NAME
+                  // =================================================
+                  DataCell(
+                    SizedBox(
+                      width: 195,
 
-                    DataCell(
-                      SizedBox(
-                        width: 195,
+                      child: Text(
+                        name,
 
-                        child: Text(
-                          name,
+                        maxLines: 1,
 
-                          maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
 
-                          overflow:
-                              TextOverflow
-                                  .ellipsis,
+                        style: const TextStyle(
+                          fontSize: 15,
 
-                          style:
-                              const TextStyle(
-                            fontSize: 15,
+                          fontWeight: FontWeight.w800,
 
-                            fontWeight:
-                                FontWeight.w800,
-
-                            color:
-                                Color(
-                              0xff0f172a,
-                            ),
-                          ),
+                          color: Color(0xff0f172a),
                         ),
                       ),
                     ),
+                  ),
 
-                    // =================================================
-                    // CODE
-                    // =================================================
+                  // =================================================
+                  // CODE
+                  // =================================================
+                  DataCell(
+                    SizedBox(
+                      width: 140,
 
-                    DataCell(
-                      SizedBox(
-                        width: 140,
+                      child: Text(
+                        code,
 
-                        child: Text(
-                          code,
+                        maxLines: 1,
 
-                          maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
 
-                          overflow:
-                              TextOverflow
-                                  .ellipsis,
+                        style: const TextStyle(
+                          fontSize: 14,
 
-                          style:
-                              const TextStyle(
-                            fontSize: 14,
+                          color: Color(0xff8ba0bb),
 
-                            color:
-                                Color(
-                              0xff8ba0bb,
-                            ),
-
-                            fontWeight:
-                                FontWeight.w500,
-                          ),
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
+                  ),
 
-                    // =================================================
-                    // DEPARTMENT
-                    // =================================================
+                  // =================================================
+                  // DEPARTMENT
+                  // =================================================
+                  DataCell(
+                    SizedBox(
+                      width: 170,
 
-                    DataCell(
-                      SizedBox(
-                        width: 170,
+                      child: Text(
+                        department,
 
-                        child: Text(
-                          department,
+                        maxLines: 1,
 
-                          maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
 
-                          overflow:
-                              TextOverflow
-                                  .ellipsis,
+                        style: const TextStyle(
+                          fontSize: 14,
 
-                          style:
-                              const TextStyle(
-                            fontSize: 14,
-
-                            color:
-                                Color(
-                              0xff111827,
-                            ),
-                          ),
+                          color: Color(0xff111827),
                         ),
                       ),
                     ),
+                  ),
 
-                    // =================================================
-                    // LOCATION
-                    // =================================================
+                  // =================================================
+                  // LOCATION
+                  // =================================================
+                  DataCell(
+                    SizedBox(
+                      width: 370,
 
-                    DataCell(
-                      SizedBox(
-                        width: 370,
+                      child: Text(
+                        location,
 
-                        child: Text(
-                          location,
+                        maxLines: 1,
 
-                          maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
 
-                          overflow:
-                              TextOverflow
-                                  .ellipsis,
+                        style: const TextStyle(
+                          fontSize: 14,
 
-                          style:
-                              const TextStyle(
-                            fontSize: 14,
-
-                            color:
-                                Color(
-                              0xff111827,
-                            ),
-                          ),
+                          color: Color(0xff111827),
                         ),
                       ),
                     ),
+                  ),
 
-                    // =================================================
-                    // CONTACT
-                    // =================================================
+                  // =================================================
+                  // CONTACT
+                  // =================================================
+                  DataCell(
+                    SizedBox(
+                      width: 150,
 
-                    DataCell(
-                      SizedBox(
-                        width: 150,
+                      child: Text(
+                        contact,
 
-                        child: Text(
-                          contact,
+                        maxLines: 1,
 
-                          maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
 
-                          overflow:
-                              TextOverflow
-                                  .ellipsis,
+                        style: const TextStyle(
+                          fontSize: 14,
 
-                          style:
-                              const TextStyle(
-                            fontSize: 14,
-
-                            color:
-                                Color(
-                              0xff8ba0bb,
-                            ),
-                          ),
+                          color: Color(0xff8ba0bb),
                         ),
                       ),
                     ),
+                  ),
 
-                    // =================================================
-                    // FUEL USAGE
-                    // =================================================
+                  // =================================================
+                  // FUEL USAGE
+                  // =================================================
+                  DataCell(
+                    SizedBox(
+                      width: 320,
 
-                    DataCell(
-                      SizedBox(
-                        width: 320,
+                      child: hasLimit
+                          ? Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
 
-                        child: hasLimit
-                            ? Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment
-                                        .center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
 
-                                crossAxisAlignment:
-                                    CrossAxisAlignment
-                                        .start,
+                              children: [
+                                Text(
+                                  "${fuelUsed.toStringAsFixed(0)}L / "
+                                  "${fuelLimit.toStringAsFixed(0)}L",
 
-                                children: [
+                                  style: const TextStyle(
+                                    fontSize: 14,
 
-                                  Text(
-                                    "${fuelUsed.toStringAsFixed(0)}L / "
-                                    "${fuelLimit.toStringAsFixed(0)}L",
-
-                                    style:
-                                        const TextStyle(
-                                      fontSize: 14,
-
-                                      color:
-                                          Color(
-                                        0xff0f172a,
-                                      ),
-                                    ),
-                                  ),
-
-                                  const SizedBox(
-                                    height: 7,
-                                  ),
-
-                                  ClipRRect(
-                                    borderRadius:
-                                        BorderRadius
-                                            .circular(
-                                      10,
-                                    ),
-
-                                    child:
-                                        LinearProgressIndicator(
-                                      value:
-                                          progress,
-
-                                      minHeight:
-                                          10,
-
-                                      backgroundColor:
-                                          const Color(
-                                        0xffedf1f6,
-                                      ),
-
-                                      valueColor:
-                                          AlwaysStoppedAnimation<
-                                              Color>(
-                                        progress >=
-                                                1
-                                            ? const Color(
-                                                0xffef4444,
-                                              )
-                                            : const Color(
-                                                0xff2161b5,
-                                              ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : const Text(
-                                "No limit",
-
-                                style:
-                                    TextStyle(
-                                  fontSize: 14,
-
-                                  color:
-                                      Color(
-                                    0xff64748b,
+                                    color: Color(0xff0f172a),
                                   ),
                                 ),
+
+                                const SizedBox(height: 7),
+
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+
+                                  child: LinearProgressIndicator(
+                                    value: progress,
+
+                                    minHeight: 10,
+
+                                    backgroundColor: const Color(0xffedf1f6),
+
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      progress >= 1
+                                          ? const Color(0xffef4444)
+                                          : const Color(0xff2161b5),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          : const Text(
+                              "No limit",
+
+                              style: TextStyle(
+                                fontSize: 14,
+
+                                color: Color(0xff64748b),
                               ),
-                      ),
+                            ),
                     ),
-                  ],
-                );
-              },
-            ).toList(),
+                  ),
+                ],
+              );
+            }).toList(),
           ),
         ),
       ),
@@ -1215,124 +867,79 @@ class _EmployeesScreenState
   // =========================================================
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          const Color(0xfff4f7fb),
+      backgroundColor: const Color(0xfff4f7fb),
 
       body: SafeArea(
         child: Column(
           children: [
-
             // =================================================
             // PAGE HEADER
             // =================================================
-
             Container(
               width: double.infinity,
 
-              padding:
-                  const EdgeInsets.fromLTRB(
-                20,
-                18,
-                20,
-                12,
-              ),
+              padding: const EdgeInsets.fromLTRB(20, 18, 20, 12),
 
               child: LayoutBuilder(
-                builder:
-                    (
-                  context,
-                  constraints,
-                ) {
-
-                  final isMobile =
-                      constraints.maxWidth <
-                          700;
+                builder: (context, constraints) {
+                  final isMobile = constraints.maxWidth < 700;
 
                   if (isMobile) {
                     return Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment
-                              .start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
 
                       children: [
-
                         const Text(
                           "Employees",
 
-                          style:
-                              TextStyle(
+                          style: TextStyle(
                             fontSize: 25,
 
-                            fontWeight:
-                                FontWeight.w800,
+                            fontWeight: FontWeight.w800,
 
-                            color:
-                                Colors.black,
+                            color: Colors.black,
                           ),
                         ),
 
-                        const SizedBox(
-                          height: 4,
-                        ),
+                        const SizedBox(height: 4),
 
                         const Text(
                           "Employee fuel usage and information",
 
-                          style:
-                              TextStyle(
+                          style: TextStyle(
                             fontSize: 13,
 
-                            color:
-                                Color(
-                              0xff64748b,
-                            ),
+                            color: Color(0xff64748b),
                           ),
                         ),
 
-                        const SizedBox(
-                          height: 10,
-                        ),
+                        const SizedBox(height: 10),
 
                         Row(
                           children: [
-
                             Expanded(
-                              child:
-                                  Text(
+                              child: Text(
                                 "Total Employees: "
                                 "${filteredEmployees.length}",
 
-                                style:
-                                    const TextStyle(
+                                style: const TextStyle(
                                   fontSize: 14,
 
-                                  fontWeight:
-                                      FontWeight
-                                          .w600,
+                                  fontWeight: FontWeight.w600,
 
-                                  color:
-                                      Color(
-                                    0xff475569,
-                                  ),
+                                  color: Color(0xff475569),
                                 ),
                               ),
                             ),
 
                             IconButton(
-                              tooltip:
-                                  "Refresh",
+                              tooltip: "Refresh",
 
-                              onPressed:
-                                  loadEmployees,
+                              onPressed: loadEmployees,
 
-                              icon:
-                                  const Icon(
-                                Icons.refresh,
-                              ),
+                              icon: const Icon(Icons.refresh),
                             ),
                           ],
                         ),
@@ -1342,51 +949,35 @@ class _EmployeesScreenState
 
                   return Row(
                     children: [
-
                       // =================================================
                       // TITLE
                       // =================================================
-
                       Expanded(
                         child: Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment
-                                  .start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
 
                           children: const [
-
                             Text(
                               "Employees",
 
-                              style:
-                                  TextStyle(
+                              style: TextStyle(
                                 fontSize: 25,
 
-                                fontWeight:
-                                    FontWeight
-                                        .w800,
+                                fontWeight: FontWeight.w800,
 
-                                color:
-                                    Colors.black,
+                                color: Colors.black,
                               ),
                             ),
 
-                            SizedBox(
-                              height: 4,
-                            ),
-
+                            SizedBox(height: 4),
 
                             Text(
                               "Employee fuel usage and information",
 
-                              style:
-                                  TextStyle(
+                              style: TextStyle(
                                 fontSize: 14,
 
-                                color:
-                                    Color(
-                                  0xff64748b,
-                                ),
+                                color: Color(0xff64748b),
                               ),
                             ),
                           ],
@@ -1396,44 +987,30 @@ class _EmployeesScreenState
                       // =================================================
                       // COUNT
                       // =================================================
-
                       Text(
                         "Total Employees: "
                         "${filteredEmployees.length}",
 
-                        style:
-                            const TextStyle(
+                        style: const TextStyle(
                           fontSize: 14,
 
-                          fontWeight:
-                              FontWeight.w600,
+                          fontWeight: FontWeight.w600,
 
-                          color:
-                              Color(
-                            0xff475569,
-                          ),
+                          color: Color(0xff475569),
                         ),
                       ),
 
-                      const SizedBox(
-                        width: 10,
-                      ),
+                      const SizedBox(width: 10),
 
                       // =================================================
                       // REFRESH
                       // =================================================
-
                       IconButton(
-                        tooltip:
-                            "Refresh",
+                        tooltip: "Refresh",
 
-                        onPressed:
-                            loadEmployees,
+                        onPressed: loadEmployees,
 
-                        icon:
-                            const Icon(
-                          Icons.refresh,
-                        ),
+                        icon: const Icon(Icons.refresh),
                       ),
                     ],
                   );
@@ -1444,36 +1021,24 @@ class _EmployeesScreenState
             // =================================================
             // MAIN CONTENT
             // =================================================
-
             Expanded(
-              child:
-                  SingleChildScrollView(
-                padding:
-                    const EdgeInsets.all(
-                  18,
-                ),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(18),
 
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment
-                          .start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
 
                   children: [
-
                     // =================================================
                     // FILTER
                     // =================================================
-
                     buildFilterSection(),
 
-                    const SizedBox(
-                      height: 18,
-                    ),
+                    const SizedBox(height: 18),
 
                     // =================================================
                     // TABLE
                     // =================================================
-
                     buildEmployeeTable(),
                   ],
                 ),
@@ -1505,38 +1070,28 @@ class _EmployeesScreenState
 // EMPLOYEE TABLE HEADER
 // =============================================================
 
-class EmployeeHeader
-    extends StatelessWidget {
+class EmployeeHeader extends StatelessWidget {
   final String title;
 
-  const EmployeeHeader(
-    this.title, {
-    super.key,
-  });
+  const EmployeeHeader(this.title, {super.key});
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return Text(
       title,
 
       maxLines: 1,
 
-      overflow:
-          TextOverflow.ellipsis,
+      overflow: TextOverflow.ellipsis,
 
-      style:
-          const TextStyle(
+      style: const TextStyle(
         fontSize: 12,
 
-        fontWeight:
-            FontWeight.w700,
+        fontWeight: FontWeight.w700,
 
         letterSpacing: 0.4,
 
-        color:
-            Color(0xff8da0b9),
+        color: Color(0xff8da0b9),
       ),
     );
   }

@@ -11,20 +11,20 @@ class AddFuelScreen extends StatefulWidget {
   final int vehicleId;
   final String registrationNo;
   final String model;
-  
+
   const AddFuelScreen({
     super.key,
     required this.vehicleId,
     required this.registrationNo,
     required this.model,
   });
- 
+
   @override
   State<AddFuelScreen> createState() => _AddFuelScreenState();
 }
 // class AddFuelScreen extends StatefulWidget {
 //   const AddFuelScreen({super.key});
-  
+
 //   @override
 //   State<AddFuelScreen> createState() => _AddFuelScreenState();
 // }
@@ -42,12 +42,10 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
   //  final int vehicleId;
   // final String registrationNo;
   // final String model;
- void showSnack(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
+  void showSnack(String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   double total = 0;
@@ -64,8 +62,6 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
     [Color(0xffFF9966), Color(0xffFF5E62)],
     [Color(0xff00C6FF), Color(0xff0072FF)],
   ];
-
-
 
   @override
   void initState() {
@@ -96,15 +92,14 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
     setState(() {
       total =
           (double.tryParse(litersController.text) ?? 0) *
-              (double.tryParse(rateController.text) ?? 0);
+          (double.tryParse(rateController.text) ?? 0);
     });
   }
 
   // ================= IMAGE PICKERS =================
 
   Future<void> pickReceipt(ImageSource source) async {
-    final picked =
-    await picker.pickImage(source: source, imageQuality: 80);
+    final picked = await picker.pickImage(source: source, imageQuality: 80);
     if (picked != null) {
       setState(() => selectedReceipt = File(picked.path));
     }
@@ -113,8 +108,7 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
   bool isReadingOdometer = false;
 
   Future<void> pickOdoImage(ImageSource source) async {
-    final picked =
-    await picker.pickImage(source: source, imageQuality: 80);
+    final picked = await picker.pickImage(source: source, imageQuality: 80);
     if (picked == null) return;
 
     setState(() {
@@ -139,7 +133,9 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
     if (reading != null) {
       showSnack("Detected $reading km — please verify & correct if wrong.");
     } else {
-      showSnack("Could not read a number — please enter the odometer manually.");
+      showSnack(
+        "Could not read a number — please enter the odometer manually.",
+      );
     }
   }
 
@@ -205,88 +201,86 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
   bool _saving = false;
 
   Future<void> saveFuel() async {
-  if (stationController.text.trim().isEmpty) {
-    showSnack("Please enter Fuel Station");
-    return;
-  }
-
-  final amount = double.tryParse(rateController.text);
-
-  if (amount == null) {
-    showSnack("Please enter valid Amount");
-    return;
-  }
-
-  final odometer = int.tryParse(odoController.text);
-
-  if (odometer == null) {
-    showSnack("Please enter valid Odometer");
-    return;
-  }
-
-  setState(() => _saving = true);
-
-  try {
-    // Upload the receipt photo first (if one was picked) — POST /fuel only
-    // accepts an already-uploaded AttachmentId, not the raw photo, so this
-    // has to happen before saveFuel(). Previously selectedReceipt was
-    // captured and previewed but never actually sent anywhere.
-    int? attachmentId;
-
-    if (selectedReceipt != null) {
-      final uploadResult = await _authService.uploadAttachment(
-        bytes: await selectedReceipt!.readAsBytes(),
-        fileName: selectedReceipt!.path.split(Platform.pathSeparator).last,
-        entityType: 'Fuel',
-      );
-      attachmentId = uploadResult.attachmentId;
+    if (stationController.text.trim().isEmpty) {
+      showSnack("Please enter Fuel Station");
+      return;
     }
 
-    // Litres are optional on this form, but sent when filled in so the
-    // mileage report has them.
-    final liters = double.tryParse(litersController.text.trim());
+    final amount = double.tryParse(rateController.text);
 
-    Future<void> save({bool confirm = false}) => _authService.saveFuel(
-          vehicleId: widget.vehicleId,
-          txnDate: DateTime.now().toIso8601String().substring(0, 10),
-          fuelStation: stationController.text.trim(),
-          amount: amount,
-          odometer: odometer,
-          quantity: (liters != null && liters > 0) ? liters : null,
-          attachmentId: attachmentId,
-          confirmDuplicate: confirm,
-        );
+    if (amount == null) {
+      showSnack("Please enter valid Amount");
+      return;
+    }
+
+    final odometer = int.tryParse(odoController.text);
+
+    if (odometer == null) {
+      showSnack("Please enter valid Odometer");
+      return;
+    }
+
+    setState(() => _saving = true);
 
     try {
-      await save();
-    } on DuplicateFuelException catch (dup) {
+      // Upload the receipt photo first (if one was picked) — POST /fuel only
+      // accepts an already-uploaded AttachmentId, not the raw photo, so this
+      // has to happen before saveFuel(). Previously selectedReceipt was
+      // captured and previewed but never actually sent anywhere.
+      int? attachmentId;
+
+      if (selectedReceipt != null) {
+        final uploadResult = await _authService.uploadAttachment(
+          bytes: await selectedReceipt!.readAsBytes(),
+          fileName: selectedReceipt!.path.split(Platform.pathSeparator).last,
+          entityType: 'Fuel',
+        );
+        attachmentId = uploadResult.attachmentId;
+      }
+
+      // Litres are optional on this form, but sent when filled in so the
+      // mileage report has them.
+      final liters = double.tryParse(litersController.text.trim());
+
+      Future<void> save({bool confirm = false}) => _authService.saveFuel(
+        vehicleId: widget.vehicleId,
+        txnDate: DateTime.now().toIso8601String().substring(0, 10),
+        fuelStation: stationController.text.trim(),
+        amount: amount,
+        odometer: odometer,
+        quantity: (liters != null && liters > 0) ? liters : null,
+        attachmentId: attachmentId,
+        confirmDuplicate: confirm,
+      );
+
+      try {
+        await save();
+      } on DuplicateFuelException catch (dup) {
+        if (!mounted) return;
+        final ok = await confirmDuplicateFuel(context, dup.message);
+        if (!ok) return;
+        await save(confirm: true);
+      }
+
       if (!mounted) return;
-      final ok = await confirmDuplicateFuel(context, dup.message);
-      if (!ok) return;
-      await save(confirm: true);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Fuel Entry Saved Successfully"),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const DriverHomeScreen()),
+      );
+    } catch (e) {
+      showSnack(e.toString());
+    } finally {
+      if (mounted) setState(() => _saving = false);
     }
-
-    if (!mounted) return;
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Fuel Entry Saved Successfully"),
-        backgroundColor: Colors.green,
-      ),
-    );
-
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const DriverHomeScreen(),
-      ),
-    );
-  } catch (e) {
-    showSnack(e.toString());
-  } finally {
-    if (mounted) setState(() => _saving = false);
   }
-}
 
   // ================= UI =================
 
@@ -319,11 +313,11 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
                   buildInput(vehicleName, "Vehicle Name", Icons.drive_eta),
                   // buildInput(vehicleNumber, "Vehicle Number", Icons.confirmation_number),
                   buildInput(
-  vehicleNumber,
-  "Vehicle Number",
-  Icons.confirmation_number,
-  readOnly: true,
-),
+                    vehicleNumber,
+                    "Vehicle Number",
+                    Icons.confirmation_number,
+                    readOnly: true,
+                  ),
                   TextField(
                     controller: odoController,
                     decoration: InputDecoration(
@@ -335,7 +329,9 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
                               child: SizedBox(
                                 width: 20,
                                 height: 20,
-                                child: CircularProgressIndicator(strokeWidth: 2),
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
                               ),
                             )
                           : IconButton(
@@ -370,10 +366,18 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
 
                   const SizedBox(height: 14),
 
-                  buildInput(litersController, "Liters", Icons.local_gas_station,
-                      onChange: updateTotal),
-                  buildInput(rateController, "Rate", Icons.currency_rupee,
-                      onChange: updateTotal),
+                  buildInput(
+                    litersController,
+                    "Liters",
+                    Icons.local_gas_station,
+                    onChange: updateTotal,
+                  ),
+                  buildInput(
+                    rateController,
+                    "Rate",
+                    Icons.currency_rupee,
+                    onChange: updateTotal,
+                  ),
 
                   Container(
                     width: double.infinity,
@@ -386,7 +390,9 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
                     child: Text(
                       "Total Amount: ₹ $total",
                       style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold),
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
 
@@ -434,7 +440,8 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green.shade600,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                       child: _saving
                           ? const SizedBox(
@@ -448,13 +455,12 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
                           : const Text(
                               "Submit Request",
                               style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                     ),
                   ),
-
-
-
                 ],
               ),
             ),
@@ -473,9 +479,10 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: const [
           BoxShadow(
-              color: Colors.black12,
-              blurRadius: 10,
-              offset: Offset(0, 4)),
+            color: Colors.black12,
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
         ],
       ),
       child: child,
@@ -483,28 +490,26 @@ class _AddFuelScreenState extends State<AddFuelScreen> {
   }
 
   Widget buildInput(
-  TextEditingController controller,
-  String label,
-  IconData icon, {
-  Function? onChange,
-  bool readOnly = false,
-}) {
-  return Container(
-    margin: const EdgeInsets.only(bottom: 14),
-    child: TextField(
-      controller: controller,
-      readOnly: readOnly,
-      onChanged: (_) => onChange != null ? onChange() : null,
-      decoration: InputDecoration(
-        labelText: label,
-        prefixIcon: Icon(icon, color: Colors.blue),
-        filled: true,
-        fillColor: Colors.grey.shade100,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+    TextEditingController controller,
+    String label,
+    IconData icon, {
+    Function? onChange,
+    bool readOnly = false,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      child: TextField(
+        controller: controller,
+        readOnly: readOnly,
+        onChanged: (_) => onChange != null ? onChange() : null,
+        decoration: InputDecoration(
+          labelText: label,
+          prefixIcon: Icon(icon, color: Colors.blue),
+          filled: true,
+          fillColor: Colors.grey.shade100,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 }

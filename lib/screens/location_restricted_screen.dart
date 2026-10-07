@@ -9,9 +9,7 @@ class LocationRestrictedScreen extends StatefulWidget {
       _LocationRestrictedScreenState();
 }
 
-class _LocationRestrictedScreenState
-    extends State<LocationRestrictedScreen> {
-
+class _LocationRestrictedScreenState extends State<LocationRestrictedScreen> {
   bool checking = false;
 
   Future<void> checkAgain() async {
@@ -19,8 +17,7 @@ class _LocationRestrictedScreenState
       checking = true;
     });
 
-    final bool allowed =
-        await LocationService.isWithinAllowedLocation();
+    final bool allowed = await LocationService.isWithinAllowedLocation();
 
     if (!mounted) return;
 
@@ -29,10 +26,7 @@ class _LocationRestrictedScreenState
     });
 
     if (allowed) {
-      Navigator.pushReplacementNamed(
-        context,
-        '/splash',
-      );
+      Navigator.pushReplacementNamed(context, '/splash');
     }
   }
 
@@ -46,20 +40,13 @@ class _LocationRestrictedScreenState
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
-                  Icons.location_off,
-                  size: 80,
-                  color: Colors.red,
-                ),
+                const Icon(Icons.location_off, size: 80, color: Colors.red),
 
                 const SizedBox(height: 20),
 
                 const Text(
                   'Location Restricted',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
 
                 const SizedBox(height: 12),
@@ -67,9 +54,7 @@ class _LocationRestrictedScreenState
                 const Text(
                   'You are outside the allowed location.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 18,
-                  ),
+                  style: TextStyle(fontSize: 18),
                 ),
 
                 const SizedBox(height: 10),
@@ -86,9 +71,7 @@ class _LocationRestrictedScreenState
                   onPressed: checking ? null : checkAgain,
                   child: checking
                       ? const CircularProgressIndicator()
-                      : const Text(
-                          'Check Location Again',
-                        ),
+                      : const Text('Check Location Again'),
                 ),
               ],
             ),

@@ -19,8 +19,7 @@ class _LocationGateState extends State<LocationGate> {
   }
 
   Future<void> _checkLocation() async {
-    final bool allowed =
-        await LocationService.isWithinAllowedLocation();
+    final bool allowed = await LocationService.isWithinAllowedLocation();
 
     if (!mounted) return;
 
@@ -28,17 +27,14 @@ class _LocationGateState extends State<LocationGate> {
       // Within 500 meters
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (context) => const SplashScreen(),
-        ),
+        MaterialPageRoute(builder: (context) => const SplashScreen()),
       );
     } else {
       // Outside 500 meters
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) =>
-              const LocationRestrictedScreen(),
+          builder: (context) => const LocationRestrictedScreen(),
         ),
       );
     }
@@ -53,12 +49,7 @@ class _LocationGateState extends State<LocationGate> {
           children: [
             CircularProgressIndicator(),
             SizedBox(height: 20),
-            Text(
-              'Checking your location...',
-              style: TextStyle(
-                fontSize: 16,
-              ),
-            ),
+            Text('Checking your location...', style: TextStyle(fontSize: 16)),
           ],
         ),
       ),

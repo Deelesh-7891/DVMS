@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+
 import 'package:intl/intl.dart';
 
 import '../../core/widgets/photo_thumbnail.dart';
@@ -11,19 +12,15 @@ class FuelBillListScreen extends StatefulWidget {
   const FuelBillListScreen({super.key});
 
   @override
-  State<FuelBillListScreen> createState() =>
-      _FuelBillListScreenState();
+  State<FuelBillListScreen> createState() => _FuelBillListScreenState();
 }
 
-class _FuelBillListScreenState
-    extends State<FuelBillListScreen> {
+class _FuelBillListScreenState extends State<FuelBillListScreen> {
   final AuthService _authService = AuthService();
 
-  final TextEditingController searchController =
-      TextEditingController();
+  final TextEditingController searchController = TextEditingController();
 
-  final TextEditingController vehicleSearchController =
-      TextEditingController();
+  final TextEditingController vehicleSearchController = TextEditingController();
 
   String selectedFuel = "All fuels";
 
@@ -73,18 +70,13 @@ class _FuelBillListScreenState
 
       final bills = data
           .whereType<Map>()
-          .map(
-            (e) => Map<String, dynamic>.from(e),
-          )
+          .map((e) => Map<String, dynamic>.from(e))
           .toList();
 
       setState(() {
         allFuelBills = bills;
 
-        filteredFuelBills =
-            List<Map<String, dynamic>>.from(
-          allFuelBills,
-        );
+        filteredFuelBills = List<Map<String, dynamic>>.from(allFuelBills);
 
         _loading = false;
       });
@@ -93,8 +85,7 @@ class _FuelBillListScreenState
 
       setState(() {
         _loading = false;
-        _loadError =
-            "Unable to load fuel bills: $e";
+        _loadError = "Unable to load fuel bills: $e";
       });
     }
   }
@@ -129,9 +120,7 @@ class _FuelBillListScreenState
 
       final vehicles = data
           .whereType<Map>()
-          .map(
-            (e) => Map<String, dynamic>.from(e),
-          )
+          .map((e) => Map<String, dynamic>.from(e))
           .where((vehicle) {
             final id = getVehicleId(vehicle);
 
@@ -140,8 +129,7 @@ class _FuelBillListScreenState
           .toList();
 
       // Remove duplicate VehicleId
-      final Map<int, Map<String, dynamic>>
-          uniqueVehicles = {};
+      final Map<int, Map<String, dynamic>> uniqueVehicles = {};
 
       for (final vehicle in vehicles) {
         final id = getVehicleId(vehicle);
@@ -151,26 +139,19 @@ class _FuelBillListScreenState
         }
       }
 
-      final finalVehicles =
-          uniqueVehicles.values.toList();
+      final finalVehicles = uniqueVehicles.values.toList();
 
       // Sort by registration number
       finalVehicles.sort(
-        (a, b) => getRegistrationNo(a)
-            .toLowerCase()
-            .compareTo(
-              getRegistrationNo(b)
-                  .toLowerCase(),
-            ),
+        (a, b) => getRegistrationNo(
+          a,
+        ).toLowerCase().compareTo(getRegistrationNo(b).toLowerCase()),
       );
 
       setState(() {
         vehiclesList = finalVehicles;
 
-        filteredVehiclesList =
-            List<Map<String, dynamic>>.from(
-          vehiclesList,
-        );
+        filteredVehiclesList = List<Map<String, dynamic>>.from(vehiclesList);
 
         _vehiclesLoading = false;
       });
@@ -181,9 +162,7 @@ class _FuelBillListScreenState
         _vehiclesLoading = false;
       });
 
-      debugPrint(
-        "Vehicle API Error: $e",
-      );
+      debugPrint("Vehicle API Error: $e");
     }
   }
 
@@ -191,16 +170,14 @@ class _FuelBillListScreenState
   // VEHICLE ID
   // =========================================================
 
-  int? getVehicleId(
-    Map<String, dynamic> item,
-  ) {
+  int? getVehicleId(Map<String, dynamic> item) {
     final value =
         item["VehicleId"] ??
-            item["VehicleID"] ??
-            item["vehicleId"] ??
-            item["Vehicle_Id"] ??
-            item["Id"] ??
-            item["ID"];
+        item["VehicleID"] ??
+        item["vehicleId"] ??
+        item["Vehicle_Id"] ??
+        item["Id"] ??
+        item["ID"];
 
     if (value == null) {
       return null;
@@ -210,26 +187,20 @@ class _FuelBillListScreenState
       return value;
     }
 
-    return int.tryParse(
-      value.toString(),
-    );
+    return int.tryParse(value.toString());
   }
 
   // =========================================================
   // REGISTRATION NUMBER
   // =========================================================
 
-  String getRegistrationNo(
-    Map<String, dynamic> item,
-  ) {
-    return (
-      item["RegistrationNo"] ??
-          item["RegistrationNumber"] ??
-          item["registrationNo"] ??
-          item["VehicleNo"] ??
-          item["VehicleNumber"] ??
-          ""
-    )
+  String getRegistrationNo(Map<String, dynamic> item) {
+    return (item["RegistrationNo"] ??
+            item["RegistrationNumber"] ??
+            item["registrationNo"] ??
+            item["VehicleNo"] ??
+            item["VehicleNumber"] ??
+            "")
         .toString()
         .trim();
   }
@@ -238,17 +209,13 @@ class _FuelBillListScreenState
   // VEHICLE MODEL
   // =========================================================
 
-  String getVehicleModel(
-    Map<String, dynamic> item,
-  ) {
-    return (
-      item["Model"] ??
-          item["VehicleModel"] ??
-          item["model"] ??
-          item["Vehicle_Model"] ??
-          item["VehicleName"] ??
-          ""
-    )
+  String getVehicleModel(Map<String, dynamic> item) {
+    return (item["Model"] ??
+            item["VehicleModel"] ??
+            item["model"] ??
+            item["Vehicle_Model"] ??
+            item["VehicleName"] ??
+            "")
         .toString()
         .trim();
   }
@@ -257,9 +224,7 @@ class _FuelBillListScreenState
   // BILL NO
   // =========================================================
 
-  String _billNo(
-    Map<String, dynamic> b,
-  ) {
+  String _billNo(Map<String, dynamic> b) {
     return "FB-${b["FuelId"] ?? "-"}";
   }
 
@@ -267,15 +232,11 @@ class _FuelBillListScreenState
   // VEHICLE NO FOR BILL
   // =========================================================
 
-  String _vehicleNo(
-    Map<String, dynamic> b,
-  ) {
-    return (
-      b["RegistrationNo"] ??
-          b["RegistrationNumber"] ??
-          b["VehicleNo"] ??
-          "-"
-    )
+  String _vehicleNo(Map<String, dynamic> b) {
+    return (b["RegistrationNo"] ??
+            b["RegistrationNumber"] ??
+            b["VehicleNo"] ??
+            "-")
         .toString();
   }
 
@@ -283,9 +244,7 @@ class _FuelBillListScreenState
   // DATE
   // =========================================================
 
-  String _date(
-    Map<String, dynamic> b,
-  ) {
+  String _date(Map<String, dynamic> b) {
     final raw = b["TxnDate"];
 
     if (raw == null) {
@@ -293,13 +252,7 @@ class _FuelBillListScreenState
     }
 
     try {
-      return DateFormat(
-        "dd-MM-yyyy",
-      ).format(
-        DateTime.parse(
-          raw.toString(),
-        ),
-      );
+      return DateFormat("dd-MM-yyyy").format(DateTime.parse(raw.toString()));
     } catch (_) {
       return raw.toString();
     }
@@ -309,57 +262,39 @@ class _FuelBillListScreenState
   // FUEL
   // =========================================================
 
-  String _fuel(
-    Map<String, dynamic> b,
-  ) {
-    return (
-      b["FuelType"] ?? "-"
-    ).toString();
+  String _fuel(Map<String, dynamic> b) {
+    return (b["FuelType"] ?? "-").toString();
   }
 
   // =========================================================
   // LITRES
   // =========================================================
 
-  String _litres(
-    Map<String, dynamic> b,
-  ) {
-    return b["Quantity"] == null
-        ? "-"
-        : "${b["Quantity"]} L";
+  String _litres(Map<String, dynamic> b) {
+    return b["Quantity"] == null ? "-" : "${b["Quantity"]} L";
   }
 
   // =========================================================
   // AMOUNT
   // =========================================================
 
-  String _amount(
-    Map<String, dynamic> b,
-  ) {
-    return b["Amount"] == null
-        ? "-"
-        : "₹${b["Amount"]}";
+  String _amount(Map<String, dynamic> b) {
+    return b["Amount"] == null ? "-" : "₹${b["Amount"]}";
   }
 
   // =========================================================
   // VENDOR
   // =========================================================
 
-  String _vendor(
-    Map<String, dynamic> b,
-  ) {
-    return (
-      b["FuelStation"] ?? "-"
-    ).toString();
+  String _vendor(Map<String, dynamic> b) {
+    return (b["FuelStation"] ?? "-").toString();
   }
 
   // =========================================================
   // PHOTO
   // =========================================================
 
-  String? _photoPath(
-    Map<String, dynamic> b,
-  ) {
+  String? _photoPath(Map<String, dynamic> b) {
     return b["PhotoPath"]?.toString();
   }
 
@@ -368,30 +303,18 @@ class _FuelBillListScreenState
   // =========================================================
 
   void applyFilter() {
-    final search =
-        searchController.text
-            .trim()
-            .toLowerCase();
+    final search = searchController.text.trim().toLowerCase();
 
     setState(() {
-      filteredFuelBills =
-          allFuelBills.where((bill) {
+      filteredFuelBills = allFuelBills.where((bill) {
         final matchesSearch =
-            _billNo(bill)
-                    .toLowerCase()
-                    .contains(search) ||
-                _vehicleNo(bill)
-                    .toLowerCase()
-                    .contains(search);
+            _billNo(bill).toLowerCase().contains(search) ||
+            _vehicleNo(bill).toLowerCase().contains(search);
 
         final matchesFuel =
-            selectedFuel ==
-                    "All fuels" ||
-                _fuel(bill) ==
-                    selectedFuel;
+            selectedFuel == "All fuels" || _fuel(bill) == selectedFuel;
 
-        return matchesSearch &&
-            matchesFuel;
+        return matchesSearch && matchesFuel;
       }).toList();
     });
   }
@@ -406,10 +329,7 @@ class _FuelBillListScreenState
     setState(() {
       selectedFuel = "All fuels";
 
-      filteredFuelBills =
-          List<Map<String, dynamic>>.from(
-        allFuelBills,
-      );
+      filteredFuelBills = List<Map<String, dynamic>>.from(allFuelBills);
     });
   }
 
@@ -426,33 +346,21 @@ class _FuelBillListScreenState
   // =========================================================
 
   void searchVehicles(String value) {
-    final search =
-        value.trim().toLowerCase();
+    final search = value.trim().toLowerCase();
 
     setState(() {
       if (search.isEmpty) {
-        filteredVehiclesList =
-            List<Map<String, dynamic>>.from(
-          vehiclesList,
-        );
+        filteredVehiclesList = List<Map<String, dynamic>>.from(vehiclesList);
 
         return;
       }
 
-      filteredVehiclesList =
-          vehiclesList.where((vehicle) {
-        final registration =
-            getRegistrationNo(vehicle)
-                .toLowerCase();
+      filteredVehiclesList = vehiclesList.where((vehicle) {
+        final registration = getRegistrationNo(vehicle).toLowerCase();
 
-        final model =
-            getVehicleModel(vehicle)
-                .toLowerCase();
+        final model = getVehicleModel(vehicle).toLowerCase();
 
-        final id =
-            getVehicleId(vehicle)
-                ?.toString() ??
-            "";
+        final id = getVehicleId(vehicle)?.toString() ?? "";
 
         return registration.contains(search) ||
             model.contains(search) ||
@@ -468,10 +376,7 @@ class _FuelBillListScreenState
   void openVehicleSelection() {
     vehicleSearchController.clear();
 
-    filteredVehiclesList =
-        List<Map<String, dynamic>>.from(
-      vehiclesList,
-    );
+    filteredVehiclesList = List<Map<String, dynamic>>.from(vehiclesList);
 
     showModalBottomSheet(
       context: context,
@@ -479,104 +384,56 @@ class _FuelBillListScreenState
       backgroundColor: Colors.transparent,
       builder: (sheetContext) {
         return StatefulBuilder(
-          builder: (
-            context,
-            setSheetState,
-          ) {
+          builder: (context, setSheetState) {
             return SafeArea(
               child: Container(
-                height:
-                    MediaQuery.of(context)
-                            .size
-                            .height *
-                        0.82,
-                decoration:
-                    const BoxDecoration(
+                height: MediaQuery.of(context).size.height * 0.82,
+                decoration: const BoxDecoration(
                   color: Colors.white,
-                  borderRadius:
-                      BorderRadius.vertical(
-                    top: Radius.circular(
-                      24,
-                    ),
-                  ),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                 ),
                 child: Column(
                   children: [
                     // ========================================
                     // HEADER
                     // ========================================
-
                     Padding(
-                      padding:
-                          const EdgeInsets
-                              .fromLTRB(
-                        18,
-                        18,
-                        12,
-                        12,
-                      ),
+                      padding: const EdgeInsets.fromLTRB(18, 18, 12, 12),
                       child: Row(
                         children: [
                           Container(
                             width: 46,
                             height: 46,
-                            decoration:
-                                BoxDecoration(
-                              color:
-                                  const Color(
-                                0xffE8F0FE,
-                              ),
-                              borderRadius:
-                                  BorderRadius
-                                      .circular(
-                                12,
-                              ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xffE8F0FE),
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                            child:
-                                const Icon(
-                              Icons
-                                  .directions_car,
-                              color:
-                                  Color(
-                                0xff2458A6,
-                              ),
+                            child: const Icon(
+                              Icons.directions_car,
+                              color: Color(0xff2458A6),
                               size: 25,
                             ),
                           ),
 
-                          const SizedBox(
-                            width: 12,
-                          ),
+                          const SizedBox(width: 12),
 
                           const Expanded(
                             child: Column(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment
-                                      .start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
                                   "Select Vehicle",
-                                  style:
-                                      TextStyle(
-                                    fontSize:
-                                        20,
-                                    fontWeight:
-                                        FontWeight
-                                            .bold,
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                SizedBox(
-                                  height: 3,
-                                ),
+                                SizedBox(height: 3),
                                 Text(
                                   "Select vehicle for fuel entry",
-                                  style:
-                                      TextStyle(
-                                    color:
-                                        Colors
-                                            .grey,
-                                    fontSize:
-                                        12,
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 12,
                                   ),
                                 ),
                               ],
@@ -585,14 +442,9 @@ class _FuelBillListScreenState
 
                           IconButton(
                             onPressed: () {
-                              Navigator.pop(
-                                sheetContext,
-                              );
+                              Navigator.pop(sheetContext);
                             },
-                            icon:
-                                const Icon(
-                              Icons.close,
-                            ),
+                            icon: const Icon(Icons.close),
                           ),
                         ],
                       ),
@@ -601,161 +453,86 @@ class _FuelBillListScreenState
                     // ========================================
                     // SEARCH
                     // ========================================
-
                     Padding(
-                      padding:
-                          const EdgeInsets
-                              .symmetric(
-                        horizontal: 16,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: TextField(
-                        controller:
-                            vehicleSearchController,
+                        controller: vehicleSearchController,
 
                         onChanged: (value) {
-                          final search = value
-                              .trim()
-                              .toLowerCase();
+                          final search = value.trim().toLowerCase();
 
                           setSheetState(() {
-                            if (search
-                                .isEmpty) {
+                            if (search.isEmpty) {
                               filteredVehiclesList =
-                                  List<
-                                      Map<String,
-                                          dynamic>>.from(
-                                vehiclesList,
-                              );
+                                  List<Map<String, dynamic>>.from(vehiclesList);
                             } else {
-                              filteredVehiclesList =
-                                  vehiclesList
-                                      .where(
-                                (
+                              filteredVehiclesList = vehiclesList.where((
+                                vehicle,
+                              ) {
+                                final reg = getRegistrationNo(
                                   vehicle,
-                                ) {
-                                  final reg =
-                                      getRegistrationNo(
-                                    vehicle,
-                                  ).toLowerCase();
+                                ).toLowerCase();
 
-                                  final model =
-                                      getVehicleModel(
-                                    vehicle,
-                                  ).toLowerCase();
+                                final model = getVehicleModel(
+                                  vehicle,
+                                ).toLowerCase();
 
-                                  final id =
-                                      getVehicleId(
-                                    vehicle,
-                                  )?.toString() ??
-                                      "";
+                                final id =
+                                    getVehicleId(vehicle)?.toString() ?? "";
 
-                                  return reg
-                                          .contains(
-                                        search,
-                                      ) ||
-                                      model
-                                          .contains(
-                                        search,
-                                      ) ||
-                                      id.contains(
-                                        search,
-                                      );
-                                },
-                              ).toList();
+                                return reg.contains(search) ||
+                                    model.contains(search) ||
+                                    id.contains(search);
+                              }).toList();
                             }
                           });
                         },
 
-                        decoration:
-                            InputDecoration(
-                          hintText:
-                              "Search vehicle number / model / ID",
+                        decoration: InputDecoration(
+                          hintText: "Search vehicle number / model / ID",
 
-                          prefixIcon:
-                              const Icon(
+                          prefixIcon: const Icon(
                             Icons.search,
-                            color:
-                                Color(
-                              0xff2458A6,
-                            ),
+                            color: Color(0xff2458A6),
                           ),
 
-                          suffixIcon:
-                              vehicleSearchController
-                                      .text
-                                      .isNotEmpty
-                                  ? IconButton(
-                                      onPressed: () {
-                                        vehicleSearchController
-                                            .clear();
+                          suffixIcon: vehicleSearchController.text.isNotEmpty
+                              ? IconButton(
+                                  onPressed: () {
+                                    vehicleSearchController.clear();
 
-                                        setSheetState(() {
-                                          filteredVehiclesList =
-                                              List<
-                                                  Map<String,
-                                                      dynamic>>.from(
+                                    setSheetState(() {
+                                      filteredVehiclesList =
+                                          List<Map<String, dynamic>>.from(
                                             vehiclesList,
                                           );
-                                        });
-                                      },
-                                      icon:
-                                          const Icon(
-                                        Icons.clear,
-                                      ),
-                                    )
-                                  : null,
+                                    });
+                                  },
+                                  icon: const Icon(Icons.clear),
+                                )
+                              : null,
 
                           filled: true,
-                          fillColor:
-                              const Color(
-                            0xffF8FAFC,
-                          ),
+                          fillColor: const Color(0xffF8FAFC),
 
-                          border:
-                              OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius
-                                    .circular(
-                              12,
-                            ),
-                            borderSide:
-                                const BorderSide(
-                              color:
-                                  Color(
-                                0xffDCE3EC,
-                              ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: Color(0xffDCE3EC),
                             ),
                           ),
 
-                          enabledBorder:
-                              OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius
-                                    .circular(
-                              12,
-                            ),
-                            borderSide:
-                                const BorderSide(
-                              color:
-                                  Color(
-                                0xffDCE3EC,
-                              ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: Color(0xffDCE3EC),
                             ),
                           ),
 
-                          focusedBorder:
-                              OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius
-                                    .circular(
-                              12,
-                            ),
-                            borderSide:
-                                const BorderSide(
-                              color:
-                                  Color(
-                                0xff2458A6,
-                              ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: Color(0xff2458A6),
                               width: 1.5,
                             ),
                           ),
@@ -763,33 +540,20 @@ class _FuelBillListScreenState
                       ),
                     ),
 
-                    const SizedBox(
-                      height: 12,
-                    ),
+                    const SizedBox(height: 12),
 
                     // ========================================
                     // COUNT
                     // ========================================
-
                     Padding(
-                      padding:
-                          const EdgeInsets
-                              .symmetric(
-                        horizontal: 18,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 18),
                       child: Row(
                         children: [
                           Text(
                             "${filteredVehiclesList.length} vehicles",
-                            style:
-                                const TextStyle(
-                              fontWeight:
-                                  FontWeight
-                                      .w600,
-                              color:
-                                  Color(
-                                0xff475569,
-                              ),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xff475569),
                             ),
                           ),
 
@@ -799,264 +563,152 @@ class _FuelBillListScreenState
                             const SizedBox(
                               width: 18,
                               height: 18,
-                              child:
-                                  CircularProgressIndicator(
-                                strokeWidth: 2,
-                              ),
+                              child: CircularProgressIndicator(strokeWidth: 2),
                             ),
                         ],
                       ),
                     ),
 
-                    const SizedBox(
-                      height: 8,
-                    ),
+                    const SizedBox(height: 8),
 
                     // ========================================
                     // VEHICLE LIST
                     // ========================================
-
                     Expanded(
-                      child: _vehiclesLoading &&
-                              vehiclesList.isEmpty
-                          ? const Center(
-                              child:
-                                  CircularProgressIndicator(),
+                      child: _vehiclesLoading && vehiclesList.isEmpty
+                          ? const Center(child: CircularProgressIndicator())
+                          : filteredVehiclesList.isEmpty
+                          ? Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.directions_car_outlined,
+                                    size: 55,
+                                    color: Colors.grey,
+                                  ),
+
+                                  const SizedBox(height: 12),
+
+                                  Text(
+                                    vehiclesList.isEmpty
+                                        ? "No vehicles found"
+                                        : "No matching vehicle",
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             )
-                          : filteredVehiclesList
-                                  .isEmpty
-                              ? Center(
-                                  child:
-                                      Column(
-                                    mainAxisSize:
-                                        MainAxisSize
-                                            .min,
-                                    children: [
-                                      const Icon(
-                                        Icons
-                                            .directions_car_outlined,
-                                        size: 55,
-                                        color:
-                                            Colors
-                                                .grey,
-                                      ),
+                          : ListView.builder(
+                              padding: const EdgeInsets.fromLTRB(16, 4, 16, 20),
+                              itemCount: filteredVehiclesList.length,
+                              itemBuilder: (context, index) {
+                                final vehicle = filteredVehiclesList[index];
 
-                                      const SizedBox(
-                                        height: 12,
-                                      ),
+                                final vehicleId = getVehicleId(vehicle);
 
-                                      Text(
-                                        vehiclesList
-                                                .isEmpty
-                                            ? "No vehicles found"
-                                            : "No matching vehicle",
-                                        style:
-                                            const TextStyle(
-                                          fontSize:
-                                              16,
-                                          fontWeight:
-                                              FontWeight
-                                                  .w600,
-                                          color:
-                                              Colors
-                                                  .grey,
-                                        ),
-                                      ),
-                                    ],
+                                final registrationNo = getRegistrationNo(
+                                  vehicle,
+                                );
+
+                                final model = getVehicleModel(vehicle);
+
+                                return Card(
+                                  elevation: 1,
+                                  margin: const EdgeInsets.only(bottom: 8),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14),
+                                    side: const BorderSide(
+                                      color: Color(0xffE2E8F0),
+                                    ),
                                   ),
-                                )
-                              : ListView.builder(
-                                  padding:
-                                      const EdgeInsets
-                                          .fromLTRB(
-                                    16,
-                                    4,
-                                    16,
-                                    20,
+                                  child: ListTile(
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 14,
+                                      vertical: 5,
+                                    ),
+
+                                    leading: Container(
+                                      width: 45,
+                                      height: 45,
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xffE8F0FE),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: const Icon(
+                                        Icons.directions_car,
+                                        color: Color(0xff2458A6),
+                                      ),
+                                    ),
+
+                                    title: Text(
+                                      registrationNo.isEmpty
+                                          ? "Vehicle"
+                                          : registrationNo,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+
+                                    subtitle: Padding(
+                                      padding: const EdgeInsets.only(top: 4),
+                                      child: Text(
+                                        [
+                                          if (model.isNotEmpty) model,
+                                          if (vehicleId != null) "",
+                                          // "ID: $vehicleId",
+                                        ].join(
+                                          // " • ",
+                                          " ",
+                                        ),
+                                      ),
+                                    ),
+
+                                    trailing: const Icon(
+                                      Icons.arrow_forward_ios,
+                                      size: 16,
+                                      color: Color(0xff64748B),
+                                    ),
+
+                                    onTap: () {
+                                      if (vehicleId == null) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                              "Vehicle ID is missing.",
+                                            ),
+                                          ),
+                                        );
+
+                                        return;
+                                      }
+
+                                      Navigator.pop(sheetContext);
+
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => AddFuelScreen(
+                                            vehicleId: vehicleId,
+                                            registrationNo: registrationNo,
+                                            model: model,
+                                          ),
+                                        ),
+                                      ).then((_) {
+                                        _loadFuelBills();
+                                      });
+                                    },
                                   ),
-                                  itemCount:
-                                      filteredVehiclesList
-                                          .length,
-                                  itemBuilder:
-                                      (
-                                    context,
-                                    index,
-                                  ) {
-                                    final vehicle =
-                                        filteredVehiclesList[
-                                            index];
-
-                                    final vehicleId =
-                                        getVehicleId(
-                                      vehicle,
-                                    );
-
-                                    final registrationNo =
-                                        getRegistrationNo(
-                                      vehicle,
-                                    );
-
-                                    final model =
-                                        getVehicleModel(
-                                      vehicle,
-                                    );
-
-                                    return Card(
-                                      elevation:
-                                          1,
-                                      margin:
-                                          const EdgeInsets
-                                              .only(
-                                        bottom: 8,
-                                      ),
-                                      shape:
-                                          RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius
-                                                .circular(
-                                          14,
-                                        ),
-                                        side:
-                                            const BorderSide(
-                                          color:
-                                              Color(
-                                            0xffE2E8F0,
-                                          ),
-                                        ),
-                                      ),
-                                      child:
-                                          ListTile(
-                                        contentPadding:
-                                            const EdgeInsets
-                                                .symmetric(
-                                          horizontal:
-                                              14,
-                                          vertical:
-                                              5,
-                                        ),
-
-                                        leading:
-                                            Container(
-                                          width: 45,
-                                          height: 45,
-                                          decoration:
-                                              BoxDecoration(
-                                            color:
-                                                const Color(
-                                              0xffE8F0FE,
-                                            ),
-                                            borderRadius:
-                                                BorderRadius
-                                                    .circular(
-                                              12,
-                                            ),
-                                          ),
-                                          child:
-                                              const Icon(
-                                            Icons
-                                                .directions_car,
-                                            color:
-                                                Color(
-                                              0xff2458A6,
-                                            ),
-                                          ),
-                                        ),
-
-                                        title: Text(
-                                          registrationNo
-                                                  .isEmpty
-                                              ? "Vehicle"
-                                              : registrationNo,
-                                          style:
-                                              const TextStyle(
-                                            fontWeight:
-                                                FontWeight
-                                                    .bold,
-                                            fontSize:
-                                                16,
-                                          ),
-                                        ),
-
-                                        subtitle:
-                                            Padding(
-                                          padding:
-                                              const EdgeInsets
-                                                  .only(
-                                            top: 4,
-                                          ),
-                                          child: Text(
-                                            [
-                                              if (model
-                                                  .isNotEmpty)
-                                                model,
-                                              if (vehicleId !=
-                                                  null)
-                                                "",
-                                                // "ID: $vehicleId",
-                                            ].join(
-                                              // " • ",
-                                              " ",
-                                            ),
-                                          ),
-                                        ),
-
-                                        trailing:
-                                            const Icon(
-                                          Icons
-                                              .arrow_forward_ios,
-                                          size: 16,
-                                          color:
-                                              Color(
-                                            0xff64748B,
-                                          ),
-                                        ),
-
-                                        onTap: () {
-                                          if (vehicleId ==
-                                              null) {
-                                            ScaffoldMessenger
-                                                .of(
-                                              context,
-                                            ).showSnackBar(
-                                              const SnackBar(
-                                                content:
-                                                    Text(
-                                                  "Vehicle ID is missing.",
-                                                ),
-                                              ),
-                                            );
-
-                                            return;
-                                          }
-
-                                          Navigator.pop(
-                                            sheetContext,
-                                          );
-
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder:
-                                                  (_) =>
-                                                      AddFuelScreen(
-                                                vehicleId:
-                                                    vehicleId,
-                                                registrationNo:
-                                                    registrationNo,
-                                                model:
-                                                    model,
-                                              ),
-                                            ),
-                                          ).then(
-                                            (_) {
-                                              _loadFuelBills();
-                                            },
-                                          );
-                                        },
-                                      ),
-                                    );
-                                  },
-                                ),
+                                );
+                              },
+                            ),
                     ),
                   ],
                 ),
@@ -1072,21 +724,13 @@ class _FuelBillListScreenState
   // SNACKBAR
   // =========================================================
 
-  void showSnack(
-    String message,
-  ) {
+  void showSnack(String message) {
     if (!mounted) return;
 
-    ScaffoldMessenger.of(context)
-        .hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
-    ScaffoldMessenger.of(context)
-        .showSnackBar(
-      SnackBar(
-        content: Text(message),
-        behavior:
-            SnackBarBehavior.floating,
-      ),
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
     );
   }
 
@@ -1095,86 +739,48 @@ class _FuelBillListScreenState
   // =========================================================
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
-    final width =
-        MediaQuery.of(context).size.width;
+  Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor:
-          const Color(0xffF4F7FB),
+      backgroundColor: const Color(0xffF4F7FB),
 
       // =====================================================
       // APP BAR
       // =====================================================
-
       appBar: AppBar(
         elevation: 0,
-        backgroundColor:
-            const Color(0xff2458A6),
-        foregroundColor:
-            Colors.white,
+        backgroundColor: const Color(0xff2458A6),
+        foregroundColor: Colors.white,
 
         title: const Text(
           "Fuel Bills",
-          style: TextStyle(
-            fontWeight:
-                FontWeight.bold,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
 
         actions: [
           // ================================================
           // ADD FUEL
           // ================================================
-
           Padding(
-            padding:
-                const EdgeInsets.only(
-              right: 6,
-            ),
-            child:
-                ElevatedButton.icon(
-              onPressed:
-                  _loading
-                      ? null
-                      : openAddFuel,
+            padding: const EdgeInsets.only(right: 6),
+            child: ElevatedButton.icon(
+              onPressed: _loading ? null : openAddFuel,
 
-              icon: const Icon(
-                Icons.local_gas_station,
-                size: 18,
-              ),
+              icon: const Icon(Icons.local_gas_station, size: 18),
 
               label: const Text(
                 "Add Fuel",
-                style: TextStyle(
-                  fontWeight:
-                      FontWeight.bold,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
 
-              style:
-                  ElevatedButton.styleFrom(
-                backgroundColor:
-                    Colors.white,
-                foregroundColor:
-                    const Color(
-                  0xff2458A6,
-                ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: const Color(0xff2458A6),
                 elevation: 0,
-                padding:
-                    const EdgeInsets
-                        .symmetric(
-                  horizontal: 12,
-                ),
-                shape:
-                    RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius
-                          .circular(
-                    10,
-                  ),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
             ),
@@ -1183,23 +789,17 @@ class _FuelBillListScreenState
           // ================================================
           // REFRESH
           // ================================================
-
           IconButton(
-            onPressed:
-                _loading
-                    ? null
-                    : () {
-                        _loadFuelBills();
-                        _loadVehicles();
-                      },
+            onPressed: _loading
+                ? null
+                : () {
+                    _loadFuelBills();
+                    _loadVehicles();
+                  },
 
-            icon:
-                const Icon(
-              Icons.refresh,
-            ),
+            icon: const Icon(Icons.refresh),
 
-            tooltip:
-                "Refresh",
+            tooltip: "Refresh",
           ),
         ],
       ),
@@ -1207,478 +807,245 @@ class _FuelBillListScreenState
       // =====================================================
       // BODY
       // =====================================================
-
       body: SafeArea(
         child: _loading
-            ? const Center(
-                child:
-                    CircularProgressIndicator(),
-              )
+            ? const Center(child: CircularProgressIndicator())
             : _loadError != null
-                ? Center(
-                    child: Padding(
-                      padding:
-                          const EdgeInsets
-                              .all(24),
-                      child: Column(
-                        mainAxisSize:
-                            MainAxisSize
-                                .min,
-                        children: [
-                          const Icon(
-                            Icons
-                                .error_outline,
-                            size: 48,
-                            color:
-                                Colors.red,
-                          ),
+            ? Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.error_outline,
+                        size: 48,
+                        color: Colors.red,
+                      ),
 
-                          const SizedBox(
-                            height: 12,
-                          ),
+                      const SizedBox(height: 12),
 
-                          Text(
-                            _loadError!,
-                            textAlign:
-                                TextAlign
-                                    .center,
-                          ),
+                      Text(_loadError!, textAlign: TextAlign.center),
 
-                          const SizedBox(
-                            height: 16,
-                          ),
+                      const SizedBox(height: 16),
 
-                          ElevatedButton(
-                            onPressed:
-                                _loadFuelBills,
-                            child:
-                                const Text(
-                              "Retry",
-                            ),
+                      ElevatedButton(
+                        onPressed: _loadFuelBills,
+                        child: const Text("Retry"),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            : Padding(
+                padding: const EdgeInsets.all(8),
+                child: Column(
+                  children: [
+                    // ==================================
+                    // FILTER CARD
+                    // ==================================
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(18),
+                      decoration: BoxDecoration(
+                        color: const Color(0xffF1F4F8),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: const Color(0xffDCE3EC)),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 4,
+                            offset: Offset(0, 2),
                           ),
                         ],
                       ),
-                    ),
-                  )
-                : Padding(
-                    padding:
-                        const EdgeInsets
-                            .all(8),
-                    child: Column(
-                      children: [
-                        // ==================================
-                        // FILTER CARD
-                        // ==================================
 
-                        Container(
-                          width:
-                              double.infinity,
-                          padding:
-                              const EdgeInsets
-                                  .all(18),
-                          decoration:
-                              BoxDecoration(
-                            color:
-                                const Color(
-                              0xffF1F4F8,
-                            ),
-                            borderRadius:
-                                BorderRadius
-                                    .circular(
-                              16,
-                            ),
-                            border:
-                                Border.all(
-                              color:
-                                  const Color(
-                                0xffDCE3EC,
-                              ),
-                            ),
-                            boxShadow:
-                                const [
-                              BoxShadow(
-                                color:
-                                    Colors
-                                        .black12,
-                                blurRadius: 4,
-                                offset:
-                                    Offset(
-                                  0,
-                                  2,
-                                ),
-                              ),
-                            ],
-                          ),
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          final isSmall = width < 700;
 
-                          child:
-                              LayoutBuilder(
-                            builder: (
-                              context,
-                              constraints,
-                            ) {
-                              final isSmall =
-                                  width <
-                                      700;
+                          if (isSmall) {
+                            return Column(
+                              children: [
+                                searchBox(),
 
-                              if (isSmall) {
-                                return Column(
+                                const SizedBox(height: 10),
+
+                                fuelDropdown(),
+
+                                const SizedBox(height: 10),
+
+                                Row(
                                   children: [
-                                    searchBox(),
+                                    Expanded(child: filterButton()),
 
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
+                                    const SizedBox(width: 10),
 
-                                    fuelDropdown(),
-
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child:
-                                              filterButton(),
-                                        ),
-
-                                        const SizedBox(
-                                          width:
-                                              10,
-                                        ),
-
-                                        Expanded(
-                                          child:
-                                              resetButton(),
-                                        ),
-                                      ],
-                                    ),
+                                    Expanded(child: resetButton()),
                                   ],
-                                );
-                              }
-
-                              return Row(
-                                children: [
-                                  SizedBox(
-                                    width: 260,
-                                    child:
-                                        searchBox(),
-                                  ),
-
-                                  const SizedBox(
-                                    width: 12,
-                                  ),
-
-                                  SizedBox(
-                                    width: 160,
-                                    child:
-                                        fuelDropdown(),
-                                  ),
-
-                                  const SizedBox(
-                                    width: 12,
-                                  ),
-
-                                  filterButton(),
-
-                                  const SizedBox(
-                                    width: 12,
-                                  ),
-
-                                  resetButton(),
-                                ],
-                              );
-                            },
-                          ),
-                        ),
-
-                        const SizedBox(
-                          height: 18,
-                        ),
-
-                        // ==================================
-                        // TABLE
-                        // ==================================
-
-                        Expanded(
-                          child:
-                              Container(
-                            width:
-                                double.infinity,
-                            decoration:
-                                BoxDecoration(
-                              color:
-                                  Colors.white,
-                              borderRadius:
-                                  BorderRadius
-                                      .circular(
-                                16,
-                              ),
-                              border:
-                                  Border.all(
-                                color:
-                                    const Color(
-                                  0xffDCE3EC,
                                 ),
-                              ),
-                            ),
+                              ],
+                            );
+                          }
 
-                            child:
-                                ClipRRect(
-                              borderRadius:
-                                  BorderRadius
-                                      .circular(
-                                16,
-                              ),
+                          return Row(
+                            children: [
+                              SizedBox(width: 260, child: searchBox()),
 
-                              child:
-                                  filteredFuelBills
-                                          .isEmpty
-                                      ? const Center(
-                                          child:
-                                              Padding(
-                                            padding:
-                                                EdgeInsets
-                                                    .all(
-                                              24,
-                                            ),
-                                            child:
-                                                Text(
-                                              "No fuel bills found",
-                                              style:
-                                                  TextStyle(
-                                                color:
-                                                    Colors.grey,
-                                              ),
-                                            ),
-                                          ),
-                                        )
-                                      : SingleChildScrollView(
-                                          scrollDirection:
-                                              Axis.horizontal,
-                                          child:
-                                              SingleChildScrollView(
-                                            child:
-                                                DataTable(
-                                              headingRowHeight:
-                                                  48,
+                              const SizedBox(width: 12),
 
-                                              dataRowMinHeight:
-                                                  66,
+                              SizedBox(width: 160, child: fuelDropdown()),
 
-                                              dataRowMaxHeight:
-                                                  66,
+                              const SizedBox(width: 12),
 
-                                              columnSpacing:
-                                                  30,
+                              filterButton(),
 
-                                              headingRowColor:
-                                                  WidgetStateProperty
-                                                      .all(
-                                                const Color(
-                                                  0xffF8FAFD,
-                                                ),
-                                              ),
+                              const SizedBox(width: 12),
 
-                                              columns:
-                                                  const [
-                                                DataColumn(
-                                                  label:
-                                                      Text(
-                                                    "BILL NO",
-                                                  ),
-                                                ),
-                                                DataColumn(
-                                                  label:
-                                                      Text(
-                                                    "VEHICLE NO",
-                                                  ),
-                                                ),
-                                                DataColumn(
-                                                  label:
-                                                      Text(
-                                                    "DATE",
-                                                  ),
-                                                ),
-                                                DataColumn(
-                                                  label:
-                                                      Text(
-                                                    "FUEL",
-                                                  ),
-                                                ),
-                                                DataColumn(
-                                                  label:
-                                                      Text(
-                                                    "LITRES",
-                                                  ),
-                                                ),
-                                                DataColumn(
-                                                  label:
-                                                      Text(
-                                                    "AMOUNT",
-                                                  ),
-                                                ),
-                                                DataColumn(
-                                                  label:
-                                                      Text(
-                                                    "VENDOR",
-                                                  ),
-                                                ),
-                                                DataColumn(
-                                                  label:
-                                                      Text(
-                                                    "PHOTO",
-                                                  ),
-                                                ),
-                                                DataColumn(
-                                                  label:
-                                                      Text(
-                                                    "VIEW",
-                                                  ),
-                                                ),
-                                              ],
-
-                                              rows:
-                                                  filteredFuelBills
-                                                      .map(
-                                                (
-                                                  bill,
-                                                ) {
-                                                  return DataRow(
-                                                    cells: [
-                                                      DataCell(
-                                                        Text(
-                                                          _billNo(
-                                                            bill,
-                                                          ),
-                                                          style:
-                                                              const TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color:
-                                                                Color(
-                                                              0xff172033,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-
-                                                      DataCell(
-                                                        Text(
-                                                          _vehicleNo(
-                                                            bill,
-                                                          ),
-                                                          style:
-                                                              const TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                          ),
-                                                        ),
-                                                      ),
-
-                                                      DataCell(
-                                                        Text(
-                                                          _date(
-                                                            bill,
-                                                          ),
-                                                        ),
-                                                      ),
-
-                                                      DataCell(
-                                                        Text(
-                                                          _fuel(
-                                                            bill,
-                                                          ),
-                                                        ),
-                                                      ),
-
-                                                      DataCell(
-                                                        Text(
-                                                          _litres(
-                                                            bill,
-                                                          ),
-                                                        ),
-                                                      ),
-
-                                                      DataCell(
-                                                        Text(
-                                                          _amount(
-                                                            bill,
-                                                          ),
-                                                          style:
-                                                              const TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color:
-                                                                Color(
-                                                              0xff172033,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-
-                                                      DataCell(
-                                                        Text(
-                                                          _vendor(
-                                                            bill,
-                                                          ),
-                                                        ),
-                                                      ),
-
-                                                      DataCell(
-                                                        PhotoThumbnail(
-                                                          photoPath:
-                                                              _photoPath(
-                                                            bill,
-                                                          ),
-                                                        ),
-                                                      ),
-
-                                                      DataCell(
-                                                        outlineButton(
-                                                          "View",
-                                                          icon:
-                                                              Icons.visibility,
-                                                          onPressed:
-                                                              () => viewBill(
-                                                            bill,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  );
-                                                },
-                                              ).toList(),
-                                            ),
-                                          ),
-                                        ),
-                            ),
-                          ),
-                        ),
-
-                        const SizedBox(
-                          height: 8,
-                        ),
-
-                        Align(
-                          alignment:
-                              Alignment
-                                  .centerLeft,
-                          child: Text(
-                            "${filteredFuelBills.length} fuel bills found",
-                            style:
-                                const TextStyle(
-                              color:
-                                  Colors.grey,
-                              fontWeight:
-                                  FontWeight
-                                      .w600,
-                            ),
-                          ),
-                        ),
-                      ],
+                              resetButton(),
+                            ],
+                          );
+                        },
+                      ),
                     ),
-                  ),
+
+                    const SizedBox(height: 18),
+
+                    // ==================================
+                    // TABLE
+                    // ==================================
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: const Color(0xffDCE3EC)),
+                        ),
+
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+
+                          child: filteredFuelBills.isEmpty
+                              ? const Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(24),
+                                    child: Text(
+                                      "No fuel bills found",
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
+                                  ),
+                                )
+                              : SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: SingleChildScrollView(
+                                    child: DataTable(
+                                      headingRowHeight: 48,
+
+                                      dataRowMinHeight: 66,
+
+                                      dataRowMaxHeight: 66,
+
+                                      columnSpacing: 30,
+
+                                      headingRowColor: WidgetStateProperty.all(
+                                        const Color(0xffF8FAFD),
+                                      ),
+
+                                      columns: const [
+                                        DataColumn(label: Text("BILL NO")),
+                                        DataColumn(label: Text("VEHICLE NO")),
+                                        DataColumn(label: Text("DATE")),
+                                        DataColumn(label: Text("FUEL")),
+                                        DataColumn(label: Text("LITRES")),
+                                        DataColumn(label: Text("AMOUNT")),
+                                        DataColumn(label: Text("VENDOR")),
+                                        DataColumn(label: Text("PHOTO")),
+                                        DataColumn(label: Text("VIEW")),
+                                      ],
+
+                                      rows: filteredFuelBills.map((bill) {
+                                        return DataRow(
+                                          cells: [
+                                            DataCell(
+                                              Text(
+                                                _billNo(bill),
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Color(0xff172033),
+                                                ),
+                                              ),
+                                            ),
+
+                                            DataCell(
+                                              Text(
+                                                _vehicleNo(bill),
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+
+                                            DataCell(Text(_date(bill))),
+
+                                            DataCell(Text(_fuel(bill))),
+
+                                            DataCell(Text(_litres(bill))),
+
+                                            DataCell(
+                                              Text(
+                                                _amount(bill),
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Color(0xff172033),
+                                                ),
+                                              ),
+                                            ),
+
+                                            DataCell(Text(_vendor(bill))),
+
+                                            DataCell(
+  IconButton(
+    icon: const Icon(
+      Icons.image_outlined,
+      color: Color(0xff2458A6),
+    ),
+    onPressed: () => viewBill(bill),
+  ),
+),
+
+                                            DataCell(
+                                              outlineButton(
+                                                "View",
+                                                icon: Icons.visibility,
+                                                onPressed: () => viewBill(bill),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "${filteredFuelBills.length} fuel bills found",
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
       ),
     );
   }
@@ -1689,67 +1056,36 @@ class _FuelBillListScreenState
 
   Widget searchBox() {
     return TextField(
-      controller:
-          searchController,
+      controller: searchController,
 
-      onSubmitted: (_) =>
-          applyFilter(),
+      onSubmitted: (_) => applyFilter(),
 
-      decoration:
-          InputDecoration(
-        hintText:
-            "Search bill / vehicle no...",
+      decoration: InputDecoration(
+        hintText: "Search bill / vehicle no...",
 
-        prefixIcon:
-            const Icon(
-          Icons.search,
-          size: 20,
-        ),
+        prefixIcon: const Icon(Icons.search, size: 20),
 
-        suffixIcon:
-            VoiceSearchButton(
+        suffixIcon: VoiceSearchButton(
           onResult: (digits) {
-            searchController.text =
-                digits;
+            searchController.text = digits;
 
             applyFilter();
           },
         ),
 
         filled: true,
-        fillColor:
-            Colors.white,
+        fillColor: Colors.white,
 
-        contentPadding:
-            const EdgeInsets
-                .symmetric(
-          horizontal: 14,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 14),
+
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Color(0xffDCE3EC)),
         ),
 
-        border:
-            OutlineInputBorder(
-          borderRadius:
-              BorderRadius.circular(
-            10,
-          ),
-          borderSide:
-              const BorderSide(
-            color:
-                Color(0xffDCE3EC),
-          ),
-        ),
-
-        enabledBorder:
-            OutlineInputBorder(
-          borderRadius:
-              BorderRadius.circular(
-            10,
-          ),
-          borderSide:
-              const BorderSide(
-            color:
-                Color(0xffDCE3EC),
-          ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Color(0xffDCE3EC)),
         ),
       ),
     );
@@ -1762,59 +1098,27 @@ class _FuelBillListScreenState
   Widget fuelDropdown() {
     final fuels = [
       "All fuels",
-      ...allFuelBills
-          .map(
-            (e) => _fuel(e),
-          )
-          .where(
-            (e) => e != "-",
-          )
-          .toSet(),
+      ...allFuelBills.map((e) => _fuel(e)).where((e) => e != "-").toSet(),
     ];
 
-    return DropdownButtonFormField<
-        String>(
-      initialValue:
-          fuels.contains(
-        selectedFuel,
-      )
-              ? selectedFuel
-              : "All fuels",
+    return DropdownButtonFormField<String>(
+      initialValue: fuels.contains(selectedFuel) ? selectedFuel : "All fuels",
 
-      decoration:
-          InputDecoration(
+      decoration: InputDecoration(
         filled: true,
-        fillColor:
-            Colors.white,
+        fillColor: Colors.white,
 
-        contentPadding:
-            const EdgeInsets
-                .symmetric(
-          horizontal: 14,
-        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 14),
 
-        border:
-            OutlineInputBorder(
-          borderRadius:
-              BorderRadius.circular(
-            10,
-          ),
-          borderSide:
-              const BorderSide(
-            color:
-                Color(0xffDCE3EC),
-          ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Color(0xffDCE3EC)),
         ),
       ),
 
       items: fuels
           .map(
-            (fuel) =>
-                DropdownMenuItem<
-                    String>(
-              value: fuel,
-              child: Text(fuel),
-            ),
+            (fuel) => DropdownMenuItem<String>(value: fuel, child: Text(fuel)),
           )
           .toList(),
 
@@ -1822,8 +1126,7 @@ class _FuelBillListScreenState
         if (value == null) return;
 
         setState(() {
-          selectedFuel =
-              value;
+          selectedFuel = value;
         });
 
         applyFilter();
@@ -1837,42 +1140,21 @@ class _FuelBillListScreenState
 
   Widget filterButton() {
     return ElevatedButton(
-      onPressed:
-          applyFilter,
+      onPressed: applyFilter,
 
-      style:
-          ElevatedButton.styleFrom(
-        backgroundColor:
-            const Color(
-          0xff2458A6,
-        ),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xff2458A6),
 
-        foregroundColor:
-            Colors.white,
+        foregroundColor: Colors.white,
 
-        padding:
-            const EdgeInsets
-                .symmetric(
-          horizontal: 22,
-          vertical: 16,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
 
-        shape:
-            RoundedRectangleBorder(
-          borderRadius:
-              BorderRadius.circular(
-            10,
-          ),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
 
-      child:
-          const Text(
+      child: const Text(
         "Filter",
-        style: TextStyle(
-          fontWeight:
-              FontWeight.bold,
-        ),
+        style: TextStyle(fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -1883,46 +1165,19 @@ class _FuelBillListScreenState
 
   Widget resetButton() {
     return OutlinedButton(
-      onPressed:
-          resetFilter,
+      onPressed: resetFilter,
 
-      style:
-          OutlinedButton.styleFrom(
-        foregroundColor:
-            const Color(
-          0xff475569,
-        ),
+      style: OutlinedButton.styleFrom(
+        foregroundColor: const Color(0xff475569),
 
-        padding:
-            const EdgeInsets
-                .symmetric(
-          horizontal: 20,
-          vertical: 16,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
 
-        side:
-            const BorderSide(
-          color:
-              Color(0xffDCE3EC),
-        ),
+        side: const BorderSide(color: Color(0xffDCE3EC)),
 
-        shape:
-            RoundedRectangleBorder(
-          borderRadius:
-              BorderRadius.circular(
-            10,
-          ),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
 
-      child:
-          const Text(
-        "Reset",
-        style: TextStyle(
-          fontWeight:
-              FontWeight.bold,
-        ),
-      ),
+      child: const Text("Reset", style: TextStyle(fontWeight: FontWeight.bold)),
     );
   }
 
@@ -1936,45 +1191,20 @@ class _FuelBillListScreenState
     required VoidCallback onPressed,
   }) {
     return OutlinedButton.icon(
-      onPressed:
-          onPressed,
+      onPressed: onPressed,
 
-      icon:
-          Icon(
-        icon,
-        size: 16,
-      ),
+      icon: Icon(icon, size: 16),
 
-      label:
-          Text(text),
+      label: Text(text),
 
-      style:
-          OutlinedButton.styleFrom(
-        foregroundColor:
-            const Color(
-          0xff334155,
-        ),
+      style: OutlinedButton.styleFrom(
+        foregroundColor: const Color(0xff334155),
 
-        side:
-            const BorderSide(
-          color:
-              Color(0xffDCE3EC),
-        ),
+        side: const BorderSide(color: Color(0xffDCE3EC)),
 
-        padding:
-            const EdgeInsets
-                .symmetric(
-          horizontal: 14,
-          vertical: 10,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
 
-        shape:
-            RoundedRectangleBorder(
-          borderRadius:
-              BorderRadius.circular(
-            10,
-          ),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
   }
@@ -1983,94 +1213,52 @@ class _FuelBillListScreenState
   // VIEW BILL
   // =========================================================
 
-  void viewBill(
-    Map<String, dynamic> bill,
-  ) {
+  void viewBill(Map<String, dynamic> bill) {
     showDialog(
       context: context,
-      builder:
-          (dialogContext) {
+      builder: (dialogContext) {
         return AlertDialog(
-          title: Text(
-            "Fuel Bill ${_billNo(bill)}",
-          ),
+          title: Text("Fuel Bill ${_billNo(bill)}"),
 
-          content:
-              SingleChildScrollView(
+          content: SingleChildScrollView(
             child: Column(
-              mainAxisSize:
-                  MainAxisSize.min,
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "Vehicle: ${_vehicleNo(bill)}",
-                ),
+                Text("Vehicle: ${_vehicleNo(bill)}"),
 
-                const SizedBox(
-                  height: 8,
-                ),
+                const SizedBox(height: 8),
 
-                Text(
-                  "Date: ${_date(bill)}",
-                ),
+                Text("Date: ${_date(bill)}"),
 
-                const SizedBox(
-                  height: 8,
-                ),
+                const SizedBox(height: 8),
 
-                Text(
-                  "Fuel: ${_fuel(bill)}",
-                ),
+                Text("Fuel: ${_fuel(bill)}"),
 
-                const SizedBox(
-                  height: 8,
-                ),
+                const SizedBox(height: 8),
 
-                Text(
-                  "Litres: ${_litres(bill)}",
-                ),
+                Text("Litres: ${_litres(bill)}"),
 
-                const SizedBox(
-                  height: 8,
-                ),
+                const SizedBox(height: 8),
 
-                Text(
-                  "Amount: ${_amount(bill)}",
-                ),
+                Text("Amount: ${_amount(bill)}"),
 
-                const SizedBox(
-                  height: 8,
-                ),
+                const SizedBox(height: 8),
 
-                Text(
-                  "Vendor: ${_vendor(bill)}",
-                ),
+                Text("Vendor: ${_vendor(bill)}"),
 
-                const SizedBox(
-                  height: 12,
-                ),
+                const SizedBox(height: 12),
 
-                PhotoThumbnail(
-                  photoPath:
-                      _photoPath(bill),
-                  size: 120,
-                ),
+                PhotoThumbnail(photoPath: _photoPath(bill), size: 120),
               ],
             ),
           ),
 
           actions: [
             TextButton(
-              onPressed: () =>
-                  Navigator.pop(
-                dialogContext,
-              ),
+              onPressed: () => Navigator.pop(dialogContext),
 
-              child:
-                  const Text(
-                "Close",
-              ),
+              child: const Text("Close"),
             ),
           ],
         );

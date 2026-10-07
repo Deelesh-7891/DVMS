@@ -138,202 +138,207 @@ class _InsuranceListScreenState extends State<InsuranceListScreen> {
         child: _loading
             ? const Center(child: CircularProgressIndicator())
             : _loadError != null
-                ? Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.error_outline,
-                              size: 48, color: Colors.red),
-                          const SizedBox(height: 12),
-                          Text(_loadError!, textAlign: TextAlign.center),
-                          const SizedBox(height: 16),
-                          ElevatedButton(
-                            onPressed: _loadInsurance,
-                            child: const Text("Retry"),
+            ? Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.error_outline,
+                        size: 48,
+                        color: Colors.red,
+                      ),
+                      const SizedBox(height: 12),
+                      Text(_loadError!, textAlign: TextAlign.center),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: _loadInsurance,
+                        child: const Text("Retry"),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            : Padding(
+                padding: const EdgeInsets.all(8),
+                child: Column(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(18),
+                      decoration: BoxDecoration(
+                        color: const Color(0xffF1F4F8),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: const Color(0xffDCE3EC)),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 4,
+                            offset: Offset(0, 2),
                           ),
                         ],
                       ),
-                    ),
-                  )
-                : Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Column(
-                      children: [
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(18),
-                          decoration: BoxDecoration(
-                            color: const Color(0xffF1F4F8),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: const Color(0xffDCE3EC)),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Colors.black12,
-                                blurRadius: 4,
-                                offset: Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: LayoutBuilder(
-                            builder: (context, constraints) {
-                              final isSmall = width < 700;
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          final isSmall = width < 700;
 
-                              if (isSmall) {
-                                return Column(
+                          if (isSmall) {
+                            return Column(
+                              children: [
+                                searchBox(),
+                                const SizedBox(height: 10),
+                                statusDropdown(),
+                                const SizedBox(height: 10),
+                                Row(
                                   children: [
-                                    searchBox(),
-                                    const SizedBox(height: 10),
-                                    statusDropdown(),
-                                    const SizedBox(height: 10),
-                                    Row(
-                                      children: [
-                                        Expanded(child: filterButton()),
-                                        const SizedBox(width: 10),
-                                        Expanded(child: resetButton()),
-                                      ],
-                                    ),
+                                    Expanded(child: filterButton()),
+                                    const SizedBox(width: 10),
+                                    Expanded(child: resetButton()),
                                   ],
-                                );
-                              }
+                                ),
+                              ],
+                            );
+                          }
 
-                              return Row(
-                                children: [
-                                  SizedBox(width: 280, child: searchBox()),
-                                  const SizedBox(width: 12),
-                                  SizedBox(width: 170, child: statusDropdown()),
-                                  const SizedBox(width: 12),
-                                  filterButton(),
-                                  const SizedBox(width: 12),
-                                  resetButton(),
-                                ],
-                              );
-                            },
-                          ),
+                          return Row(
+                            children: [
+                              SizedBox(width: 280, child: searchBox()),
+                              const SizedBox(width: 12),
+                              SizedBox(width: 170, child: statusDropdown()),
+                              const SizedBox(width: 12),
+                              filterButton(),
+                              const SizedBox(width: 12),
+                              resetButton(),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    Expanded(
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: const Color(0xffDCE3EC)),
                         ),
-                        const SizedBox(height: 18),
-                        Expanded(
-                          child: Container(
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(16),
-                              border:
-                                  Border.all(color: const Color(0xffDCE3EC)),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(16),
-                              child: filteredInsurance.isEmpty
-                                  ? const Center(
-                                      child: Padding(
-                                        padding: EdgeInsets.all(24),
-                                        child: Text(
-                                          "No insurance policies found",
-                                          style:
-                                              TextStyle(color: Colors.grey),
-                                        ),
-                                      ),
-                                    )
-                                  : SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: SingleChildScrollView(
-                                  child: DataTable(
-                                    headingRowHeight: 48,
-                                    dataRowMinHeight: 66,
-                                    dataRowMaxHeight: 66,
-                                    columnSpacing: 30,
-                                    headingRowColor: WidgetStateProperty.all(
-                                      const Color(0xffF8FAFD),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: filteredInsurance.isEmpty
+                              ? const Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(24),
+                                    child: Text(
+                                      "No insurance policies found",
+                                      style: TextStyle(color: Colors.grey),
                                     ),
-                                    columns: const [
-                                      DataColumn(label: Text("POLICY NO")),
-                                      DataColumn(label: Text("VEHICLE NO")),
-                                      DataColumn(label: Text("COMPANY")),
-                                      DataColumn(label: Text("START DATE")),
-                                      DataColumn(label: Text("EXPIRY DATE")),
-                                      DataColumn(label: Text("PREMIUM")),
-                                      DataColumn(label: Text("STATUS")),
-                                      DataColumn(label: Text("PHOTO")),
-                                      DataColumn(label: Text("VIEW")),
-                                    ],
-                                    rows: filteredInsurance.map((insurance) {
-                                      return DataRow(
-                                        cells: [
-                                          DataCell(
-                                            Text(
-                                              _policyNo(insurance),
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Color(0xff172033),
+                                  ),
+                                )
+                              : SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: SingleChildScrollView(
+                                    child: DataTable(
+                                      headingRowHeight: 48,
+                                      dataRowMinHeight: 66,
+                                      dataRowMaxHeight: 66,
+                                      columnSpacing: 30,
+                                      headingRowColor: WidgetStateProperty.all(
+                                        const Color(0xffF8FAFD),
+                                      ),
+                                      columns: const [
+                                        DataColumn(label: Text("POLICY NO")),
+                                        DataColumn(label: Text("VEHICLE NO")),
+                                        DataColumn(label: Text("COMPANY")),
+                                        DataColumn(label: Text("START DATE")),
+                                        DataColumn(label: Text("EXPIRY DATE")),
+                                        DataColumn(label: Text("PREMIUM")),
+                                        DataColumn(label: Text("STATUS")),
+                                        DataColumn(label: Text("PHOTO")),
+                                        DataColumn(label: Text("VIEW")),
+                                      ],
+                                      rows: filteredInsurance.map((insurance) {
+                                        return DataRow(
+                                          cells: [
+                                            DataCell(
+                                              Text(
+                                                _policyNo(insurance),
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Color(0xff172033),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          DataCell(
-                                            Text(
-                                              _vehicleNo(insurance),
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.w600,
+                                            DataCell(
+                                              Text(
+                                                _vehicleNo(insurance),
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          DataCell(Text(_company(insurance))),
-                                          DataCell(
-                                            Text(_date(insurance["StartDate"])),
-                                          ),
-                                          DataCell(
-                                            Text(
-                                                _date(insurance["ExpiryDate"])),
-                                          ),
-                                          DataCell(
-                                            Text(
-                                              _premium(insurance),
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Color(0xff172033),
+                                            DataCell(Text(_company(insurance))),
+                                            DataCell(
+                                              Text(
+                                                _date(insurance["StartDate"]),
                                               ),
                                             ),
-                                          ),
-                                          DataCell(
-                                            statusBadge(_status(insurance)),
-                                          ),
-                                          DataCell(
-                                            PhotoThumbnail(
-                                              photoPath:
-                                                  _photoPath(insurance),
+                                            DataCell(
+                                              Text(
+                                                _date(insurance["ExpiryDate"]),
+                                              ),
                                             ),
-                                          ),
-                                          DataCell(
-                                            outlineButton(
-                                              "View",
-                                              icon: Icons.visibility,
-                                              onPressed: () =>
-                                                  viewInsurance(insurance),
+                                            DataCell(
+                                              Text(
+                                                _premium(insurance),
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Color(0xff172033),
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      );
-                                    }).toList(),
+                                            DataCell(
+                                              statusBadge(_status(insurance)),
+                                            ),
+                                            DataCell(
+                                              PhotoThumbnail(
+                                                photoPath: _photoPath(
+                                                  insurance,
+                                                ),
+                                              ),
+                                            ),
+                                            DataCell(
+                                              outlineButton(
+                                                "View",
+                                                icon: Icons.visibility,
+                                                onPressed: () =>
+                                                    viewInsurance(insurance),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      }).toList(),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                          ),
                         ),
-                        const SizedBox(height: 8),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "${filteredInsurance.length} policies found",
-                            style: const TextStyle(
-                              color: Colors.grey,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 8),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "${filteredInsurance.length} policies found",
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
       ),
     );
   }
@@ -366,12 +371,7 @@ class _InsuranceListScreenState extends State<InsuranceListScreen> {
   }
 
   Widget statusDropdown() {
-    final statuses = [
-      "All statuses",
-      "Active",
-      "ExpiringSoon",
-      "Expired",
-    ];
+    final statuses = ["All statuses", "Active", "ExpiringSoon", "Expired"];
 
     return DropdownButtonFormField<String>(
       value: selectedStatus,
@@ -400,8 +400,10 @@ class _InsuranceListScreenState extends State<InsuranceListScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
-      child:
-          const Text("Filter", style: TextStyle(fontWeight: FontWeight.bold)),
+      child: const Text(
+        "Filter",
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
     );
   }
 
@@ -414,8 +416,7 @@ class _InsuranceListScreenState extends State<InsuranceListScreen> {
         side: const BorderSide(color: Color(0xffDCE3EC)),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
-      child:
-          const Text("Reset", style: TextStyle(fontWeight: FontWeight.bold)),
+      child: const Text("Reset", style: TextStyle(fontWeight: FontWeight.bold)),
     );
   }
 
@@ -438,8 +439,10 @@ class _InsuranceListScreenState extends State<InsuranceListScreen> {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-      decoration:
-          BoxDecoration(color: background, borderRadius: BorderRadius.circular(20)),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(20),
+      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [

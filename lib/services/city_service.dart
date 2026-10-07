@@ -11,34 +11,22 @@ class CityService {
     try {
       final response = await http.get(
         Uri.parse(citiesUrl),
-        headers: {
-          'Accept': 'application/json',
-        },
+        headers: {'Accept': 'application/json'},
       );
 
       if (response.statusCode != 200) {
-        throw Exception(
-          'City API Error: ${response.statusCode}',
-        );
+        throw Exception('City API Error: ${response.statusCode}');
       }
 
-      final Map<String, dynamic> responseData =
-          jsonDecode(response.body);
+      final Map<String, dynamic> responseData = jsonDecode(response.body);
 
-      final List<dynamic> data =
-          responseData['data'] ?? [];
+      final List<dynamic> data = responseData['data'] ?? [];
 
       return data
-          .map(
-            (item) => CityModel.fromJson(
-              item as Map<String, dynamic>,
-            ),
-          )
+          .map((item) => CityModel.fromJson(item as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      throw Exception(
-        'Failed to load cities: $e',
-      );
+      throw Exception('Failed to load cities: $e');
     }
   }
 }

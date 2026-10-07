@@ -3,7 +3,6 @@ import '../../services/auth_service.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
-
 class ReportDamageScreen extends StatefulWidget {
   const ReportDamageScreen({super.key});
 
@@ -12,75 +11,66 @@ class ReportDamageScreen extends StatefulWidget {
 }
 
 class _ReportDamageScreenState extends State<ReportDamageScreen> {
-final AuthService _authService = AuthService();
+  final AuthService _authService = AuthService();
 
   final locationController = TextEditingController();
 
   final descriptionController = TextEditingController();
-  
+
   String damageType = "Scratch";
   File? cameraImage;
   final ImagePicker picker = ImagePicker();
   File? selectedImage;
 
+  Future<void> openCamera() async {
+    final XFile? image = await picker.pickImage(
+      source: ImageSource.camera,
+      imageQuality: 80,
+    );
 
- Future<void> openCamera() async {
-  final XFile? image = await picker.pickImage(
-    source: ImageSource.camera,
-    imageQuality: 80,
-  );
-
-  if (image != null) {
-    setState(() {
-      cameraImage = File(image.path);
-    });
+    if (image != null) {
+      setState(() {
+        cameraImage = File(image.path);
+      });
+    }
   }
-}
 
   Future<void> saveDamage() async {
-  try {
-    await _authService.reportDamageSave(
-      vehicleId: 2011,
-      txnDate: DateTime.now().toIso8601String(),
-      damageType: damageType,
-      location: locationController.text,
-      description: descriptionController.text,
-    );
+    try {
+      await _authService.reportDamageSave(
+        vehicleId: 2011,
+        txnDate: DateTime.now().toIso8601String(),
+        damageType: damageType,
+        location: locationController.text,
+        description: descriptionController.text,
+      );
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Damage Report Saved Successfully"),
-        backgroundColor: Colors.green,
-      ),
-    );
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Damage Report Saved Successfully"),
+          backgroundColor: Colors.green,
+        ),
+      );
 
-    // Clear fields
-    locationController.clear();
-    descriptionController.clear();
+      // Clear fields
+      locationController.clear();
+      descriptionController.clear();
 
-   setState(() {
-  damageType = "Scratch";
-});
+      setState(() {
+        damageType = "Scratch";
+      });
+    } catch (e) {
+      if (!mounted) return;
 
-  } catch (e) {
-    if (!mounted) return;
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(e.toString()),
-        backgroundColor: Colors.red,
-      ),
-    );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString()), backgroundColor: Colors.red),
+      );
+    }
   }
-}
-  final damageTypes = [
-    "Scratch",
-    "Dent",
-    "Crack",
-    "Other",
-  ];
+
+  final damageTypes = ["Scratch", "Dent", "Crack", "Other"];
 
   @override
   Widget build(BuildContext context) {
@@ -96,16 +86,10 @@ final AuthService _authService = AuthService();
           children: [
             Text(
               "⚠ Report Damage",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 22,
-              ),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
             ),
             SizedBox(height: 4),
-            Text(
-              "RJ14 DM 0002 · Harrier",
-              style: TextStyle(fontSize: 14),
-            ),
+            Text("RJ14 DM 0002 · Harrier", style: TextStyle(fontSize: 14)),
           ],
         ),
       ),
@@ -115,7 +99,6 @@ final AuthService _authService = AuthService();
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             const Text(
               "PHOTOS",
               style: TextStyle(
@@ -128,36 +111,30 @@ final AuthService _authService = AuthService();
 
             Row(
               children: [
-                 Expanded(
-  child: InkWell(
-    onTap: openCamera,
-    child: Container(
-      height: 100,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.grey.shade300,
-        ),
-      ),
-      child: cameraImage == null
-          ? const Center(
-              child: Icon(
-                Icons.camera_alt,
-                size: 30,
-              ),
-            )
-          : ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.file(
-                cameraImage!,
-                fit: BoxFit.cover,
-              ),
-            ),
-    ),
-  ),
-),
-
+                Expanded(
+                  child: InkWell(
+                    onTap: openCamera,
+                    child: Container(
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey.shade300),
+                      ),
+                      child: cameraImage == null
+                          ? const Center(
+                              child: Icon(Icons.camera_alt, size: 30),
+                            )
+                          : ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.file(
+                                cameraImage!,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                    ),
+                  ),
+                ),
 
                 // Expanded(
                 //   child: Container(
@@ -178,43 +155,41 @@ final AuthService _authService = AuthService();
                 //     ),
                 //   ),
                 // ),
-
                 const SizedBox(width: 12),
-Expanded(
-  child: InkWell(
-    onTap: openCamera,
-    child: Container(
-      height: 100,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.grey.shade300,
-        ),
-      ),
-      child: selectedImage == null
-          ? const Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.add),
-                  SizedBox(width: 8),
-                  Text("Add"),
-                ],
-              ),
-            )
-          : ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.file(
-                selectedImage!,
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: double.infinity,
-              ),
-            ),
-    ),
-  ),
-),
+                Expanded(
+                  child: InkWell(
+                    onTap: openCamera,
+                    child: Container(
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey.shade300),
+                      ),
+                      child: selectedImage == null
+                          ? const Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.add),
+                                  SizedBox(width: 8),
+                                  Text("Add"),
+                                ],
+                              ),
+                            )
+                          : ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.file(
+                                selectedImage!,
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: double.infinity,
+                              ),
+                            ),
+                    ),
+                  ),
+                ),
+
                 // Expanded(
                 //   child: InkWell(
                 //     onTap: () {
@@ -241,11 +216,6 @@ Expanded(
                 //     ),
                 //   ),
                 // ),
-
-
-
-
-
               ],
             ),
 
@@ -268,14 +238,14 @@ Expanded(
                 final selected = damageType == e;
 
                 return ChoiceChip(
-  label: Text(e),
-  selected: selected,
-  onSelected: (_) {
-    setState(() {
-      damageType = e;
-    });
-  },
-);
+                  label: Text(e),
+                  selected: selected,
+                  onSelected: (_) {
+                    setState(() {
+                      damageType = e;
+                    });
+                  },
+                );
               }).toList(),
             ),
 
@@ -293,7 +263,7 @@ Expanded(
 
             TextField(
               controller: locationController,
-             
+
               decoration: InputDecoration(
                 filled: true,
                 hintText: "Enter damage location",
@@ -318,7 +288,7 @@ Expanded(
 
             TextField(
               controller: descriptionController,
-              
+
               maxLines: 3,
               decoration: InputDecoration(
                 filled: true,
@@ -343,23 +313,22 @@ Expanded(
                   ),
                 ),
                 onPressed: () async {
+                  if (locationController.text.trim().isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Enter damage location")),
+                    );
+                    return;
+                  }
 
-  if (locationController.text.trim().isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Enter damage location")),
-    );
-    return;
-  }
+                  if (descriptionController.text.trim().isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Enter damage description")),
+                    );
+                    return;
+                  }
 
-  if (descriptionController.text.trim().isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Enter damage description")),
-    );
-    return;
-  }
-
-  await saveDamage();
-},
+                  await saveDamage();
+                },
                 // onPressed: () {
 
                 //   ScaffoldMessenger.of(context).showSnackBar(
@@ -379,7 +348,6 @@ Expanded(
                 ),
               ),
             ),
-
           ],
         ),
       ),

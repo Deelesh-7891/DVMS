@@ -15,11 +15,9 @@ class _FitnessScreenState extends State<FitnessScreen> {
   // CONTROLLERS
   // =========================================================
 
-  final TextEditingController searchController =
-      TextEditingController();
+  final TextEditingController searchController = TextEditingController();
 
-  final TextEditingController certificateController =
-      TextEditingController();
+  final TextEditingController certificateController = TextEditingController();
 
   // =========================================================
   // DATA
@@ -87,10 +85,7 @@ class _FitnessScreenState extends State<FitnessScreen> {
   // GET VALUE
   // =========================================================
 
-  String getValue(
-    Map<String, dynamic> item,
-    List<String> keys,
-  ) {
+  String getValue(Map<String, dynamic> item, List<String> keys) {
     for (final key in keys) {
       final value = item[key];
 
@@ -109,71 +104,58 @@ class _FitnessScreenState extends State<FitnessScreen> {
   // =========================================================
 
   String getVehicle(Map<String, dynamic> item) {
-    return getValue(
-      item,
-      [
-        "RegistrationNo",
-        "registrationNo",
-        "VehicleNo",
-        "vehicleNo",
-        "VehicleNumber",
-        "vehicleNumber",
-        "RegistrationNumber",
-        "registrationNumber",
-        "Vehicle",
-        "vehicle",
-      ],
-    );
+    return getValue(item, [
+      "RegistrationNo",
+      "registrationNo",
+      "VehicleNo",
+      "vehicleNo",
+      "VehicleNumber",
+      "vehicleNumber",
+      "RegistrationNumber",
+      "registrationNumber",
+      "Vehicle",
+      "vehicle",
+    ]);
   }
 
   // =========================================================
   // CERTIFICATE NUMBER
   // =========================================================
 
-  String getCertificateNo(
-    Map<String, dynamic> item,
-  ) {
-    return getValue(
-      item,
-      [
-        "CertificateNo",
-        "certificateNo",
-        "CertificateNumber",
-        "certificateNumber",
-        "FitnessCertificateNo",
-        "fitnessCertificateNo",
-        "FitnessCertificateNumber",
-        "fitnessCertificateNumber",
-        "FitnessNo",
-        "fitnessNo",
-      ],
-    );
+  String getCertificateNo(Map<String, dynamic> item) {
+    return getValue(item, [
+      "CertificateNo",
+      "certificateNo",
+      "CertificateNumber",
+      "certificateNumber",
+      "FitnessCertificateNo",
+      "fitnessCertificateNo",
+      "FitnessCertificateNumber",
+      "fitnessCertificateNumber",
+      "FitnessNo",
+      "fitnessNo",
+    ]);
   }
 
   // =========================================================
   // EXPIRY
   // =========================================================
 
-  String getExpiryValue(
-    Map<String, dynamic> item,
-  ) {
-    return getValue(
-      item,
-      [
-        "Expiry",
-        "expiry",
-        "ExpiryDate",
-        "expiryDate",
-        "FitnessExpiry",
-        "fitnessExpiry",
-        "FitnessExpiryDate",
-        "fitnessExpiryDate",
-        "ValidTill",
-        "validTill",
-        "ValidityDate",
-        "validityDate",
-      ],
-    );
+  String getExpiryValue(Map<String, dynamic> item) {
+    return getValue(item, [
+      "Expiry",
+      "expiry",
+      "ExpiryDate",
+      "expiryDate",
+      "FitnessExpiry",
+      "fitnessExpiry",
+      "FitnessExpiryDate",
+      "fitnessExpiryDate",
+      "ValidTill",
+      "validTill",
+      "ValidityDate",
+      "validityDate",
+    ]);
   }
 
   // =========================================================
@@ -181,17 +163,14 @@ class _FitnessScreenState extends State<FitnessScreen> {
   // =========================================================
 
   String getState(Map<String, dynamic> item) {
-    return getValue(
-      item,
-      [
-        "State",
-        "state",
-        "FitnessState",
-        "fitnessState",
-        "Status",
-        "status",
-      ],
-    );
+    return getValue(item, [
+      "State",
+      "state",
+      "FitnessState",
+      "fitnessState",
+      "Status",
+      "status",
+    ]);
   }
 
   // =========================================================
@@ -272,21 +251,11 @@ class _FitnessScreenState extends State<FitnessScreen> {
 
     final today = DateTime.now();
 
-    final todayOnly = DateTime(
-      today.year,
-      today.month,
-      today.day,
-    );
+    final todayOnly = DateTime(today.year, today.month, today.day);
 
-    final expiryOnly = DateTime(
-      expiry.year,
-      expiry.month,
-      expiry.day,
-    );
+    final expiryOnly = DateTime(expiry.year, expiry.month, expiry.day);
 
-    return expiryOnly
-        .difference(todayOnly)
-        .inDays;
+    return expiryOnly.difference(todayOnly).inDays;
   }
 
   // =========================================================
@@ -294,18 +263,11 @@ class _FitnessScreenState extends State<FitnessScreen> {
   // =========================================================
 
   void applyFilters() {
-    final vehicleSearch =
-        searchController.text
-            .trim()
-            .toLowerCase();
+    final vehicleSearch = searchController.text.trim().toLowerCase();
 
-    final certificateSearch =
-        certificateController.text
-            .trim()
-            .toLowerCase();
+    final certificateSearch = certificateController.text.trim().toLowerCase();
 
-    List<dynamic> result =
-        List<dynamic>.from(allFitness);
+    List<dynamic> result = List<dynamic>.from(allFitness);
 
     // VEHICLE SEARCH
     if (vehicleSearch.isNotEmpty) {
@@ -314,12 +276,9 @@ class _FitnessScreenState extends State<FitnessScreen> {
           return false;
         }
 
-        final data =
-            Map<String, dynamic>.from(item);
+        final data = Map<String, dynamic>.from(item);
 
-        return getVehicle(data)
-            .toLowerCase()
-            .contains(vehicleSearch);
+        return getVehicle(data).toLowerCase().contains(vehicleSearch);
       }).toList();
     }
 
@@ -330,12 +289,9 @@ class _FitnessScreenState extends State<FitnessScreen> {
           return false;
         }
 
-        final data =
-            Map<String, dynamic>.from(item);
+        final data = Map<String, dynamic>.from(item);
 
-        return getCertificateNo(data)
-            .toLowerCase()
-            .contains(certificateSearch);
+        return getCertificateNo(data).toLowerCase().contains(certificateSearch);
       }).toList();
     }
 
@@ -346,21 +302,15 @@ class _FitnessScreenState extends State<FitnessScreen> {
           return false;
         }
 
-        final data =
-            Map<String, dynamic>.from(item);
+        final data = Map<String, dynamic>.from(item);
 
-        final expiry =
-            parseDate(getExpiryValue(data));
+        final expiry = parseDate(getExpiryValue(data));
 
         if (expiry == null) {
           return false;
         }
 
-        final expiryDate = DateTime(
-          expiry.year,
-          expiry.month,
-          expiry.day,
-        );
+        final expiryDate = DateTime(expiry.year, expiry.month, expiry.day);
 
         final selectedFrom = DateTime(
           fromDate!.year,
@@ -368,9 +318,7 @@ class _FitnessScreenState extends State<FitnessScreen> {
           fromDate!.day,
         );
 
-        return !expiryDate.isBefore(
-          selectedFrom,
-        );
+        return !expiryDate.isBefore(selectedFrom);
       }).toList();
     }
 
@@ -381,31 +329,19 @@ class _FitnessScreenState extends State<FitnessScreen> {
           return false;
         }
 
-        final data =
-            Map<String, dynamic>.from(item);
+        final data = Map<String, dynamic>.from(item);
 
-        final expiry =
-            parseDate(getExpiryValue(data));
+        final expiry = parseDate(getExpiryValue(data));
 
         if (expiry == null) {
           return false;
         }
 
-        final expiryDate = DateTime(
-          expiry.year,
-          expiry.month,
-          expiry.day,
-        );
+        final expiryDate = DateTime(expiry.year, expiry.month, expiry.day);
 
-        final selectedTo = DateTime(
-          toDate!.year,
-          toDate!.month,
-          toDate!.day,
-        );
+        final selectedTo = DateTime(toDate!.year, toDate!.month, toDate!.day);
 
-        return !expiryDate.isAfter(
-          selectedTo,
-        );
+        return !expiryDate.isAfter(selectedTo);
       }).toList();
     }
 
@@ -428,10 +364,7 @@ class _FitnessScreenState extends State<FitnessScreen> {
       fromDate = null;
       toDate = null;
 
-      filteredFitness =
-          List<dynamic>.from(
-        allFitness,
-      );
+      filteredFitness = List<dynamic>.from(allFitness);
     });
   }
 
@@ -439,9 +372,7 @@ class _FitnessScreenState extends State<FitnessScreen> {
   // DATE PICKER
   // =========================================================
 
-  Future<void> selectDate({
-    required bool isFromDate,
-  }) async {
+  Future<void> selectDate({required bool isFromDate}) async {
     final picked = await showDatePicker(
       context: context,
       initialDate: isFromDate
@@ -508,52 +439,32 @@ class _FitnessScreenState extends State<FitnessScreen> {
 
   Widget buildHeader() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        22,
-        20,
-        22,
-        12,
-      ),
+      padding: const EdgeInsets.fromLTRB(22, 20, 22, 12),
       child: LayoutBuilder(
-        builder: (
-          context,
-          constraints,
-        ) {
-          final mobile =
-              constraints.maxWidth < 750;
+        builder: (context, constraints) {
+          final mobile = constraints.maxWidth < 750;
 
           if (mobile) {
             return Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
                   "Fitness Certificates",
                   style: TextStyle(
                     fontSize: 28,
-                    fontWeight:
-                        FontWeight.w800,
-                    color:
-                        Color(0xff111827),
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xff111827),
                   ),
                 ),
 
-                const SizedBox(
-                  height: 3,
-                ),
+                const SizedBox(height: 3),
 
                 const Text(
                   "RTO Fitness monitoring for tagged demo vehicles",
-                  style: TextStyle(
-                    fontSize: 15,
-                    color:
-                        Color(0xff64748b),
-                  ),
+                  style: TextStyle(fontSize: 15, color: Color(0xff64748b)),
                 ),
 
-                const SizedBox(
-                  height: 12,
-                ),
+                const SizedBox(height: 12),
 
                 buildHeaderActions(),
               ],
@@ -561,36 +472,26 @@ class _FitnessScreenState extends State<FitnessScreen> {
           }
 
           return Row(
-            crossAxisAlignment:
-                CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Expanded(
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       "Fitness Certificates",
                       style: TextStyle(
                         fontSize: 30,
-                        fontWeight:
-                            FontWeight.w800,
-                        color:
-                            Color(0xff111827),
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xff111827),
                       ),
                     ),
 
-                    SizedBox(
-                      height: 3,
-                    ),
+                    SizedBox(height: 3),
 
                     Text(
                       "RTO Fitness monitoring for tagged demo vehicles",
-                      style: TextStyle(
-                        fontSize: 15,
-                        color:
-                            Color(0xff64748b),
-                      ),
+                      style: TextStyle(fontSize: 15, color: Color(0xff64748b)),
                     ),
                   ],
                 ),
@@ -613,17 +514,14 @@ class _FitnessScreenState extends State<FitnessScreen> {
     return Wrap(
       spacing: 12,
       runSpacing: 8,
-      crossAxisAlignment:
-          WrapCrossAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         Text(
           todayText(),
           style: const TextStyle(
             fontSize: 14,
-            fontWeight:
-                FontWeight.w700,
-            color:
-                Color(0xff1e293b),
+            fontWeight: FontWeight.w700,
+            color: Color(0xff1e293b),
           ),
         ),
 
@@ -631,20 +529,13 @@ class _FitnessScreenState extends State<FitnessScreen> {
           width: 46,
           height: 46,
           alignment: Alignment.center,
-          decoration:
-              const BoxDecoration(
-            color:
-                Color(0xff2161b5),
-            shape:
-                BoxShape.circle,
+          decoration: const BoxDecoration(
+            color: Color(0xff2161b5),
+            shape: BoxShape.circle,
           ),
           child: const Text(
             "SY",
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight:
-                  FontWeight.w800,
-            ),
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w800),
           ),
         ),
       ],
@@ -657,20 +548,12 @@ class _FitnessScreenState extends State<FitnessScreen> {
 
   Widget buildInfoText() {
     return const Padding(
-      padding: EdgeInsets.fromLTRB(
-        22,
-        18,
-        22,
-        12,
-      ),
+      padding: EdgeInsets.fromLTRB(22, 18, 22, 12),
       child: Align(
         alignment: Alignment.centerLeft,
         child: Text(
           "Only vehicles tagged Fitness Required in Vehicle Master appear here.",
-          style: TextStyle(
-            fontSize: 16,
-            color: Color(0xff8aa0c0),
-          ),
+          style: TextStyle(fontSize: 16, color: Color(0xff8aa0c0)),
         ),
       ),
     );
@@ -687,31 +570,22 @@ class _FitnessScreenState extends State<FitnessScreen> {
       decoration: const BoxDecoration(
         color: Color(0xfff8fafc),
         border: Border(
-          top: BorderSide(
-            color: Color(0xffe2e8f0),
-          ),
-          bottom: BorderSide(
-            color: Color(0xffe2e8f0),
-          ),
+          top: BorderSide(color: Color(0xffe2e8f0)),
+          bottom: BorderSide(color: Color(0xffe2e8f0)),
         ),
       ),
       child: Wrap(
         spacing: 13,
         runSpacing: 12,
-        crossAxisAlignment:
-            WrapCrossAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.center,
         children: [
           // VEHICLE SEARCH
           SizedBox(
             width: 270,
             height: 44,
             child: TextField(
-              controller:
-                  searchController,
-              decoration:
-                  inputDecoration(
-                "Type to search...",
-              ),
+              controller: searchController,
+              decoration: inputDecoration("Type to search..."),
             ),
           ),
 
@@ -720,12 +594,8 @@ class _FitnessScreenState extends State<FitnessScreen> {
             width: 270,
             height: 44,
             child: TextField(
-              controller:
-                  certificateController,
-              decoration:
-                  inputDecoration(
-                "Search certificate no...",
-              ),
+              controller: certificateController,
+              decoration: inputDecoration("Search certificate no..."),
             ),
           ),
 
@@ -733,27 +603,17 @@ class _FitnessScreenState extends State<FitnessScreen> {
           buildDateBox(
             title: fromDate == null
                 ? "dd-mm-yyyy"
-                : formatSelectedDate(
-                    fromDate!,
-                  ),
+                : formatSelectedDate(fromDate!),
             onTap: () {
-              selectDate(
-                isFromDate: true,
-              );
+              selectDate(isFromDate: true);
             },
           ),
 
           // TO DATE
           buildDateBox(
-            title: toDate == null
-                ? "dd-mm-yyyy"
-                : formatSelectedDate(
-                    toDate!,
-                  ),
+            title: toDate == null ? "dd-mm-yyyy" : formatSelectedDate(toDate!),
             onTap: () {
-              selectDate(
-                isFromDate: false,
-              );
+              selectDate(isFromDate: false);
             },
           ),
 
@@ -762,34 +622,18 @@ class _FitnessScreenState extends State<FitnessScreen> {
             height: 42,
             child: ElevatedButton(
               onPressed: applyFilters,
-              style:
-                  ElevatedButton.styleFrom(
-                backgroundColor:
-                    const Color(
-                  0xff2161b5,
-                ),
-                foregroundColor:
-                    Colors.white,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xff2161b5),
+                foregroundColor: Colors.white,
                 elevation: 0,
-                padding:
-                    const EdgeInsets
-                        .symmetric(
-                  horizontal: 18,
-                ),
-                shape:
-                    RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(
-                    10,
-                  ),
+                padding: const EdgeInsets.symmetric(horizontal: 18),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
               child: const Text(
                 "Filter",
-                style: TextStyle(
-                  fontWeight:
-                      FontWeight.w700,
-                ),
+                style: TextStyle(fontWeight: FontWeight.w700),
               ),
             ),
           ),
@@ -799,34 +643,16 @@ class _FitnessScreenState extends State<FitnessScreen> {
             height: 42,
             child: OutlinedButton(
               onPressed: resetFilters,
-              style:
-                  OutlinedButton.styleFrom(
-                foregroundColor:
-                    const Color(
-                  0xff475569,
-                ),
-                backgroundColor:
-                    Colors.white,
-                side:
-                    const BorderSide(
-                  color:
-                      Color(0xffdbe2ea),
-                ),
-                padding:
-                    const EdgeInsets
-                        .symmetric(
-                  horizontal: 18,
-                ),
-                shape:
-                    RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(
-                    10,
-                  ),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: const Color(0xff475569),
+                backgroundColor: Colors.white,
+                side: const BorderSide(color: Color(0xffdbe2ea)),
+                padding: const EdgeInsets.symmetric(horizontal: 18),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child:
-                  const Text("Reset"),
+              child: const Text("Reset"),
             ),
           ),
         ],
@@ -838,48 +664,24 @@ class _FitnessScreenState extends State<FitnessScreen> {
   // INPUT DECORATION
   // =========================================================
 
-  InputDecoration inputDecoration(
-    String hint,
-  ) {
+  InputDecoration inputDecoration(String hint) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: const TextStyle(
-        color: Color(0xff8b8f96),
-      ),
+      hintStyle: const TextStyle(color: Color(0xff8b8f96)),
       filled: true,
       fillColor: Colors.white,
-      contentPadding:
-          const EdgeInsets.symmetric(
-        horizontal: 15,
-      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 15),
       border: OutlineInputBorder(
-        borderRadius:
-            BorderRadius.circular(10),
-        borderSide:
-            const BorderSide(
-          color:
-              Color(0xffdbe2ea),
-        ),
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Color(0xffdbe2ea)),
       ),
-      enabledBorder:
-          OutlineInputBorder(
-        borderRadius:
-            BorderRadius.circular(10),
-        borderSide:
-            const BorderSide(
-          color:
-              Color(0xffdbe2ea),
-        ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Color(0xffdbe2ea)),
       ),
-      focusedBorder:
-          OutlineInputBorder(
-        borderRadius:
-            BorderRadius.circular(10),
-        borderSide:
-            const BorderSide(
-          color:
-              Color(0xff2161b5),
-        ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Color(0xff2161b5)),
       ),
     );
   }
@@ -888,50 +690,32 @@ class _FitnessScreenState extends State<FitnessScreen> {
   // DATE BOX
   // =========================================================
 
-  Widget buildDateBox({
-    required String title,
-    required VoidCallback onTap,
-  }) {
+  Widget buildDateBox({required String title, required VoidCallback onTap}) {
     return InkWell(
       onTap: onTap,
-      borderRadius:
-          BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(10),
       child: Container(
         width: 190,
         height: 44,
-        padding:
-            const EdgeInsets.symmetric(
-          horizontal: 13,
-        ),
-        decoration:
-            BoxDecoration(
+        padding: const EdgeInsets.symmetric(horizontal: 13),
+        decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius:
-              BorderRadius.circular(10),
-          border: Border.all(
-            color:
-                const Color(0xffdbe2ea),
-          ),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xffdbe2ea)),
         ),
         child: Row(
           children: [
             Expanded(
               child: Text(
                 title,
-                style:
-                    const TextStyle(
-                  fontSize: 14,
-                  color:
-                      Color(0xff475569),
-                ),
+                style: const TextStyle(fontSize: 14, color: Color(0xff475569)),
               ),
             ),
 
             const Icon(
               Icons.calendar_today_outlined,
               size: 17,
-              color:
-                  Color(0xff111827),
+              color: Color(0xff111827),
             ),
           ],
         ),
@@ -943,9 +727,7 @@ class _FitnessScreenState extends State<FitnessScreen> {
   // FORMAT SELECTED DATE
   // =========================================================
 
-  String formatSelectedDate(
-    DateTime date,
-  ) {
+  String formatSelectedDate(DateTime date) {
     return "${date.day.toString().padLeft(2, '0')}-"
         "${date.month.toString().padLeft(2, '0')}-"
         "${date.year}";
@@ -960,10 +742,8 @@ class _FitnessScreenState extends State<FitnessScreen> {
     if (isLoading) {
       return const Center(
         child: Padding(
-          padding:
-              EdgeInsets.all(60),
-          child:
-              CircularProgressIndicator(),
+          padding: EdgeInsets.all(60),
+          child: CircularProgressIndicator(),
         ),
       );
     }
@@ -972,41 +752,25 @@ class _FitnessScreenState extends State<FitnessScreen> {
     if (errorMessage != null) {
       return Center(
         child: Padding(
-          padding:
-              const EdgeInsets.all(40),
+          padding: const EdgeInsets.all(40),
           child: Column(
-            mainAxisSize:
-                MainAxisSize.min,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
-                Icons.error_outline,
-                size: 48,
-                color: Colors.red,
-              ),
+              const Icon(Icons.error_outline, size: 48, color: Colors.red),
 
-              const SizedBox(
-                height: 12,
-              ),
+              const SizedBox(height: 12),
 
               Text(
                 errorMessage!,
-                textAlign:
-                    TextAlign.center,
-                style:
-                    const TextStyle(
-                  color: Colors.red,
-                ),
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.red),
               ),
 
-              const SizedBox(
-                height: 15,
-              ),
+              const SizedBox(height: 15),
 
               ElevatedButton(
-                onPressed:
-                    loadFitness,
-                child:
-                    const Text("Retry"),
+                onPressed: loadFitness,
+                child: const Text("Retry"),
               ),
             ],
           ),
@@ -1018,15 +782,10 @@ class _FitnessScreenState extends State<FitnessScreen> {
     if (filteredFitness.isEmpty) {
       return const Center(
         child: Padding(
-          padding:
-              EdgeInsets.all(60),
+          padding: EdgeInsets.all(60),
           child: Text(
             "No fitness records found",
-            style: TextStyle(
-              fontSize: 16,
-              color:
-                  Color(0xff64748b),
-            ),
+            style: TextStyle(fontSize: 16, color: Color(0xff64748b)),
           ),
         ),
       );
@@ -1037,20 +796,13 @@ class _FitnessScreenState extends State<FitnessScreen> {
       width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius:
-            BorderRadius.circular(15),
-        border: Border.all(
-          color:
-              const Color(0xffe2e8f0),
-        ),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: const Color(0xffe2e8f0)),
       ),
       child: ClipRRect(
-        borderRadius:
-            BorderRadius.circular(15),
-        child:
-            SingleChildScrollView(
-          scrollDirection:
-              Axis.horizontal,
+        borderRadius: BorderRadius.circular(15),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
           child: DataTable(
             horizontalMargin: 18,
             columnSpacing: 70,
@@ -1060,151 +812,88 @@ class _FitnessScreenState extends State<FitnessScreen> {
             dividerThickness: 0.7,
 
             columns: const [
-              DataColumn(
-                label: FitnessHeader(
-                  "VEHICLE",
-                ),
-              ),
-              DataColumn(
-                label: FitnessHeader(
-                  "CERTIFICATE NO.",
-                ),
-              ),
-              DataColumn(
-                label: FitnessHeader(
-                  "EXPIRY",
-                ),
-              ),
-              DataColumn(
-                label: FitnessHeader(
-                  "DAYS LEFT",
-                ),
-              ),
-              DataColumn(
-                label: FitnessHeader(
-                  "STATE",
-                ),
-              ),
+              DataColumn(label: FitnessHeader("VEHICLE")),
+              DataColumn(label: FitnessHeader("CERTIFICATE NO.")),
+              DataColumn(label: FitnessHeader("EXPIRY")),
+              DataColumn(label: FitnessHeader("DAYS LEFT")),
+              DataColumn(label: FitnessHeader("STATE")),
             ],
 
-            rows:
-                filteredFitness
-                    .map<DataRow>(
-              (item) {
-                final data =
-                    Map<String,
-                        dynamic>.from(
-                  item,
-                );
+            rows: filteredFitness.map<DataRow>((item) {
+              final data = Map<String, dynamic>.from(item);
 
-                final vehicle =
-                    getVehicle(data);
+              final vehicle = getVehicle(data);
 
-                final certificate =
-                    getCertificateNo(
-                  data,
-                );
+              final certificate = getCertificateNo(data);
 
-                final expiry =
-                    getExpiryValue(
-                  data,
-                );
+              final expiry = getExpiryValue(data);
 
-                final daysLeft =
-                    getDaysLeft(
-                  expiry,
-                );
+              final daysLeft = getDaysLeft(expiry);
 
-                return DataRow(
-                  cells: [
-                    // VEHICLE
-                    DataCell(
-                      SizedBox(
-                        width: 250,
-                        child: Text(
-                          vehicle,
-                          style:
-                              const TextStyle(
-                            fontSize: 14,
-                            fontWeight:
-                                FontWeight.w800,
-                            color:
-                                Color(
-                              0xff111827,
-                            ),
-                          ),
+              return DataRow(
+                cells: [
+                  // VEHICLE
+                  DataCell(
+                    SizedBox(
+                      width: 250,
+                      child: Text(
+                        vehicle,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xff111827),
                         ),
                       ),
                     ),
+                  ),
 
-                    // CERTIFICATE NO
-                    DataCell(
-                      SizedBox(
-                        width: 250,
-                        child: Text(
-                          certificate,
-                          style:
-                              const TextStyle(
-                            fontSize: 14,
-                            color:
-                                Color(
-                              0xff111827,
-                            ),
-                          ),
+                  // CERTIFICATE NO
+                  DataCell(
+                    SizedBox(
+                      width: 250,
+                      child: Text(
+                        certificate,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Color(0xff111827),
                         ),
                       ),
                     ),
+                  ),
 
-                    // EXPIRY
-                    DataCell(
-                      SizedBox(
-                        width: 180,
-                        child: Text(
-                          formatDate(
-                            expiry,
-                          ),
-                          style:
-                              const TextStyle(
-                            fontSize: 14,
-                            color:
-                                Color(
-                              0xff111827,
-                            ),
-                          ),
+                  // EXPIRY
+                  DataCell(
+                    SizedBox(
+                      width: 180,
+                      child: Text(
+                        formatDate(expiry),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Color(0xff111827),
                         ),
                       ),
                     ),
+                  ),
 
-                    // DAYS LEFT
-                    DataCell(
-                      SizedBox(
-                        width: 200,
-                        child: Text(
-                          daysLeft == null
-                              ? "-"
-                              : "$daysLeft days",
-                          style:
-                              const TextStyle(
-                            fontSize: 14,
-                            color:
-                                Color(
-                              0xff111827,
-                            ),
-                          ),
+                  // DAYS LEFT
+                  DataCell(
+                    SizedBox(
+                      width: 200,
+                      child: Text(
+                        daysLeft == null ? "-" : "$daysLeft days",
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Color(0xff111827),
                         ),
                       ),
                     ),
+                  ),
 
-                    // STATE
-                    DataCell(
-                      fitnessStatusBadge(
-                        daysLeft,
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ).toList(),
+                  // STATE
+                  DataCell(fitnessStatusBadge(daysLeft)),
+                ],
+              );
+            }).toList(),
           ),
         ),
       ),
@@ -1215,9 +904,7 @@ class _FitnessScreenState extends State<FitnessScreen> {
   // STATUS BADGE
   // =========================================================
 
-  Widget fitnessStatusBadge(
-    int? daysLeft,
-  ) {
+  Widget fitnessStatusBadge(int? daysLeft) {
     String text;
     Color background;
     Color foreground;
@@ -1225,73 +912,54 @@ class _FitnessScreenState extends State<FitnessScreen> {
     if (daysLeft == null) {
       text = "Unknown";
 
-      background =
-          const Color(0xffe2e8f0);
+      background = const Color(0xffe2e8f0);
 
-      foreground =
-          const Color(0xff475569);
+      foreground = const Color(0xff475569);
     } else if (daysLeft < 0) {
       text = "Expired";
 
-      background =
-          const Color(0xffffdddd);
+      background = const Color(0xffffdddd);
 
-      foreground =
-          const Color(0xffdc2626);
+      foreground = const Color(0xffdc2626);
     } else if (daysLeft <= 30) {
       text = "Expiring Soon";
 
-      background =
-          const Color(0xffffedd5);
+      background = const Color(0xffffedd5);
 
-      foreground =
-          const Color(0xffea580c);
+      foreground = const Color(0xffea580c);
     } else {
       text = "Valid";
 
-      background =
-          const Color(0xffdcfce7);
+      background = const Color(0xffdcfce7);
 
-      foreground =
-          const Color(0xff15803d);
+      foreground = const Color(0xff15803d);
     }
 
     return Container(
-      padding:
-          const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 6,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: background,
-        borderRadius:
-            BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
-        mainAxisSize:
-            MainAxisSize.min,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
             width: 8,
             height: 8,
-            decoration:
-                BoxDecoration(
+            decoration: BoxDecoration(
               color: foreground,
-              shape:
-                  BoxShape.circle,
+              shape: BoxShape.circle,
             ),
           ),
 
-          const SizedBox(
-            width: 7,
-          ),
+          const SizedBox(width: 7),
 
           Text(
             text,
             style: TextStyle(
               fontSize: 13,
-              fontWeight:
-                  FontWeight.w700,
+              fontWeight: FontWeight.w700,
               color: foreground,
             ),
           ),
@@ -1305,12 +973,9 @@ class _FitnessScreenState extends State<FitnessScreen> {
   // =========================================================
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          const Color(0xfff1f5f9),
+      backgroundColor: const Color(0xfff1f5f9),
 
       body: SafeArea(
         child: Column(
@@ -1326,15 +991,8 @@ class _FitnessScreenState extends State<FitnessScreen> {
 
             // CONTENT
             Expanded(
-              child:
-                  SingleChildScrollView(
-                padding:
-                    const EdgeInsets.fromLTRB(
-                  22,
-                  20,
-                  22,
-                  30,
-                ),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(22, 20, 22, 30),
                 child: Column(
                   children: [
                     // RECORD COUNT + REFRESH
@@ -1344,28 +1002,18 @@ class _FitnessScreenState extends State<FitnessScreen> {
                           child: Text(
                             "Fitness Records: "
                             "${filteredFitness.length}",
-                            style:
-                                const TextStyle(
+                            style: const TextStyle(
                               fontSize: 14,
-                              fontWeight:
-                                  FontWeight.w600,
-                              color:
-                                  Color(
-                                0xff64748b,
-                              ),
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xff64748b),
                             ),
                           ),
                         ),
 
                         IconButton(
-                          tooltip:
-                              "Refresh",
-                          onPressed:
-                              loadFitness,
-                          icon:
-                              const Icon(
-                            Icons.refresh,
-                          ),
+                          tooltip: "Refresh",
+                          onPressed: loadFitness,
+                          icon: const Icon(Icons.refresh),
                         ),
                       ],
                     ),
@@ -1399,28 +1047,19 @@ class _FitnessScreenState extends State<FitnessScreen> {
 // TABLE HEADER
 // =============================================================
 
-class FitnessHeader
-    extends StatelessWidget {
+class FitnessHeader extends StatelessWidget {
   final String title;
 
-  const FitnessHeader(
-    this.title, {
-    super.key,
-  });
+  const FitnessHeader(this.title, {super.key});
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     return Text(
       title,
-      style:
-          const TextStyle(
+      style: const TextStyle(
         fontSize: 12,
-        fontWeight:
-            FontWeight.w700,
-        color:
-            Color(0xff94a3b8),
+        fontWeight: FontWeight.w700,
+        color: Color(0xff94a3b8),
         letterSpacing: 0.4,
       ),
     );

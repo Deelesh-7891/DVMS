@@ -16,14 +16,11 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
   // CONTROLLERS
   // =========================================================
 
-  final TextEditingController vehicleController =
-      TextEditingController();
+  final TextEditingController vehicleController = TextEditingController();
 
-  final TextEditingController reportedByController =
-      TextEditingController();
+  final TextEditingController reportedByController = TextEditingController();
 
-  final TextEditingController descriptionController =
-      TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
 
   // =========================================================
   // DATA
@@ -63,7 +60,7 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
     });
 
     try {
-      final result = await _authService.getaccidents();
+      final result = await _authService.getAccidents();
 
       if (!mounted) return;
 
@@ -95,9 +92,7 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
   Future<void> openAddAccident() async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const ReportAccidentScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => const ReportAccidentScreen()),
     );
 
     // Add Accident screen se true return hua
@@ -111,10 +106,7 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
   // GET VALUE
   // =========================================================
 
-  String getValue(
-    Map<String, dynamic> item,
-    List<String> keys,
-  ) {
+  String getValue(Map<String, dynamic> item, List<String> keys) {
     for (final key in keys) {
       final value = item[key];
 
@@ -133,21 +125,18 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
   // =========================================================
 
   String getVehicle(Map<String, dynamic> item) {
-    return getValue(
-      item,
-      [
-        "RegistrationNo",
-        "registrationNo",
-        "VehicleNo",
-        "vehicleNo",
-        "VehicleNumber",
-        "vehicleNumber",
-        "RegistrationNumber",
-        "registrationNumber",
-        "Vehicle",
-        "vehicle",
-      ],
-    );
+    return getValue(item, [
+      "RegistrationNo",
+      "registrationNo",
+      "VehicleNo",
+      "vehicleNo",
+      "VehicleNumber",
+      "vehicleNumber",
+      "RegistrationNumber",
+      "registrationNumber",
+      "Vehicle",
+      "vehicle",
+    ]);
   }
 
   // =========================================================
@@ -155,17 +144,14 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
   // =========================================================
 
   String getModel(Map<String, dynamic> item) {
-    return getValue(
-      item,
-      [
-        "Model",
-        "model",
-        "VehicleModel",
-        "vehicleModel",
-        "ModelName",
-        "modelName",
-      ],
-    );
+    return getValue(item, [
+      "Model",
+      "model",
+      "VehicleModel",
+      "vehicleModel",
+      "ModelName",
+      "modelName",
+    ]);
   }
 
   // =========================================================
@@ -173,19 +159,16 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
   // =========================================================
 
   String getLocation(Map<String, dynamic> item) {
-    return getValue(
-      item,
-      [
-        "Location",
-        "location",
-        "LocationName",
-        "locationName",
-        "AccidentLocation",
-        "accidentLocation",
-        "City",
-        "city",
-      ],
-    );
+    return getValue(item, [
+      "Location",
+      "location",
+      "LocationName",
+      "locationName",
+      "AccidentLocation",
+      "accidentLocation",
+      "City",
+      "city",
+    ]);
   }
 
   // =========================================================
@@ -193,21 +176,18 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
   // =========================================================
 
   String getReportedBy(Map<String, dynamic> item) {
-    return getValue(
-      item,
-      [
-        "ReportedBy",
-        "reportedBy",
-        "ReportedByName",
-        "reportedByName",
-        "CreatedByName",
-        "createdByName",
-        "UserName",
-        "username",
-        "CreatedBy",
-        "createdBy",
-      ],
-    );
+    return getValue(item, [
+      "ReportedBy",
+      "reportedBy",
+      "ReportedByName",
+      "reportedByName",
+      "CreatedByName",
+      "createdByName",
+      "UserName",
+      "username",
+      "CreatedBy",
+      "createdBy",
+    ]);
   }
 
   // =========================================================
@@ -215,19 +195,16 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
   // =========================================================
 
   String getDescription(Map<String, dynamic> item) {
-    return getValue(
-      item,
-      [
-        "Description",
-        "description",
-        "AccidentDescription",
-        "accidentDescription",
-        "Remarks",
-        "remarks",
-        "Details",
-        "details",
-      ],
-    );
+    return getValue(item, [
+      "Description",
+      "description",
+      "AccidentDescription",
+      "accidentDescription",
+      "Remarks",
+      "remarks",
+      "Details",
+      "details",
+    ]);
   }
 
   // =========================================================
@@ -235,21 +212,18 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
   // =========================================================
 
   String getPhoto(Map<String, dynamic> item) {
-    return getValue(
-      item,
-      [
-        "Photo",
-        "photo",
-        "PhotoUrl",
-        "photoUrl",
-        "Image",
-        "image",
-        "ImageUrl",
-        "imageUrl",
-        "PhotoPath",
-        "photoPath",
-      ],
-    );
+    return getValue(item, [
+      "Photo",
+      "photo",
+      "PhotoUrl",
+      "photoUrl",
+      "Image",
+      "image",
+      "ImageUrl",
+      "imageUrl",
+      "PhotoPath",
+      "photoPath",
+    ]);
   }
 
   // =========================================================
@@ -257,23 +231,20 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
   // =========================================================
 
   String getCaptured(Map<String, dynamic> item) {
-    return getValue(
-      item,
-      [
-        "Captured",
-        "captured",
-        "CapturedAt",
-        "capturedAt",
-        "CapturedDate",
-        "capturedDate",
-        "AccidentDate",
-        "accidentDate",
-        "CreatedAt",
-        "createdAt",
-        "Date",
-        "date",
-      ],
-    );
+    return getValue(item, [
+      "Captured",
+      "captured",
+      "CapturedAt",
+      "capturedAt",
+      "CapturedDate",
+      "capturedDate",
+      "AccidentDate",
+      "accidentDate",
+      "CreatedAt",
+      "createdAt",
+      "Date",
+      "date",
+    ]);
   }
 
   // =========================================================
@@ -296,11 +267,9 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
 
       int hour = date.hour;
 
-      final minute =
-          date.minute.toString().padLeft(2, '0');
+      final minute = date.minute.toString().padLeft(2, '0');
 
-      final second =
-          date.second.toString().padLeft(2, '0');
+      final second = date.second.toString().padLeft(2, '0');
 
       final amPm = hour >= 12 ? "pm" : "am";
 
@@ -322,29 +291,22 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
   // =========================================================
 
   void applyFilters() {
-    final vehicleSearch =
-        vehicleController.text.trim().toLowerCase();
+    final vehicleSearch = vehicleController.text.trim().toLowerCase();
 
-    final reportedBySearch =
-        reportedByController.text.trim().toLowerCase();
+    final reportedBySearch = reportedByController.text.trim().toLowerCase();
 
-    final descriptionSearch =
-        descriptionController.text.trim().toLowerCase();
+    final descriptionSearch = descriptionController.text.trim().toLowerCase();
 
-    List<dynamic> result =
-        List<dynamic>.from(allAccidents);
+    List<dynamic> result = List<dynamic>.from(allAccidents);
 
     // VEHICLE
     if (vehicleSearch.isNotEmpty) {
       result = result.where((item) {
         if (item is! Map) return false;
 
-        final data =
-            Map<String, dynamic>.from(item);
+        final data = Map<String, dynamic>.from(item);
 
-        return getVehicle(data)
-            .toLowerCase()
-            .contains(vehicleSearch);
+        return getVehicle(data).toLowerCase().contains(vehicleSearch);
       }).toList();
     }
 
@@ -353,12 +315,9 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
       result = result.where((item) {
         if (item is! Map) return false;
 
-        final data =
-            Map<String, dynamic>.from(item);
+        final data = Map<String, dynamic>.from(item);
 
-        return getReportedBy(data)
-            .toLowerCase()
-            .contains(reportedBySearch);
+        return getReportedBy(data).toLowerCase().contains(reportedBySearch);
       }).toList();
     }
 
@@ -367,12 +326,9 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
       result = result.where((item) {
         if (item is! Map) return false;
 
-        final data =
-            Map<String, dynamic>.from(item);
+        final data = Map<String, dynamic>.from(item);
 
-        return getDescription(data)
-            .toLowerCase()
-            .contains(descriptionSearch);
+        return getDescription(data).toLowerCase().contains(descriptionSearch);
       }).toList();
     }
 
@@ -393,8 +349,7 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
     descriptionController.clear();
 
     setState(() {
-      filteredAccidents =
-          List<dynamic>.from(allAccidents);
+      filteredAccidents = List<dynamic>.from(allAccidents);
     });
   }
 
@@ -572,8 +527,7 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
                             vertical: 10,
                           ),
                           minimumSize: Size.zero,
-                          tapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
@@ -659,10 +613,7 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
                       "Accident records and incident monitoring",
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Color(0xff64748b),
-                      ),
+                      style: TextStyle(fontSize: 15, color: Color(0xff64748b)),
                     ),
                   ],
                 ),
@@ -672,10 +623,7 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
                 icon: const Icon(Icons.add, size: 20),
                 label: const Text(
                   "Add Accidents",
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xff2161b5),
@@ -732,22 +680,16 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
       builder: (context, constraints) {
         final width = constraints.maxWidth;
         final mobile = width < 600;
-        final fieldWidth = mobile
-            ? (width - 24).clamp(0.0, 1000.0)
-            : 270.0;
+        final fieldWidth = mobile ? (width - 24).clamp(0.0, 1000.0) : 270.0;
 
         return Container(
           width: double.infinity,
-          margin: EdgeInsets.symmetric(
-            horizontal: mobile ? 12 : 22,
-          ),
+          margin: EdgeInsets.symmetric(horizontal: mobile ? 12 : 22),
           padding: EdgeInsets.all(mobile ? 12 : 20),
           decoration: BoxDecoration(
             color: const Color(0xfff8fafc),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: const Color(0xffe2e8f0),
-            ),
+            border: Border.all(color: const Color(0xffe2e8f0)),
             boxShadow: const [
               BoxShadow(
                 color: Color(0x08000000),
@@ -764,9 +706,7 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
                       height: 44,
                       child: TextField(
                         controller: vehicleController,
-                        decoration: inputDecoration(
-                          "Search Vehicle...",
-                        ),
+                        decoration: inputDecoration("Search Vehicle..."),
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -789,9 +729,7 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
                       height: 44,
                       child: TextField(
                         controller: descriptionController,
-                        decoration: inputDecoration(
-                          "Search Description...",
-                        ),
+                        decoration: inputDecoration("Search Description..."),
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -804,21 +742,15 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
                           style: OutlinedButton.styleFrom(
                             backgroundColor: Colors.white,
                             foregroundColor: const Color(0xff475569),
-                            side: const BorderSide(
-                              color: Color(0xffdbe2ea),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 18,
-                            ),
+                            side: const BorderSide(color: Color(0xffdbe2ea)),
+                            padding: const EdgeInsets.symmetric(horizontal: 18),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
                           child: const Text(
                             "Reset",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                            ),
+                            style: TextStyle(fontWeight: FontWeight.w700),
                           ),
                         ),
                       ),
@@ -835,9 +767,7 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
                       height: 44,
                       child: TextField(
                         controller: vehicleController,
-                        decoration: inputDecoration(
-                          "Type to search...",
-                        ),
+                        decoration: inputDecoration("Type to search..."),
                       ),
                     ),
                     SizedBox(
@@ -860,9 +790,7 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
                       height: 44,
                       child: TextField(
                         controller: descriptionController,
-                        decoration: inputDecoration(
-                          "Type to search...",
-                        ),
+                        decoration: inputDecoration("Type to search..."),
                       ),
                     ),
                     SizedBox(
@@ -872,21 +800,15 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
                         style: OutlinedButton.styleFrom(
                           backgroundColor: Colors.white,
                           foregroundColor: const Color(0xff475569),
-                          side: const BorderSide(
-                            color: Color(0xffdbe2ea),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 18,
-                          ),
+                          side: const BorderSide(color: Color(0xffdbe2ea)),
+                          padding: const EdgeInsets.symmetric(horizontal: 18),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                         child: const Text(
                           "Reset",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                          ),
+                          style: TextStyle(fontWeight: FontWeight.w700),
                         ),
                       ),
                     ),
@@ -897,66 +819,36 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
     );
   }
 
-  InputDecoration inputDecoration(
-    String hint, {
-    Widget? suffixIcon,
-  }) {
+  InputDecoration inputDecoration(String hint, {Widget? suffixIcon}) {
     return InputDecoration(
       hintText: hint,
 
-      hintStyle:
-          const TextStyle(
-        color: Color(0xff8b8f96),
-        fontSize: 14,
-      ),
+      hintStyle: const TextStyle(color: Color(0xff8b8f96), fontSize: 14),
 
-      suffixIcon:
-          suffixIcon,
+      suffixIcon: suffixIcon,
 
       filled: true,
 
-      fillColor:
-          Colors.white,
+      fillColor: Colors.white,
 
-      contentPadding:
-          const EdgeInsets.symmetric(
-        horizontal: 15,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 15),
+
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+
+        borderSide: const BorderSide(color: Color(0xffdbe2ea)),
       ),
 
-      border:
-          OutlineInputBorder(
-        borderRadius:
-            BorderRadius.circular(10),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
 
-        borderSide:
-            const BorderSide(
-          color:
-              Color(0xffdbe2ea),
-        ),
+        borderSide: const BorderSide(color: Color(0xffdbe2ea)),
       ),
 
-      enabledBorder:
-          OutlineInputBorder(
-        borderRadius:
-            BorderRadius.circular(10),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
 
-        borderSide:
-            const BorderSide(
-          color:
-              Color(0xffdbe2ea),
-        ),
-      ),
-
-      focusedBorder:
-          OutlineInputBorder(
-        borderRadius:
-            BorderRadius.circular(10),
-
-        borderSide:
-            const BorderSide(
-          color:
-              Color(0xff2161b5),
-        ),
+        borderSide: const BorderSide(color: Color(0xff2161b5)),
       ),
     );
   }
@@ -966,7 +858,6 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
   // =========================================================
 
   Widget buildAccidentTable() {
-
     // =======================================================
     // LOADING
     // =======================================================
@@ -974,11 +865,9 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
     if (isLoading) {
       return const Center(
         child: Padding(
-          padding:
-              EdgeInsets.all(60),
+          padding: EdgeInsets.all(60),
 
-          child:
-              CircularProgressIndicator(),
+          child: CircularProgressIndicator(),
         ),
       );
     }
@@ -990,46 +879,29 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
     if (errorMessage != null) {
       return Center(
         child: Padding(
-          padding:
-              const EdgeInsets.all(40),
+          padding: const EdgeInsets.all(40),
 
           child: Column(
-            mainAxisSize:
-                MainAxisSize.min,
+            mainAxisSize: MainAxisSize.min,
 
             children: [
+              const Icon(Icons.error_outline, size: 50, color: Colors.red),
 
-              const Icon(
-                Icons.error_outline,
-                size: 50,
-                color: Colors.red,
-              ),
-
-              const SizedBox(
-                height: 12,
-              ),
+              const SizedBox(height: 12),
 
               Text(
                 errorMessage!,
-                textAlign:
-                    TextAlign.center,
+                textAlign: TextAlign.center,
 
-                style:
-                    const TextStyle(
-                  color: Colors.red,
-                ),
+                style: const TextStyle(color: Colors.red),
               ),
 
-              const SizedBox(
-                height: 15,
-              ),
+              const SizedBox(height: 15),
 
               ElevatedButton(
-                onPressed:
-                    loadAccidents,
+                onPressed: loadAccidents,
 
-                child:
-                    const Text("Retry"),
+                child: const Text("Retry"),
               ),
             ],
           ),
@@ -1044,17 +916,12 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
     if (filteredAccidents.isEmpty) {
       return const Center(
         child: Padding(
-          padding:
-              EdgeInsets.all(60),
+          padding: EdgeInsets.all(60),
 
           child: Text(
             "No accident records found",
 
-            style: TextStyle(
-              fontSize: 16,
-              color:
-                  Color(0xff64748b),
-            ),
+            style: TextStyle(fontSize: 16, color: Color(0xff64748b)),
           ),
         ),
       );
@@ -1067,33 +934,21 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
     return Container(
       width: double.infinity,
 
-      margin:
-          const EdgeInsets.symmetric(
-        horizontal: 22,
-      ),
+      margin: const EdgeInsets.symmetric(horizontal: 22),
 
-      decoration:
-          BoxDecoration(
+      decoration: BoxDecoration(
         color: Colors.white,
 
-        borderRadius:
-            BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16),
 
-        border: Border.all(
-          color:
-              const Color(
-                  0xffe2e8f0),
-        ),
+        border: Border.all(color: const Color(0xffe2e8f0)),
       ),
 
       child: ClipRRect(
-        borderRadius:
-            BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16),
 
-        child:
-            SingleChildScrollView(
-          scrollDirection:
-              Axis.horizontal,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
 
           child: DataTable(
             horizontalMargin: 18,
@@ -1109,255 +964,168 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
             dividerThickness: 0.7,
 
             columns: const [
+              DataColumn(label: AccidentHeader("CAPTURED")),
 
-              DataColumn(
-                label:
-                    AccidentHeader(
-                  "CAPTURED",
-                ),
-              ),
+              DataColumn(label: AccidentHeader("VEHICLE")),
 
-              DataColumn(
-                label:
-                    AccidentHeader(
-                  "VEHICLE",
-                ),
-              ),
+              DataColumn(label: AccidentHeader("MODEL")),
 
-              DataColumn(
-                label:
-                    AccidentHeader(
-                  "MODEL",
-                ),
-              ),
+              DataColumn(label: AccidentHeader("LOCATION")),
 
-              DataColumn(
-                label:
-                    AccidentHeader(
-                  "LOCATION",
-                ),
-              ),
+              DataColumn(label: AccidentHeader("REPORTED BY")),
 
-              DataColumn(
-                label:
-                    AccidentHeader(
-                  "REPORTED BY",
-                ),
-              ),
+              DataColumn(label: AccidentHeader("DESCRIPTION")),
 
-              DataColumn(
-                label:
-                    AccidentHeader(
-                  "DESCRIPTION",
-                ),
-              ),
-
-              DataColumn(
-                label:
-                    AccidentHeader(
-                  "PHOTO",
-                ),
-              ),
+              DataColumn(label: AccidentHeader("PHOTO")),
             ],
 
-            rows:
-                filteredAccidents
-                    .map<DataRow>(
-              (item) {
+            rows: filteredAccidents.map<DataRow>((item) {
+              final data = Map<String, dynamic>.from(item);
 
-                final data =
-                    Map<String, dynamic>
-                        .from(item);
+              final captured = getCaptured(data);
 
-                final captured =
-                    getCaptured(data);
+              final vehicle = getVehicle(data);
 
-                final vehicle =
-                    getVehicle(data);
+              final model = getModel(data);
 
-                final model =
-                    getModel(data);
+              final location = getLocation(data);
 
-                final location =
-                    getLocation(data);
+              final reportedBy = getReportedBy(data);
 
-                final reportedBy =
-                    getReportedBy(data);
+              final description = getDescription(data);
 
-                final description =
-                    getDescription(data);
+              final photo = getPhoto(data);
 
-                final photo =
-                    getPhoto(data);
+              return DataRow(
+                cells: [
+                  // =========================================
+                  // CAPTURED
+                  // =========================================
+                  DataCell(
+                    SizedBox(
+                      width: 175,
 
-                return DataRow(
-                  cells: [
+                      child: Text(
+                        formatCaptured(captured),
 
-                    // =========================================
-                    // CAPTURED
-                    // =========================================
-
-                    DataCell(
-                      SizedBox(
-                        width: 175,
-
-                        child: Text(
-                          formatCaptured(
-                            captured,
-                          ),
-
-                          style:
-                              const TextStyle(
-                            fontSize: 13,
-                            color:
-                                Color(
-                                    0xff111827),
-                          ),
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Color(0xff111827),
                         ),
                       ),
                     ),
+                  ),
 
-                    // =========================================
-                    // VEHICLE
-                    // =========================================
+                  // =========================================
+                  // VEHICLE
+                  // =========================================
+                  DataCell(
+                    SizedBox(
+                      width: 110,
 
-                    DataCell(
-                      SizedBox(
-                        width: 110,
+                      child: Text(
+                        vehicle,
 
-                        child: Text(
-                          vehicle,
-
-                          style:
-                              const TextStyle(
-                            fontSize: 14,
-                            fontWeight:
-                                FontWeight.w800,
-                            color:
-                                Color(
-                                    0xff111827),
-                          ),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xff111827),
                         ),
                       ),
                     ),
+                  ),
 
-                    // =========================================
-                    // MODEL
-                    // =========================================
+                  // =========================================
+                  // MODEL
+                  // =========================================
+                  DataCell(
+                    SizedBox(
+                      width: 120,
 
-                    DataCell(
-                      SizedBox(
-                        width: 120,
+                      child: Text(
+                        model,
 
-                        child: Text(
-                          model,
-
-                          style:
-                              const TextStyle(
-                            fontSize: 14,
-                            color:
-                                Color(
-                                    0xff111827),
-                          ),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Color(0xff111827),
                         ),
                       ),
                     ),
+                  ),
 
-                    // =========================================
-                    // LOCATION
-                    // =========================================
+                  // =========================================
+                  // LOCATION
+                  // =========================================
+                  DataCell(
+                    SizedBox(
+                      width: 130,
 
-                    DataCell(
-                      SizedBox(
-                        width: 130,
+                      child: Text(
+                        location,
 
-                        child: Text(
-                          location,
+                        maxLines: 2,
 
-                          maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
 
-                          overflow:
-                              TextOverflow
-                                  .ellipsis,
-
-                          style:
-                              const TextStyle(
-                            fontSize: 14,
-                            color:
-                                Color(
-                                    0xff111827),
-                          ),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Color(0xff111827),
                         ),
                       ),
                     ),
+                  ),
 
-                    // =========================================
-                    // REPORTED BY
-                    // =========================================
+                  // =========================================
+                  // REPORTED BY
+                  // =========================================
+                  DataCell(
+                    SizedBox(
+                      width: 165,
 
-                    DataCell(
-                      SizedBox(
-                        width: 165,
+                      child: Text(
+                        reportedBy,
 
-                        child: Text(
-                          reportedBy,
+                        maxLines: 2,
 
-                          maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
 
-                          overflow:
-                              TextOverflow
-                                  .ellipsis,
-
-                          style:
-                              const TextStyle(
-                            fontSize: 14,
-                            color:
-                                Color(
-                                    0xff111827),
-                          ),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Color(0xff111827),
                         ),
                       ),
                     ),
+                  ),
 
-                    // =========================================
-                    // DESCRIPTION
-                    // =========================================
+                  // =========================================
+                  // DESCRIPTION
+                  // =========================================
+                  DataCell(
+                    SizedBox(
+                      width: 390,
 
-                    DataCell(
-                      SizedBox(
-                        width: 390,
+                      child: Text(
+                        description,
 
-                        child: Text(
-                          description,
+                        maxLines: 2,
 
-                          maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
 
-                          overflow:
-                              TextOverflow
-                                  .ellipsis,
-
-                          style:
-                              const TextStyle(
-                            fontSize: 14,
-                            color:
-                                Color(
-                                    0xff111827),
-                          ),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Color(0xff111827),
                         ),
                       ),
                     ),
+                  ),
 
-                    // =========================================
-                    // PHOTO
-                    // =========================================
-
-                    DataCell(
-                      buildPhoto(photo),
-                    ),
-                  ],
-                );
-              },
-            ).toList(),
+                  // =========================================
+                  // PHOTO
+                  // =========================================
+                  DataCell(buildPhoto(photo)),
+                ],
+              );
+            }).toList(),
           ),
         ),
       ),
@@ -1369,53 +1137,33 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
   // =========================================================
 
   Widget buildPhoto(String photo) {
-
-    if (photo == "-" ||
-        photo.trim().isEmpty) {
+    if (photo == "-" || photo.trim().isEmpty) {
       return const Text(
         "—",
 
-        style: TextStyle(
-          color:
-              Color(0xff94a3b8),
-          fontSize: 16,
-        ),
+        style: TextStyle(color: Color(0xff94a3b8), fontSize: 16),
       );
     }
 
     return InkWell(
       onTap: () {
-
         showDialog(
           context: context,
 
           builder: (_) {
-
             return Dialog(
-              child:
-                  InteractiveViewer(
-                child:
-                    Image.network(
+              child: InteractiveViewer(
+                child: Image.network(
                   photo,
 
-                  fit:
-                      BoxFit.contain,
+                  fit: BoxFit.contain,
 
-                  errorBuilder: (
-                    context,
-                    error,
-                    stackTrace,
-                  ) {
-
+                  errorBuilder: (context, error, stackTrace) {
                     return const SizedBox(
                       width: 350,
                       height: 250,
 
-                      child: Center(
-                        child: Text(
-                          "Unable to load image",
-                        ),
-                      ),
+                      child: Center(child: Text("Unable to load image")),
                     );
                   },
                 ),
@@ -1426,8 +1174,7 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
       },
 
       child: ClipRRect(
-        borderRadius:
-            BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(6),
 
         child: Image.network(
           photo,
@@ -1435,23 +1182,10 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
           width: 45,
           height: 45,
 
-          fit:
-              BoxFit.cover,
+          fit: BoxFit.cover,
 
-          errorBuilder: (
-            context,
-            error,
-            stackTrace,
-          ) {
-
-            return const Text(
-              "—",
-
-              style: TextStyle(
-                color:
-                    Color(0xff94a3b8),
-              ),
-            );
+          errorBuilder: (context, error, stackTrace) {
+            return const Text("—", style: TextStyle(color: Color(0xff94a3b8)));
           },
         ),
       ),
@@ -1463,109 +1197,73 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
   // =========================================================
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
-
+  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          const Color(0xfff1f5f9),
+      backgroundColor: const Color(0xfff1f5f9),
 
       body: SafeArea(
         child: Column(
           children: [
-
             // =================================================
             // HEADER
             // =================================================
-
             buildHeader(),
 
             // =================================================
             // CONTENT
             // =================================================
-
             Expanded(
-              child:
-                  SingleChildScrollView(
-
-                padding:
-                    const EdgeInsets.only(
-                  top: 8,
-                  bottom: 30,
-                ),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.only(top: 8, bottom: 30),
 
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
 
                   children: [
-
                     // =================================================
                     // FILTER
                     // =================================================
-
                     buildFilterSection(),
 
-                    const SizedBox(
-                      height: 20,
-                    ),
+                    const SizedBox(height: 20),
 
                     // =================================================
                     // RECORD COUNT
                     // =================================================
-
                     Padding(
-                      padding:
-                          const EdgeInsets
-                              .symmetric(
-                        horizontal: 22,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 22),
 
                       child: Row(
                         children: [
-
                           Expanded(
                             child: Text(
                               "Accident Records: "
                               "${filteredAccidents.length}",
 
-                              style:
-                                  const TextStyle(
+                              style: const TextStyle(
                                 fontSize: 14,
-                                fontWeight:
-                                    FontWeight.w600,
-                                color:
-                                    Color(
-                                        0xff64748b),
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xff64748b),
                               ),
                             ),
                           ),
 
                           IconButton(
-                            tooltip:
-                                "Refresh",
+                            tooltip: "Refresh",
 
-                            onPressed:
-                                loadAccidents,
+                            onPressed: loadAccidents,
 
-                            icon:
-                                const Icon(
-                              Icons.refresh,
-                            ),
+                            icon: const Icon(Icons.refresh),
                           ),
                         ],
                       ),
                     ),
 
-                    const SizedBox(
-                      height: 2,
-                    ),
+                    const SizedBox(height: 2),
 
                     // =================================================
                     // TABLE
                     // =================================================
-
                     buildAccidentTable(),
                   ],
                 ),
@@ -1583,7 +1281,6 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
 
   @override
   void dispose() {
-
     vehicleController.dispose();
 
     reportedByController.dispose();
@@ -1598,33 +1295,22 @@ class _AccidentsScreenState extends State<AccidentsScreen> {
 // TABLE HEADER
 // =============================================================
 
-class AccidentHeader
-    extends StatelessWidget {
-
+class AccidentHeader extends StatelessWidget {
   final String title;
 
-  const AccidentHeader(
-    this.title, {
-    super.key,
-  });
+  const AccidentHeader(this.title, {super.key});
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
-
+  Widget build(BuildContext context) {
     return Text(
       title,
 
       maxLines: 1,
 
-      style:
-          const TextStyle(
+      style: const TextStyle(
         fontSize: 12,
-        fontWeight:
-            FontWeight.w700,
-        color:
-            Color(0xff94a3b8),
+        fontWeight: FontWeight.w700,
+        color: Color(0xff94a3b8),
         letterSpacing: 0.4,
       ),
     );
